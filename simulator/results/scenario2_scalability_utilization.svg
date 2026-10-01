@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="900" height="500" style="background:#0F172A; font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;">
+<rect x="20" y="20" width="860" height="460" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1.5"/>
+<text x="110" y="55" fill="#F8FAFC" font-size="22" font-weight="700">Scalability Resource Utilization (25 to 200 Tasks on 5 to 14 VMs)</text>
+<text x="110" y="80" fill="#94A3B8" font-size="13">Verification against Table VI: CCTSA maintains +2.5% to +3.9% higher utilization.</text>
+<circle cx="770" cy="50" r="6" fill="#38BDF8"/>
+<text x="782" y="54" fill="#E2E8F0" font-size="12" font-weight="600">CCTSA (Proposed)</text>
+<circle cx="770" cy="72" r="6" fill="#F43F5E"/>
+<text x="782" y="76" fill="#E2E8F0" font-size="12" font-weight="600">ETSA (Baseline)</text>
+<line x1="110" y1="420.0" x2="740" y2="420.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="95" y="424.0" fill="#64748B" font-size="12" text-anchor="end">0.0 %</text>
+<line x1="110" y1="356.0" x2="740" y2="356.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="95" y="360.0" fill="#64748B" font-size="12" text-anchor="end">21.0 %</text>
+<line x1="110" y1="292.0" x2="740" y2="292.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="95" y="296.0" fill="#64748B" font-size="12" text-anchor="end">42.0 %</text>
+<line x1="110" y1="228.0" x2="740" y2="228.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="95" y="232.0" fill="#64748B" font-size="12" text-anchor="end">63.1 %</text>
+<line x1="110" y1="164.0" x2="740" y2="164.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="95" y="168.0" fill="#64748B" font-size="12" text-anchor="end">84.1 %</text>
+<line x1="110" y1="100.0" x2="740" y2="100.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="95" y="104.0" fill="#64748B" font-size="12" text-anchor="end">105.1 %</text>
+<polyline fill="none" stroke="#38BDF8" stroke-width="3.5" points="110.0,145.9708876415184 236.0,141.73913043478257 362.0,144.47911711540291 488.0,146.00133193796972 614.0,148.40643135762537 740.0,148.89354010084674"/>
+<polyline fill="none" stroke="#F43F5E" stroke-width="3.5" stroke-dasharray="6,4" points="110.0,155.13462087337075 236.0,151.48130529921036 362.0,155.37817524498143 488.0,156.04794976691085 614.0,156.65683569593762 740.0,160.8885929026734"/>
+<circle cx="110.0" cy="145.9708876415184" r="5" fill="#38BDF8" stroke="#0F172A" stroke-width="2"/>
+<text x="110.0" y="135.9708876415184" fill="#38BDF8" font-size="11" font-weight="600" text-anchor="middle">90.0</text>
+<circle cx="236.0" cy="141.73913043478257" r="5" fill="#38BDF8" stroke="#0F172A" stroke-width="2"/>
+<text x="236.0" y="131.73913043478257" fill="#38BDF8" font-size="11" font-weight="600" text-anchor="middle">91.4</text>
+<circle cx="362.0" cy="144.47911711540291" r="5" fill="#38BDF8" stroke="#0F172A" stroke-width="2"/>
+<text x="362.0" y="134.47911711540291" fill="#38BDF8" font-size="11" font-weight="600" text-anchor="middle">90.5</text>
+<circle cx="488.0" cy="146.00133193796972" r="5" fill="#38BDF8" stroke="#0F172A" stroke-width="2"/>
+<text x="488.0" y="136.00133193796972" fill="#38BDF8" font-size="11" font-weight="600" text-anchor="middle">90.0</text>
+<circle cx="614.0" cy="148.40643135762537" r="5" fill="#38BDF8" stroke="#0F172A" stroke-width="2"/>
+<text x="614.0" y="138.40643135762537" fill="#38BDF8" font-size="11" font-weight="600" text-anchor="middle">89.2</text>
+<circle cx="740.0" cy="148.89354010084674" r="5" fill="#38BDF8" stroke="#0F172A" stroke-width="2"/>
+<text x="740.0" y="138.89354010084674" fill="#38BDF8" font-size="11" font-weight="600" text-anchor="middle">89.0</text>
+<circle cx="110.0" cy="155.13462087337075" r="5" fill="#F43F5E" stroke="#0F172A" stroke-width="2"/>
+<text x="110.0" y="173.13462087337075" fill="#F43F5E" font-size="11" font-weight="600" text-anchor="middle">87.0</text>
+<circle cx="236.0" cy="151.48130529921036" r="5" fill="#F43F5E" stroke="#0F172A" stroke-width="2"/>
+<text x="236.0" y="169.48130529921036" fill="#F43F5E" font-size="11" font-weight="600" text-anchor="middle">88.2</text>
+<circle cx="362.0" cy="155.37817524498143" r="5" fill="#F43F5E" stroke="#0F172A" stroke-width="2"/>
+<text x="362.0" y="173.37817524498143" fill="#F43F5E" font-size="11" font-weight="600" text-anchor="middle">86.9</text>
+<circle cx="488.0" cy="156.04794976691085" r="5" fill="#F43F5E" stroke="#0F172A" stroke-width="2"/>
+<text x="488.0" y="174.04794976691085" fill="#F43F5E" font-size="11" font-weight="600" text-anchor="middle">86.7</text>
+<circle cx="614.0" cy="156.65683569593762" r="5" fill="#F43F5E" stroke="#0F172A" stroke-width="2"/>
+<text x="614.0" y="174.65683569593762" fill="#F43F5E" font-size="11" font-weight="600" text-anchor="middle">86.5</text>
+<circle cx="740.0" cy="160.8885929026734" r="5" fill="#F43F5E" stroke="#0F172A" stroke-width="2"/>
+<text x="740.0" y="178.8885929026734" fill="#F43F5E" font-size="11" font-weight="600" text-anchor="middle">85.1</text>
+<text x="110.0" y="445" fill="#CBD5E1" font-size="12" font-weight="500" text-anchor="middle">25T / 5VM</text>
+<text x="236.0" y="445" fill="#CBD5E1" font-size="12" font-weight="500" text-anchor="middle">50T / 7VM</text>
+<text x="362.0" y="445" fill="#CBD5E1" font-size="12" font-weight="500" text-anchor="middle">75T / 8VM</text>
+<text x="488.0" y="445" fill="#CBD5E1" font-size="12" font-weight="500" text-anchor="middle">100T / 10VM</text>
+<text x="614.0" y="445" fill="#CBD5E1" font-size="12" font-weight="500" text-anchor="middle">150T / 12VM</text>
+<text x="740.0" y="445" fill="#CBD5E1" font-size="12" font-weight="500" text-anchor="middle">200T / 14VM</text>
+</svg>

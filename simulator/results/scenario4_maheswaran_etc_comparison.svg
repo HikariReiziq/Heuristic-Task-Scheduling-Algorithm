@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520" style="background:#0F172A; font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;">
+<rect x="20" y="20" width="920" height="480" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1.5"/>
+<text x="110" y="55" fill="#F8FAFC" font-size="21" font-weight="700">Maheswaran ETC Matrix Benchmark (Inconsistent HiHi: 512 Tasks / 16 VMs)</text>
+<text x="110" y="80" fill="#94A3B8" font-size="13">Evaluating Makespan (s) and Resource Utilization (%) under extreme heterogeneity.</text>
+<rect x="810" y="45" width="14" height="14" rx="3" fill="#38BDF8"/>
+<text x="830" y="57" fill="#E2E8F0" font-size="12" font-weight="600">Makespan (s)</text>
+<rect x="810" y="67" width="14" height="14" rx="3" fill="#F59E0B"/>
+<text x="830" y="79" fill="#E2E8F0" font-size="12" font-weight="600">Resource Util (%)</text>
+<line x1="110" y1="435.0" x2="800" y2="435.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="98" y="439.0" fill="#64748B" font-size="11" text-anchor="end">0.0 s</text>
+<line x1="110" y1="370.0" x2="800" y2="370.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="98" y="374.0" fill="#64748B" font-size="11" text-anchor="end">162106.7 s</text>
+<line x1="110" y1="305.0" x2="800" y2="305.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="98" y="309.0" fill="#64748B" font-size="11" text-anchor="end">324213.3 s</text>
+<line x1="110" y1="240.0" x2="800" y2="240.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="98" y="244.0" fill="#64748B" font-size="11" text-anchor="end">486320.0 s</text>
+<line x1="110" y1="175.0" x2="800" y2="175.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="98" y="179.0" fill="#64748B" font-size="11" text-anchor="end">648426.6 s</text>
+<line x1="110" y1="110.0" x2="800" y2="110.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="98" y="114.0" fill="#64748B" font-size="11" text-anchor="end">810533.3 s</text>
+<rect x="140.0" y="367.7050954107071" width="36.0" height="67.29490458929291" rx="4" fill="#38BDF8" opacity="0.9"/>
+<text x="158.0" y="361.7050954107071" fill="#38BDF8" font-size="11" font-weight="600" text-anchor="middle">167830.0</text>
+<rect x="182.0" y="179.78786442514115" width="36.0" height="255.21213557485885" rx="4" fill="#F59E0B" opacity="0.9"/>
+<text x="200.0" y="173.78786442514115" fill="#F59E0B" font-size="11" font-weight="600" text-anchor="middle">89.8</text>
+<text x="179.0" y="459" fill="#CBD5E1" font-size="11" font-weight="500" text-anchor="middle">CCTSA</text>
+<rect x="278.0" y="388.56130146350404" width="36.0" height="46.43869853649595" rx="4" fill="#38BDF8" opacity="0.9"/>
+<text x="296.0" y="382.56130146350404" fill="#38BDF8" font-size="11" font-weight="600" text-anchor="middle">115815.7</text>
+<rect x="320.0" y="170.75260522308628" width="36.0" height="264.2473947769137" rx="4" fill="#F59E0B" opacity="0.9"/>
+<text x="338.0" y="164.75260522308628" fill="#F59E0B" font-size="11" font-weight="600" text-anchor="middle">93.0</text>
+<text x="317.0" y="459" fill="#CBD5E1" font-size="11" font-weight="500" text-anchor="middle">ETSA</text>
+<rect x="416.0" y="387.6521211049971" width="36.0" height="47.347878895002886" rx="4" fill="#38BDF8" opacity="0.9"/>
+<text x="434.0" y="381.6521211049971" fill="#38BDF8" font-size="11" font-weight="600" text-anchor="middle">118083.2</text>
+<rect x="458.0" y="164.16666666666663" width="36.0" height="270.83333333333337" rx="4" fill="#F59E0B" opacity="0.9"/>
+<text x="476.0" y="158.16666666666663" fill="#F59E0B" font-size="11" font-weight="600" text-anchor="middle">95.3</text>
+<text x="455.0" y="459" fill="#CBD5E1" font-size="11" font-weight="500" text-anchor="middle">Standard Sufferage</text>
+<rect x="554.0" y="387.1584577453523" width="36.0" height="47.84154225464773" rx="4" fill="#38BDF8" opacity="0.9"/>
+<text x="572.0" y="381.1584577453523" fill="#38BDF8" font-size="11" font-weight="600" text-anchor="middle">119314.3</text>
+<rect x="596.0" y="179.42381224739142" width="36.0" height="255.57618775260858" rx="4" fill="#F59E0B" opacity="0.9"/>
+<text x="614.0" y="173.42381224739142" fill="#F59E0B" font-size="11" font-weight="600" text-anchor="middle">89.9</text>
+<text x="593.0" y="459" fill="#CBD5E1" font-size="11" font-weight="500" text-anchor="middle">Min-Min</text>
+<rect x="692.0" y="164.16666666666669" width="36.0" height="270.8333333333333" rx="4" fill="#38BDF8" opacity="0.9"/>
+<text x="710.0" y="158.16666666666669" fill="#38BDF8" font-size="11" font-weight="600" text-anchor="middle">675444.4</text>
+<rect x="734.0" y="218.31155814671962" width="36.0" height="216.68844185328038" rx="4" fill="#F59E0B" opacity="0.9"/>
+<text x="752.0" y="212.31155814671962" fill="#F59E0B" font-size="11" font-weight="600" text-anchor="middle">76.3</text>
+<text x="731.0" y="459" fill="#CBD5E1" font-size="11" font-weight="500" text-anchor="middle">Round Robin (RR)</text>
+</svg>

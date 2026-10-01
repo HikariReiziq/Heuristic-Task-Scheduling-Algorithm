@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520" style="background:#0F172A; font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;">
+<rect x="20" y="20" width="920" height="480" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1.5"/>
+<text x="110" y="55" fill="#F8FAFC" font-size="21" font-weight="700">Google Cloud Jobs (GoCJ 1.000 Tasks) Benchmark</text>
+<text x="110" y="80" fill="#94A3B8" font-size="13">Makespan (s) vs Total Financial Cost (k INR) across 50 heterogeneous cloud VMs.</text>
+<rect x="810" y="45" width="14" height="14" rx="3" fill="#38BDF8"/>
+<text x="830" y="57" fill="#E2E8F0" font-size="12" font-weight="600">Makespan (s)</text>
+<rect x="810" y="67" width="14" height="14" rx="3" fill="#F59E0B"/>
+<text x="830" y="79" fill="#E2E8F0" font-size="12" font-weight="600">Total Cost (k INR)</text>
+<line x1="110" y1="435.0" x2="800" y2="435.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="98" y="439.0" fill="#64748B" font-size="11" text-anchor="end">0.0 s</text>
+<line x1="110" y1="370.0" x2="800" y2="370.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="98" y="374.0" fill="#64748B" font-size="11" text-anchor="end">293.1 s</text>
+<line x1="110" y1="305.0" x2="800" y2="305.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="98" y="309.0" fill="#64748B" font-size="11" text-anchor="end">586.2 s</text>
+<line x1="110" y1="240.0" x2="800" y2="240.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="98" y="244.0" fill="#64748B" font-size="11" text-anchor="end">879.3 s</text>
+<line x1="110" y1="175.0" x2="800" y2="175.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="98" y="179.0" fill="#64748B" font-size="11" text-anchor="end">1172.4 s</text>
+<line x1="110" y1="110.0" x2="800" y2="110.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="98" y="114.0" fill="#64748B" font-size="11" text-anchor="end">1465.5 s</text>
+<rect x="140.0" y="262.4753886731844" width="36.0" height="172.52461132681563" rx="4" fill="#38BDF8" opacity="0.9"/>
+<text x="158.0" y="256.4753886731844" fill="#38BDF8" font-size="11" font-weight="600" text-anchor="middle">777.9</text>
+<rect x="182.0" y="260.58763193602704" width="36.0" height="174.41236806397296" rx="4" fill="#F59E0B" opacity="0.9"/>
+<text x="200.0" y="254.58763193602704" fill="#F59E0B" font-size="11" font-weight="600" text-anchor="middle">23631.9</text>
+<text x="179.0" y="459" fill="#CBD5E1" font-size="11" font-weight="500" text-anchor="middle">CCTSA</text>
+<rect x="278.0" y="372.62022325452847" width="36.0" height="62.3797767454715" rx="4" fill="#38BDF8" opacity="0.9"/>
+<text x="296.0" y="366.62022325452847" fill="#38BDF8" font-size="11" font-weight="600" text-anchor="middle">281.3</text>
+<rect x="320.0" y="168.37262661912376" width="36.0" height="266.62737338087624" rx="4" fill="#F59E0B" opacity="0.9"/>
+<text x="338.0" y="162.37262661912376" fill="#F59E0B" font-size="11" font-weight="600" text-anchor="middle">36126.5</text>
+<text x="317.0" y="459" fill="#CBD5E1" font-size="11" font-weight="500" text-anchor="middle">ETSA</text>
+<rect x="416.0" y="372.71122063708793" width="36.0" height="62.28877936291207" rx="4" fill="#38BDF8" opacity="0.9"/>
+<text x="434.0" y="366.71122063708793" fill="#38BDF8" font-size="11" font-weight="600" text-anchor="middle">280.9</text>
+<rect x="458.0" y="168.59738249994126" width="36.0" height="266.40261750005874" rx="4" fill="#F59E0B" opacity="0.9"/>
+<text x="476.0" y="162.59738249994126" fill="#F59E0B" font-size="11" font-weight="600" text-anchor="middle">36096.0</text>
+<text x="455.0" y="459" fill="#CBD5E1" font-size="11" font-weight="500" text-anchor="middle">Standard Sufferage</text>
+<rect x="554.0" y="368.13710694317626" width="36.0" height="66.86289305682375" rx="4" fill="#38BDF8" opacity="0.9"/>
+<text x="572.0" y="362.13710694317626" fill="#38BDF8" font-size="11" font-weight="600" text-anchor="middle">301.5</text>
+<rect x="596.0" y="164.16666666666669" width="36.0" height="270.8333333333333" rx="4" fill="#F59E0B" opacity="0.9"/>
+<text x="614.0" y="158.16666666666669" fill="#F59E0B" font-size="11" font-weight="600" text-anchor="middle">36696.3</text>
+<text x="593.0" y="459" fill="#CBD5E1" font-size="11" font-weight="500" text-anchor="middle">Min-Min</text>
+<rect x="692.0" y="164.16666666666663" width="36.0" height="270.83333333333337" rx="4" fill="#38BDF8" opacity="0.9"/>
+<text x="710.0" y="158.16666666666663" fill="#38BDF8" font-size="11" font-weight="600" text-anchor="middle">1221.2</text>
+<rect x="734.0" y="246.1191900900569" width="36.0" height="188.8808099099431" rx="4" fill="#F59E0B" opacity="0.9"/>
+<text x="752.0" y="240.1191900900569" fill="#F59E0B" font-size="11" font-weight="600" text-anchor="middle">25592.3</text>
+<text x="731.0" y="459" fill="#CBD5E1" font-size="11" font-weight="500" text-anchor="middle">Round Robin (RR)</text>
+</svg>

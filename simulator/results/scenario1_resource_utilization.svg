@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="900" height="500" style="background:#0F172A; font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;">
+<rect x="20" y="20" width="860" height="460" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1.5"/>
+<text x="120" y="55" fill="#F8FAFC" font-size="22" font-weight="700">Resource Utilization Comparison (Scenario 1: Table III)</text>
+<text x="120" y="80" fill="#94A3B8" font-size="13">Higher is better. CCTSA maintains higher overall utilization (91.40% vs 88.98%).</text>
+<line x1="120" y1="420.0" x2="840" y2="420.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="105" y="424.0" fill="#64748B" font-size="12" text-anchor="end">50.0 %</text>
+<line x1="120" y1="356.0" x2="840" y2="356.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="105" y="360.0" fill="#64748B" font-size="12" text-anchor="end">60.0 %</text>
+<line x1="120" y1="292.0" x2="840" y2="292.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="105" y="296.0" fill="#64748B" font-size="12" text-anchor="end">70.0 %</text>
+<line x1="120" y1="228.0" x2="840" y2="228.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="105" y="232.0" fill="#64748B" font-size="12" text-anchor="end">80.0 %</text>
+<line x1="120" y1="164.0" x2="840" y2="164.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="105" y="168.0" fill="#64748B" font-size="12" text-anchor="end">90.0 %</text>
+<line x1="120" y1="100.0" x2="840" y2="100.0" stroke="#334155" stroke-dasharray="4,4" stroke-width="1"/>
+<text x="105" y="104.0" fill="#64748B" font-size="12" text-anchor="end">100.0 %</text>
+<rect x="159.5" y="131.3725490196078" width="65" height="288.6274509803922" rx="6" fill="#38BDF8" opacity="0.9"><animate attributeName="opacity" from="0.7" to="0.95" dur="0.3s"/></rect>
+<text x="192.0" y="123.37254901960779" fill="#F8FAFC" font-size="13" font-weight="600" text-anchor="middle">95.10</text>
+<text x="192.0" y="445" fill="#CBD5E1" font-size="12" font-weight="500" text-anchor="middle">CCTSA</text>
+<rect x="303.5" y="144.4267726971504" width="65" height="275.5732273028496" rx="6" fill="#F43F5E" opacity="0.9"><animate attributeName="opacity" from="0.7" to="0.95" dur="0.3s"/></rect>
+<text x="336.0" y="136.4267726971504" fill="#F8FAFC" font-size="13" font-weight="600" text-anchor="middle">93.06</text>
+<text x="336.0" y="445" fill="#CBD5E1" font-size="12" font-weight="500" text-anchor="middle">ETSA</text>
+<rect x="447.5" y="170.51454138702456" width="65" height="249.48545861297544" rx="6" fill="#A855F7" opacity="0.9"><animate attributeName="opacity" from="0.7" to="0.95" dur="0.3s"/></rect>
+<text x="480.0" y="162.51454138702456" fill="#F8FAFC" font-size="13" font-weight="600" text-anchor="middle">88.98</text>
+<text x="480.0" y="445" fill="#CBD5E1" font-size="12" font-weight="500" text-anchor="middle">Standard Sufferage</text>
+<rect x="591.5" y="194.03326102675348" width="65" height="225.96673897324652" rx="6" fill="#EAB308" opacity="0.9"><animate attributeName="opacity" from="0.7" to="0.95" dur="0.3s"/></rect>
+<text x="624.0" y="186.03326102675348" fill="#F8FAFC" font-size="13" font-weight="600" text-anchor="middle">85.31</text>
+<text x="624.0" y="445" fill="#CBD5E1" font-size="12" font-weight="500" text-anchor="middle">Min-Min</text>
+<rect x="735.5" y="345.6462917685412" width="65" height="74.35370823145881" rx="6" fill="#10B981" opacity="0.9"><animate attributeName="opacity" from="0.7" to="0.95" dur="0.3s"/></rect>
+<text x="768.0" y="337.6462917685412" fill="#F8FAFC" font-size="13" font-weight="600" text-anchor="middle">61.62</text>
+<text x="768.0" y="445" fill="#CBD5E1" font-size="12" font-weight="500" text-anchor="middle">Round Robin (RR)</text>
+</svg>
