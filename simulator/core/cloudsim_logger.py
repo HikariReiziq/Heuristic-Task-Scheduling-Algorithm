@@ -113,7 +113,8 @@ def print_cloudsim_event_trace(
     print(f"{GREEN}INFO {makespan:7.2f}: SOKA_CloudBroker: [FINISH] All {len(tasks)} Cloudlets finished execution. Broker shutting down.{RESET}")
 
     # 5. CloudSim Cloudlet Execution Record Table (Screenshot 2 style)
-    print(f"\n{BOLD}============================== CLOUDSIM CLOUDLET EXECUTION RECORD =============================={RESET}")
+    print(f"\n{YELLOW}--- [FASE 4: CLOUDSIM CLOUDLET EXECUTION RECORD] ---{RESET}")
+    print(f"{BOLD}============================== CLOUDSIM CLOUDLET EXECUTION RECORD =============================={RESET}")
     print(f"{BOLD}| {'Cloudlet ID':<11} | {'STATUS':<7} | {'Datacenter ID':<15} | {'Host ID':<7} | {'VM ID':<5} | {'Length (MI)':<11} | {'Start (s)':<9} | {'Finish (s)':<10} | {f'Cost ({cost_unit})':<11} |{RESET}")
     print("-" * 100)
 
@@ -141,8 +142,8 @@ def print_cloudsim_event_trace(
     # 6. Single Algorithm Metric Block (Screenshot 2 style)
     final_cost = result.total_cost / cost_divisor
     cost_str = f"{final_cost:,.2f} {cost_unit}"
-    print(f"""
-{BOLD}{GREEN}========== HASIL EVALUASI METRIK {algorithm_name.upper()} =========={RESET}
+    print(f"\n{YELLOW}--- [FASE 5: HASIL EVALUASI METRIK KINERJA] ---{RESET}")
+    print(f"""{BOLD}{GREEN}========== HASIL EVALUASI METRIK {algorithm_name.upper()} =========={RESET}
 {BOLD}1. Makespan             :{RESET} {result.makespan:.2f} Detik
 {BOLD}2. Average Waiting Time :{RESET} {result.avg_waiting_time:.2f} Detik
 {BOLD}3. Resource Utilization :{RESET} {result.resource_utilization:.2f} %
