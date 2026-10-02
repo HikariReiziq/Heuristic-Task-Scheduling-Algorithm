@@ -86,6 +86,14 @@ python3 serve_dashboard.py
 ```
 *(Atau Anda bisa langsung mengklik ganda file `dashboard.html` di file manager untuk membukanya di browser secara instan tanpa perlu web server)*.
 
+#### Fitur Dashboard Terintegrasi:
+- **Terminal Console Interaktif (Di Tengah Layar)**:
+  Dilengkapi tombol jalan cepat (`[ ▶ Run All ]`, `[ 🏢 Tugas 2A ]`, `[ 🌐 GoCJ ]`, `[ 📖 Tabel III ]`, `[ ⚡ Maheswaran ]`).
+  Tombol ini terhubung ke backend `serve_dashboard.py` melalui API `/api/run?scenario=...` yang mengeksekusi simulator secara nyata (*live execution*) dan menampilkan output log warna ANSI secara langsung.
+- **Profil 5 Anggota Tim**: Menampilkan foto asli dari folder `image/`, nama lengkap, dan NRP.
+- **Sinkronisasi Otomatis Data `results/`**: Seluruh angka Makespan, Biaya, Utilisasi, dan DI yang tampil pada kartu KPI dan chart dibaca langsung dari file `results/simulation_summary.json`.
+- **Galeri Gambar Hasil Simulasi**: Gambar plot PNG/SVG dari folder `results/` dapat dilihat dan diunduh langsung dari web.
+
 ### Opsi H: Jalankan Dashboard Streamlit (Integrasi Repositori Ronn / Theo) 🎨
 Jika lingkungan Python Anda memiliki `streamlit`, `pandas`, dan `plotly`:
 ```bash
@@ -105,27 +113,30 @@ python3 test_simulator.py
 
 ---
 
-## 📊 5. Hasil Output & Visualisasi Grafik
+## 📊 5. Hasil Output & Visualisasi Grafik (Folder results/)
 
-Setiap eksekusi akan otomatis memperbarui folder `results/`:
+Setiap eksekusi akan otomatis memperbarui file di folder `results/`:
 
-| Nama File | Deskripsi |
+| Nama File | Deskripsi & Kegunaan |
 | :--- | :--- |
+| **`dashboard.html`** | Single-file Web Dashboard interaktif lengkap dengan terminal console dan chart interaktif. |
 | **`simulation_summary.json`** | Rekapitulasi data numerik lengkap seluruh skenario dalam format JSON terstruktur. |
+| **`scenario5_tugas2a_comparison.png`** | Grafik Makespan vs Utilisasi pada desain infrastruktur Tugas 2A / 2B Kelompok 4 (PNG/SVG). |
+| **`scenario3_gocj_cost_makespan.png`** | Grafik Makespan vs Biaya Finansial pada beban kerja nyata Google Cloud Jobs (PNG/SVG). |
+| **`scenario4_maheswaran_etc_comparison.png`**| Grafik Makespan vs Utilisasi pada benchmark heterogenitas ekstrim Maheswaran (PNG/SVG). |
+| **`scenario1_cost_comparison.png`** | Grafik perbandingan Biaya Eksekusi Finansial (Rs) (Skenario 1 - Tabel III). |
+| **`scenario1_makespan_comparison.png`** | Grafik perbandingan Makespan antar 5 algoritma (Skenario 1 - Tabel III). |
+| **`scenario1_resource_utilization.png`** | Grafik perbandingan Utilisasi Sumber Daya (%) (Skenario 1 - Tabel III). |
+| **`scenario2_scalability_cost.png`** | Kurva tren efisiensi biaya CCTSA vs ETSA pada 25–200 task. |
+| **`scenario2_scalability_utilization.png`**| Kurva stabilitas utilisasi sumber daya CCTSA vs ETSA. |
 | **`scenario1_comparison.csv`** | Tabel komparasi Makespan, Cost, RU, DI, dan Waiting Time (Skenario 1 - Tabel III). |
 | **`scenario2_scalability.csv`** | Evaluasi skalabilitas beban 25 s.d. 200 task (Skenario 2 - Tabel IV, V, VI). |
 | **`scenario3_gocj.csv`** | Data komparasi 5 algoritma pada dataset Google Cloud Jobs (1.000 task pada 50 VM). |
 | **`scenario4_maheswaran.csv`** | Evaluasi matriks ETC Maheswaran JPDC 1999 (Inconsistent HiHi 512 task pada 16 VM). |
 | **`scenario5_tugas2a.csv`** | Evaluasi infrastruktur SOKA Tugas 2A (1.000 task @ 50.000 MI pada 50 VM). |
+| **`hasil_simulasi_cloudsim.csv`** | Log alokasi task rinci 5.000 baris kompatibel standar CloudSim. |
+| **`hasil_ringkasan_algoritma.csv`** | Ringkasan skor gabungan dan ranking efisiensi algoritma. |
 | **`task_allocations.csv`** | Log jejak alokasi task ke VM (start time, finish time, cost, waiting time). |
-| **`scenario1_makespan_comparison.png`** | Grafik perbandingan Makespan antar 5 algoritma (Skenario 1). |
-| **`scenario1_cost_comparison.png`** | Grafik perbandingan Biaya Eksekusi Finansial (Rs) (Skenario 1). |
-| **`scenario1_resource_utilization.png`** | Grafik perbandingan Utilisasi Sumber Daya (%) (Skenario 1). |
-| **`scenario2_scalability_cost.png`** | Kurva tren efisiensi biaya CCTSA vs ETSA pada 25–200 task. |
-| **`scenario2_scalability_utilization.png`**| Kurva stabilitas utilisasi sumber daya CCTSA vs ETSA. |
-| **`scenario3_gocj_cost_makespan.png`** | Grafik Makespan vs Biaya Finansial pada beban kerja nyata Google Cloud Jobs (GoCJ). |
-| **`scenario4_maheswaran_etc_comparison.png`**| Grafik Makespan vs Utilisasi pada benchmark heterogenitas ekstrim Maheswaran. |
-| **`scenario5_tugas2a_comparison.png`** | Grafik Makespan vs Utilisasi pada desain infrastruktur Tugas 2A / 2B Kelompok 4. |
 
 ---
 

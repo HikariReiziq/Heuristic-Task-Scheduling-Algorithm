@@ -17,13 +17,30 @@ Repositori ini memuat implementasi *cloud task scheduling simulator*, kerangka k
 - **Departemen**: Teknik Komputer / Informatika, Fakultas Teknologi Elektro dan Informatika Cerdas (FTEIC)
 - **Institusi**: Institut Teknologi Sepuluh Nopember (ITS), Surabaya
 - **Dosen Pengampu**: Dr. Ir. Henning Titi Ciptaningtyas, S.Kom., M.Kom.
-- **Kelompok 4**:
-  1. **I Dewa Made Satya Raditya** (NRP: 5027231051)
-  2. **Ahmad Wildan Fawwaz** (NRP: 5027241001)
-  3. **Muhammad Rakha Hananditya Rauf** (NRP: 5027241015)
-  4. **Theodorus Aaron Ugraha** (NRP: 5027241056)
-  5. **M. Hikari Reiziq Rakhmadinta** (NRP: 5027241079)
+- **Kelompok 4 (Tim Pengembang)**:
+  1. **I Dewa Made Satya Raditya** (NRP: 5027231051) — *Heuristic Core & Sufferage Lead*
+  2. **Ahmad Wildan Fawwaz** (NRP: 5027241001) — *Simulation Architecture & Engine Specialist*
+  3. **Muhammad Rakha Hananditya Rauf** (NRP: 5027241015) — *Benchmark & Workload Dataset Specialist*
+  4. **Theodorus Aaron Ugraha** (NRP: 5027241056) — *CloudSim Metrics & Trade-off Analyst*
+  5. **M. Hikari Reiziq Rakhmadinta** (NRP: 5027241079) — *Dashboard Architect & Visualizer*
+- **Foto Profil Tim**: Tersimpan di folder [`image/`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/image) dan tertaut langsung pada dashboard web.
 - **Repositori Resmi**: [https://github.com/HikariReiziq/Heuristic-Task-Scheduling-Algorithm.git](https://github.com/HikariReiziq/Heuristic-Task-Scheduling-Algorithm.git)
+
+---
+
+## 📋 Instruksi Resmi Tugas 3 (SOKA 2026)
+
+> *"Pilih 1 algoritma Heuristik Task Scheduling. TIDAK boleh sama untuk ketiga kelas.<br>
+> 1. Buatkan slide presentasi yang menjelaskan langkah algoritma yang dipilih.<br>
+> 2. Bangun datacenter sesuai tugas sebelumnya di simulator.<br>
+> 3. Implementasikan algoritma yang dipilih di simulator.<br>
+> 4. Jalankan ujicoba sesuai dengan dataset yang diajukan di minggu 3."*
+
+**Status Pemenuhan Tugas Kelompok 4**:
+- [x] **Poin 1**: Slide presentasi komprehensif Sufferage & CCTSA ([`Sufferage_Kelompok4_Tugas2A.pdf`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/Sufferage_Kelompok4_Tugas2A.pdf)).
+- [x] **Poin 2**: Datacenter multi-region: Datacenter Jakarta (DC 2) & Datacenter Surabaya (DC 3), 20 Host Fisik, 50 VM Heterogen.
+- [x] **Poin 3**: 5 Algoritma penjadwalan: CCTSA (Proposed), ETSA, Standard Sufferage, Min-Min, dan Round Robin.
+- [x] **Poin 4**: 4 Dataset uji: Paper Krishnaveni 2019 (Tabel I & II), Skenario Tugas 2A (1.000 task @ 50.000 MI), Google Cloud Jobs (GoCJ), dan Maheswaran JPDC 1999 (Inconsistent HiHi).
 
 ---
 
@@ -250,18 +267,27 @@ python3 run_simulation.py --scenario maheswaran
 ```
 
 ### 8.3 Menjalankan Interactive Web Dashboard (Sangat Direkomendasikan untuk Demo!)
-Anda dapat menyajikan simulasi secara visual dan interaktif melalui 2 cara:
+Website dashboard [`dashboard.html`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/simulator/dashboard.html) menyajikan visualisasi hasil simulasi secara interaktif, anti-slop, dan profesional:
 
-#### Cara 1: Standalone Web Dashboard (Zero-Dependency) 🌐
-Dapat dibuka langsung di Google Chrome atau Firefox tanpa perlu menginstal pustaka apapun:
 ```bash
+# Jalankan web server lokal bawaan Python (Port 8080):
 python3 serve_dashboard.py
-# Buka browser di: http://localhost:8080
+# Buka peramban Anda di: http://localhost:8080
 ```
-*(Atau klik ganda file `dashboard.html` di file manager)*.
+*(Atau Anda bisa langsung mengklik ganda file `dashboard.html` di file manager untuk membukanya secara statis).*
 
-#### Cara 2: Streamlit Performance Dashboard (Integrasi Repositori Ronn / Theo) 🎨
-Jika lingkungan Python memiliki pustaka `streamlit`:
+#### ✨ Fitur Unggulan Website Dashboard:
+1. **Showcase 5 Anggota Kelompok 4**: Menampilkan foto profil asli dari folder `image/`, nama lengkap, NRP, serta peranan teknis masing-masing anggota.
+2. **Terminal Console Interaktif (di Tengah Layar)**:
+   - Jendela terminal Fedora Linux interaktif dengan tombol shortcut: `[ ▶ Run All ]`, `[ 🏢 Tugas 2A ]`, `[ 🌐 GoCJ ]`, `[ 📖 Tabel III ]`, `[ ⚡ Maheswaran ]`, `[ 🧹 Clear ]`, dan `[ 📋 Copy Log ]`.
+   - Terkoneksi ke Live Simulation API (`/api/run?scenario=...`) di mana penekanan tombol akan mengeksekusi simulator Python secara nyata dan mengalirkan (*streaming*) log teks berwarna ANSI langsung di browser!
+3. **Sinkronisasi Data 100% dengan Folder `simulator/results/`**:
+   - Seluruh angka pada kartu KPI (Makespan, Total Cost, Utilisasi, DI), diagram batang (Chart.js), dan tabel peringkat dibaca langsung dari `results/simulation_summary.json` dan file CSV di `results/`.
+4. **Galeri Arsip Gambar & Grafik Statis**:
+   - Menampilkan preview seluruh file gambar PNG dan SVG yang tersimpan di `results/` lengkap dengan tombol unduhan langsung untuk kebutuhan makalah/laporan.
+
+#### Alternatif Opsi: Streamlit Performance Dashboard (Integrasi Repositori Ronn / Theo) 🎨
+Jika lingkungan Python Anda memiliki pustaka `streamlit`:
 ```bash
 streamlit run app.py
 ```
@@ -281,20 +307,24 @@ java cost.CostCTSA
 
 ---
 
-## 🖼️ 9. Galeri Visualisasi Hasil Pengujian
+## 🖼️ 9. Galeri Visualisasi Hasil Pengujian (Folder results/)
 
-Seluruh grafik dihasilkan otomatis dalam resolusi tinggi di folder `simulator/results/`:
+Setiap kali simulasi dijalankan (baik via CLI `python3 run_simulation.py` maupun tombol terminal di website), seluruh grafik dan data numerik di folder `simulator/results/` otomatis diperbarui:
 
-| Nama File Grafik | Visualisasi dan Makna Evaluasi |
-| :--- | :--- |
-| **`scenario1_cost_comparison.png`** | Perbandingan Total Biaya Finansial pada Skenario 1 (CCTSA hemat 17.3%). |
-| **`scenario1_makespan_comparison.png`** | Perbandingan Makespan pada Skenario 1. |
-| **`scenario1_resource_utilization.png`** | Perbandingan Utilisasi Sumber Daya pada Skenario 1 (CCTSA mencapai 95.10%). |
-| **`scenario2_scalability_cost.png`** | Kurva efisiensi biaya CCTSA vs ETSA pada 25 s.d. 200 task. |
-| **`scenario2_scalability_utilization.png`**| Kurva stabilitas utilisasi sumber daya CCTSA vs ETSA. |
-| **`scenario3_gocj_cost_makespan.png`** | Evaluasi Makespan vs Biaya Finansial pada Google Cloud Jobs (GoCJ 1.000 Task). |
-| **`scenario4_maheswaran_etc_comparison.png`**| Evaluasi Makespan vs Utilisasi pada benchmark Maheswaran (Inconsistent HiHi). |
-| **`scenario5_tugas2a_comparison.png`** | Evaluasi Makespan vs Utilisasi pada desain infrastruktur Tugas 2A / 2B Kelompok 4. |
+| Nama File Hasil | Format | Visualisasi dan Makna Evaluasi |
+| :--- | :---: | :--- |
+| **`dashboard.html`** | HTML/JS | Dashboard visual interaktif dengan terminal console, chart interaktif, dan galeri unduhan. |
+| **`simulation_summary.json`** | JSON | Ringkasan terstruktur seluruh metrik performa kelima algoritma pada semua skenario. |
+| **`scenario5_tugas2a_comparison.png`** | PNG / SVG | Evaluasi Makespan vs Utilisasi pada desain infrastruktur Tugas 2A / 2B Kelompok 4. |
+| **`scenario3_gocj_cost_makespan.png`** | PNG / SVG | Evaluasi Makespan vs Biaya Finansial pada Google Cloud Jobs (GoCJ 1.000 Task). |
+| **`scenario4_maheswaran_etc_comparison.png`**| PNG / SVG | Evaluasi Makespan vs Utilisasi pada benchmark Maheswaran (Inconsistent HiHi). |
+| **`scenario1_cost_comparison.png`** | PNG / SVG | Perbandingan Total Biaya Finansial pada Skenario 1 (Validasi Paper Tabel III). |
+| **`scenario1_makespan_comparison.png`** | PNG / SVG | Perbandingan Makespan pada Skenario 1 (Validasi Paper Tabel III). |
+| **`scenario1_resource_utilization.png`** | PNG / SVG | Perbandingan Utilisasi Sumber Daya pada Skenario 1 (CCTSA mencapai 95.10%). |
+| **`scenario2_scalability_cost.png`** | PNG / SVG | Kurva efisiensi biaya CCTSA vs ETSA pada 25 s.d. 200 task. |
+| **`scenario2_scalability_utilization.png`**| PNG / SVG | Kurva stabilitas utilisasi sumber daya CCTSA vs ETSA. |
+| **`hasil_simulasi_cloudsim.csv`** | CSV | Log alokasi rinci 5.000 baris task kompatibel standar CloudSim. |
+| **`hasil_ringkasan_algoritma.csv`** | CSV | Tabel rekapitulasi komparasi ranking algoritma. |
 
 ---
 

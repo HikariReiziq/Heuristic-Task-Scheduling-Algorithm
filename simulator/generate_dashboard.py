@@ -885,10 +885,10 @@ def build_dashboard():
       📋 Instruksi Wajib Tugas 3 — Penjadwalan Tugas Komputasi Awan (SOKA 2026)
     </div>
     <div class="task-quote">
-"Pilih 1 algoritma Heuristik Task Scheduling. TIDAK boleh sama untuk ketiga kelas.
-1. Buatkan slide presentasi yang menjelaskan langkah algoritma yang dipilih.
-2. Bangun datacenter sesuai tugas sebelumnya di simulator.
-3. Implementasikan algoritma yang dipilih di simulator.
+"Pilih 1 algoritma Heuristik Task Scheduling. TIDAK boleh sama untuk ketiga kelas.<br>
+1. Buatkan slide presentasi yang menjelaskan langkah algoritma yang dipilih.<br>
+2. Bangun datacenter sesuai tugas sebelumnya di simulator.<br>
+3. Implementasikan algoritma yang dipilih di simulator.<br>
 4. Jalankan ujicoba sesuai dengan dataset yang diajukan di minggu 3."
     </div>
     <div class="task-checklist">
@@ -1199,7 +1199,46 @@ def build_dashboard():
     </div>
   </section>
 
-  <!-- 12. Conclusion & Evaluation -->
+  <!-- 12. Static Image Gallery from results/ -->
+  <section class="section-card">
+    <div class="section-header">
+      <div class="section-title">
+        📁 Arsip Grafik & Visualisasi Statis (Tersimpan di simulator/results/)
+      </div>
+      <div class="section-desc">
+        Grafik komparasi statis format PNG dan SVG siap unduh untuk lampiran laporan dan presentasi:
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+      <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px; text-align: center;">
+        <img src="results/scenario5_tugas2a_comparison.png" alt="Tugas 2A Benchmark" style="width: 100%; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);" onerror="this.src='results/scenario5_tugas2a_comparison.svg'">
+        <div style="font-size: 0.82rem; font-weight: 600; color: #fff; margin-top: 8px;">Tugas 2A: 1.000 Task / 50 VM</div>
+        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;"><a href="results/scenario5_tugas2a_comparison.png" download style="color: #38bdf8; text-decoration: underline;">Unduh PNG</a> • <a href="results/scenario5_tugas2a_comparison.svg" download style="color: #34d399; text-decoration: underline;">Unduh SVG</a></div>
+      </div>
+      <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px; text-align: center;">
+        <img src="results/scenario3_gocj_cost_makespan.png" alt="GoCJ Benchmark" style="width: 100%; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);" onerror="this.src='results/scenario3_gocj_cost_makespan.svg'">
+        <div style="font-size: 0.82rem; font-weight: 600; color: #fff; margin-top: 8px;">Google Cloud Jobs (GoCJ)</div>
+        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;"><a href="results/scenario3_gocj_cost_makespan.png" download style="color: #38bdf8; text-decoration: underline;">Unduh PNG</a> • <a href="results/scenario3_gocj_cost_makespan.svg" download style="color: #34d399; text-decoration: underline;">Unduh SVG</a></div>
+      </div>
+      <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px; text-align: center;">
+        <img src="results/scenario4_maheswaran_etc_comparison.png" alt="Maheswaran ETC" style="width: 100%; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);" onerror="this.src='results/scenario4_maheswaran_etc_comparison.svg'">
+        <div style="font-size: 0.82rem; font-weight: 600; color: #fff; margin-top: 8px;">Maheswaran ETC 16-Kuadran</div>
+        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;"><a href="results/scenario4_maheswaran_etc_comparison.png" download style="color: #38bdf8; text-decoration: underline;">Unduh PNG</a> • <a href="results/scenario4_maheswaran_etc_comparison.svg" download style="color: #34d399; text-decoration: underline;">Unduh SVG</a></div>
+      </div>
+      <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px; text-align: center;">
+        <img src="results/scenario1_cost_comparison.png" alt="Paper Table III" style="width: 100%; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);" onerror="this.src='results/scenario1_cost_comparison.svg'">
+        <div style="font-size: 0.82rem; font-weight: 600; color: #fff; margin-top: 8px;">Validasi Paper Tabel III</div>
+        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;"><a href="results/scenario1_cost_comparison.png" download style="color: #38bdf8; text-decoration: underline;">Unduh PNG</a> • <a href="results/scenario1_cost_comparison.svg" download style="color: #34d399; text-decoration: underline;">Unduh SVG</a></div>
+      </div>
+      <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px; text-align: center;">
+        <img src="results/scenario2_scalability_cost.png" alt="Skalabilitas" style="width: 100%; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);" onerror="this.src='results/scenario2_scalability_cost.svg'">
+        <div style="font-size: 0.82rem; font-weight: 600; color: #fff; margin-top: 8px;">Kurva Skalabilitas Biaya</div>
+        <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;"><a href="results/scenario2_scalability_cost.png" download style="color: #38bdf8; text-decoration: underline;">Unduh PNG</a> • <a href="results/scenario2_scalability_cost.svg" download style="color: #34d399; text-decoration: underline;">Unduh SVG</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13. Conclusion & Evaluation -->
   <section class="section-card" style="border-left: 5px solid #10b981;">
     <div class="section-header">
       <div class="section-title" style="color: #34d399;">
