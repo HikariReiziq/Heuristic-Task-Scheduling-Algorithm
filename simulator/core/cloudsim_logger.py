@@ -80,37 +80,37 @@ def print_cloudsim_event_trace(
     print(f"{GREEN}0.01: Broker: Total {len(vms)} VMs successfully initialized in Datacenter cluster.{RESET}")
 
     # 3. Cloudlet Submission (Screenshot 3 style)
-    print(f"\n{YELLOW}--- [FASE 2: DISPATCHING CLOUDLETS TO VMS] ---{RESET}")
+    print(f"\n{YELLOW}--- [FASE 2: DISPATCHING CLOUDLETS TO VMS (SENDING)] ---{RESET}")
     allocs = result.allocations
     allocs_to_show = allocs[:max_cloudlet_display]
     for a in allocs_to_show:
         task_len = int(tasks[a.task_id-1].length_mi if a.task_id <= len(tasks) else 50000)
-        print(f"0.01: Broker: Sending Cloudlet #{a.task_id} (Length: {task_len} MI) to Vm #{a.vm_id}")
+        print(f"0.01: Broker: [SENDING] Cloudlet #{a.task_id} (Length: {task_len} MI) to Vm #{a.vm_id}")
 
     if len(allocs) > max_cloudlet_display:
         omitted_c = len(allocs) - max_cloudlet_display
         print(f"{DIM}... [{omitted_c} Cloudlet dispatch events omitted for display clarity] ...{RESET}")
         last_a = allocs[-1]
         task_len = int(tasks[last_a.task_id-1].length_mi if last_a.task_id <= len(tasks) else 50000)
-        print(f"0.01: Broker: Sending Cloudlet #{last_a.task_id} (Length: {task_len} MI) to Vm #{last_a.vm_id}")
+        print(f"0.01: Broker: [SENDING] Cloudlet #{last_a.task_id} (Length: {task_len} MI) to Vm #{last_a.vm_id}")
 
     # 4. Cloudlet Completion Logs (Screenshot 1 style)
-    print(f"\n{YELLOW}--- [FASE 3: CLOUDLET EXECUTION & RETURN TO BROKER] ---{RESET}")
+    print(f"\n{YELLOW}--- [FASE 3: CLOUDLET EXECUTION & RETURN TO BROKER (RECEIVER & FINISH)] ---{RESET}")
     finished_sorted = sorted(allocs, key=lambda x: x.finish_time)
     finish_to_show = finished_sorted[:max_cloudlet_display]
 
     for a in finish_to_show:
-        print(f"INFO {a.finish_time:7.2f}: SOKA_CloudBroker: Cloudlet #{a.task_id} finished in Vm #{a.vm_id} and returned to broker.")
+        print(f"INFO {a.finish_time:7.2f}: SOKA_CloudBroker: [RECEIVER] Cloudlet #{a.task_id} finished in Vm #{a.vm_id} and returned to broker.")
 
     if len(finished_sorted) > max_cloudlet_display:
         omitted_f = len(finished_sorted) - (max_cloudlet_display + 3)
         if omitted_f > 0:
             print(f"{DIM}... [{omitted_f} Cloudlet execution events completed asynchronously] ...{RESET}")
         for a in finished_sorted[-3:]:
-            print(f"INFO {a.finish_time:7.2f}: SOKA_CloudBroker: Cloudlet #{a.task_id} finished in Vm #{a.vm_id} and returned to broker.")
+            print(f"INFO {a.finish_time:7.2f}: SOKA_CloudBroker: [RECEIVER] Cloudlet #{a.task_id} finished in Vm #{a.vm_id} and returned to broker.")
 
     makespan = result.makespan
-    print(f"{GREEN}INFO {makespan:7.2f}: SOKA_CloudBroker: All {len(tasks)} Cloudlets finished execution. Broker shutting down.{RESET}")
+    print(f"{GREEN}INFO {makespan:7.2f}: SOKA_CloudBroker: [FINISH] All {len(tasks)} Cloudlets finished execution. Broker shutting down.{RESET}")
 
     # 5. CloudSim Cloudlet Execution Record Table (Screenshot 2 style)
     print(f"\n{BOLD}============================== CLOUDSIM CLOUDLET EXECUTION RECORD =============================={RESET}")

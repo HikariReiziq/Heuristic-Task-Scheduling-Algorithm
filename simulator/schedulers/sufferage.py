@@ -28,28 +28,43 @@ class StandardSufferageScheduler(BaseScheduler):
         etc = self.compute_etc_matrix(tasks, vms)
         ecc = self.compute_ecc_matrix(tasks, vms)
 
-        unassigned = list(range(len(tasks)))
+        num_tasks = len(tasks)
+        num_vms = len(vms)
+        unassigned = set(range(num_tasks))
         allocations: List[TaskAllocation] = []
 
-        while unassigned:
-            ct_dict, _ = self.compute_completion_matrices(tasks, vms, etc, ecc, unassigned)
+        # ct[i][j] = etc[i][j] + vms[j].ready_time
+        ct = [[etc[i][j] for j in range(num_vms)] for i in range(num_tasks)]
 
-            # Map VM -> (best_task_idx, sufferage, min_ct)
-            vm_proposals: Dict[int, List[tuple]] = {j: [] for j in range(len(vms))}
+        while unassigned:
+            # Map VM -> list of (t_idx, sufferage, min_ct)
+            vm_proposals: Dict[int, List[tuple]] = {j: [] for j in range(num_vms)}
 
             for t_idx in unassigned:
-                ct_row = ct_dict[t_idx]
-                sorted_vms = sorted(range(len(vms)), key=lambda j: ct_row[j])
-                best_vm = sorted_vms[0]
-                second_vm = sorted_vms[1] if len(sorted_vms) > 1 else best_vm
+                ct_row = ct[t_idx]
+                best_vm = 0
+                second_vm = 0
+                min1 = ct_row[0]
+                min2 = float("inf")
+                for j in range(1, num_vms):
+                    v = ct_row[j]
+                    if v < min1:
+                        min2 = min1
+                        second_vm = best_vm
+                        min1 = v
+                        best_vm = j
+                    elif v < min2:
+                        min2 = v
+                        second_vm = j
 
-                sufferage = ct_row[second_vm] - ct_row[best_vm]
-                vm_proposals[best_vm].append((t_idx, sufferage, ct_row[best_vm]))
+                sufferage = (min2 - min1) if num_vms > 1 else 0.0
+                vm_proposals[best_vm].append((t_idx, sufferage, min1))
 
             assigned_in_this_round = False
 
             # For each VM with proposals, assign to task with maximum sufferage
-            for vm_idx, proposals in vm_proposals.items():
+            for vm_idx in range(num_vms):
+                proposals = vm_proposals[vm_idx]
                 if not proposals:
                     continue
 
@@ -86,7 +101,12 @@ class StandardSufferageScheduler(BaseScheduler):
 
                 unassigned.remove(winning_task_idx)
                 assigned_in_this_round = True
-                break  # Re-evaluate matrices after allocation
+
+                # Update only the modified VM column in ct for remaining tasks
+                for rem_idx in unassigned:
+                    ct[rem_idx][vm_idx] = etc[rem_idx][vm_idx] + finish_time
+
+                break  # Re-evaluate proposals after allocation
 
             if not assigned_in_this_round and unassigned:
                 # Emergency fallback

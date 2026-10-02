@@ -42,22 +42,38 @@ class ETSAScheduler(BaseScheduler):
 
             for t_idx in unassigned:
                 ct_row = ct_dict[t_idx]
-                sorted_indices = sorted(range(len(ct_row)), key=lambda j: ct_row[j])
-                fmict_vm = sorted_indices[0]
-                fmict = ct_row[fmict_vm]
-                smict = ct_row[sorted_indices[1]] if len(sorted_indices) > 1 else fmict
-                sufferage = smict - fmict
+                best_j = 0
+                second_j = 0
+                min1 = ct_row[0]
+                min2 = float("inf")
+                for j in range(1, len(ct_row)):
+                    v = ct_row[j]
+                    if v < min1:
+                        min2 = min1
+                        second_j = best_j
+                        min1 = v
+                        best_j = j
+                    elif v < min2:
+                        min2 = v
+                        second_j = j
+
+                sufferage = (min2 - min1) if len(ct_row) > 1 else 0.0
 
                 if sufferage > max_sufferage:
                     max_sufferage = sufferage
                     best_task_idx = t_idx
-                    best_vm_idx = fmict_vm
+                    best_vm_idx = best_j
 
             # In case of tie or zero sufferage, fallback to first task
             if best_task_idx is None:
                 best_task_idx = unassigned[0]
                 ct_row = ct_dict[best_task_idx]
-                best_vm_idx = min(range(len(vms)), key=lambda j: ct_row[j])
+                best_vm_idx = 0
+                min_v = ct_row[0]
+                for j in range(1, len(ct_row)):
+                    if ct_row[j] < min_v:
+                        min_v = ct_row[j]
+                        best_vm_idx = j
 
             task = tasks[best_task_idx]
             vm = vms[best_vm_idx]

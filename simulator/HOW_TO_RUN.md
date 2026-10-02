@@ -1,7 +1,7 @@
 # Panduan Eksekusi Cloud Task Scheduling Simulator (CCTSA)
 **Mata Kuliah**: Strategi Optimasi Komputasi Awan (SOKA) - Kelas C  
 **Dosen Pengampu**: Dr. Ir. Henning Titi Ciptaningtyas, S.Kom., M.Kom.  
-**Institusi**: Departemen Teknik Komputer / Informatika, FTEIC, Institut Teknologi Sepuluh Nopember (ITS) Surabaya — 2026  
+**Institusi**: Departemen Teknologi Informasi, FTEIC, Institut Teknologi Sepuluh Nopember (ITS) Surabaya — 2026  
 **Kelompok 4**:
 1. I Dewa Made Satya Raditya (5027231051)
 2. Ahmad Wildan Fawwaz (5027241001)

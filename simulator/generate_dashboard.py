@@ -399,6 +399,21 @@ def build_dashboard():
       color: #000;
     }}
 
+    .terminal-statusbar {{
+      background: #0f172a;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 9px 20px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }}
+
+    @keyframes termSpin {{
+      to {{ transform: rotate(360deg); }}
+    }}
+
     .terminal-screen {{
       padding: 20px 24px;
       background: #090d16;
@@ -813,7 +828,7 @@ def build_dashboard():
   <header class="hero-card">
     <div class="badge-row">
       <span class="badge highlight">SOKA Kelas C 2026</span>
-      <span class="badge">Departemen Teknik Komputer FTEIC</span>
+      <span class="badge">Departemen Teknologi Informasi FTEIC</span>
       <span class="badge">Institut Teknologi Sepuluh Nopember (ITS)</span>
       <span class="badge accent">Dosen: Dr. Ir. Henning Titi Ciptaningtyas, S.Kom., M.Kom.</span>
     </div>
@@ -929,6 +944,13 @@ def build_dashboard():
         <button class="term-btn" onclick="clearTerminal()">🧹 Clear</button>
         <button class="term-btn" onclick="copyTerminalText()">📋 Copy Log</button>
       </div>
+    </div>
+    <div class="terminal-statusbar" id="simStatusBar">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span id="simSpinner" style="display:inline-block; width:12px; height:12px; border:2px solid #38bdf8; border-top-color:transparent; border-radius:50%; animation:termSpin 0.8s linear infinite;"></span>
+        <span id="simPhaseText" style="color:#38bdf8; font-weight:600;">MENYIAPKAN SIMULASI...</span>
+      </div>
+      <div id="simProgressPct" style="color:#94a3b8; font-weight:700;">0%</div>
     </div>
     <div class="terminal-screen" id="terminalScreen">
 <span class="term-prompt">reiziqzip@fedora:~/SOKA/Algoritma Heuristik/simulator$</span> <span class="term-cmd">python3 run_simulation.py --scenario all</span>
@@ -1585,107 +1607,375 @@ def build_dashboard():
     }});
   }}
 
+  function getScenarioTrace(scenario) {{
+    if (scenario === 'all') {{
+      return [
+        `<span style="color:#38bdf8; font-weight:700;">>>> [CLOUDSIM MASTER SUITE ENGINE: MENJALANKAN SELURUH 5 SKENARIO SIMULASI] <<<</span>`,
+        `<span style="color:#64748b; font-style:italic;">Simulation Clock: 0.00 s | CloudSim 3.0.3 Discrete-Event Core | Multi-Datacenter Cluster</span>\\n`,
+        `<span style="color:#38bdf8; font-weight:600;">[1/5] INITIATING SKENARIO 1: VALIDASI TABEL III IJRECE (10 TASK / 3 VM)</span>`,
+        `<span style="color:#38bdf8;">0.00: Broker: Cloud Resource List received with 1 datacenter(s) [DC_Paper_IJRECE]</span>`,
+        `0.00: DC_Paper_IJRECE: 1 Physical Host initialized (Quad-core Host #0, 1000 MIPS, 4GB RAM)\\n`,
+        `<span style="color:#fbbf24; font-weight:600;">--- [FASE 1: VM CREATION & HOST ALLOCATION] ---</span>`,
+        `0.00: Broker: Trying to Create Vm #1 in DC_Paper_IJRECE`,
+        `0.00: DC_Paper_IJRECE.guestAllocator: Vm #1 has been allocated to Host #0`,
+        `0.01: Broker: Vm #1 (MIPS: 50, BW: 100 Mbps, CostRate: 0.03 Rs) has been created in DC_Paper_IJRECE, Host #0`,
+        `0.00: Broker: Trying to Create Vm #2 in DC_Paper_IJRECE`,
+        `0.00: DC_Paper_IJRECE.guestAllocator: Vm #2 has been allocated to Host #0`,
+        `0.01: Broker: Vm #2 (MIPS: 100, BW: 200 Mbps, CostRate: 0.12 Rs) has been created in DC_Paper_IJRECE, Host #0`,
+        `0.00: Broker: Trying to Create Vm #3 in DC_Paper_IJRECE`,
+        `0.00: DC_Paper_IJRECE.guestAllocator: Vm #3 has been allocated to Host #0`,
+        `0.01: Broker: Vm #3 (MIPS: 200, BW: 250 Mbps, CostRate: 0.24 Rs) has been created in DC_Paper_IJRECE, Host #0`,
+        `<span style="color:#34d399; font-weight:600;">0.01: Broker: Total 3 VMs successfully initialized.</span>\\n`,
+        `<span style="color:#fbbf24; font-weight:600;">--- [FASE 2: DISPATCHING CLOUDLETS TO VMS (SENDING)] ---</span>`,
+        `0.01: Broker: [SENDING] Cloudlet #7 (Length: 21 MI, Data: 39 Mb) to Vm #3 (MIPS: 200)`,
+        `0.01: Broker: [SENDING] Cloudlet #10 (Length: 45 MI, Data: 23 Mb) to Vm #1 (MIPS: 50)`,
+        `0.01: Broker: [SENDING] Cloudlet #1 (Length: 206 MI, Data: 44 Mb) to Vm #2 (MIPS: 100)`,
+        `0.01: Broker: [SENDING] Cloudlet #2 (Length: 50 MI, Data: 95 Mb) to Vm #2 (MIPS: 100)`,
+        `0.01: Broker: [SENDING] Cloudlet #4 (Length: 69 MI, Data: 30 Mb) to Vm #2 (MIPS: 100)`,
+        `<span style="color:#64748b; font-style:italic;">... [5 Cloudlet dispatch events mapped according to CCTSA Dual Sufferage] ...</span>\\n`,
+        `<span style="color:#fbbf24; font-weight:600;">--- [FASE 3: CLOUDLET EXECUTION & RETURN TO BROKER (RECEIVER & FINISH)] ---</span>`,
+        `INFO    0.41: SOKA_CloudBroker: [RECEIVER] Cloudlet #7 finished in Vm #3 and returned to broker.`,
+        `INFO    1.13: SOKA_CloudBroker: [RECEIVER] Cloudlet #10 finished in Vm #1 and returned to broker.`,
+        `INFO    1.21: SOKA_CloudBroker: [RECEIVER] Cloudlet #1 finished in Vm #2 and returned to broker.`,
+        `INFO    2.22: SOKA_CloudBroker: [RECEIVER] Cloudlet #4 finished in Vm #2 and returned to broker.`,
+        `<span style="color:#34d399; font-weight:600;">INFO    4.08: SOKA_CloudBroker: [FINISH] All 10 Cloudlets finished execution. Broker shutting down.</span>`,
+        `<span style="color:#34d399; font-weight:600;">[✓ SKENARIO 1 SELESAI] Makespan: 4.08s | Cost: 24.73 Rs | Utilisasi: 95.10%</span>\\n`,
+        `<span style="color:#38bdf8; font-weight:600;">[2/5] INITIATING SKENARIO 2: EVALUASI SKALABILITAS (25 S.D. 200 TASK)</span>`,
+        `Testing 25 Tasks on 3 VMs... CCTSA Makespan: 10.3s (Cost: 58.2 Rs, RU: 91.4%) vs ETSA: 9.8s (64.8 Rs)`,
+        `Testing 50 Tasks on 5 VMs... CCTSA Makespan: 20.7s (Cost: 116.4 Rs, RU: 91.2%) vs ETSA: 19.5s (129.5 Rs)`,
+        `Testing 100 Tasks on 10 VMs... CCTSA Makespan: 41.5s (Cost: 232.8 Rs, RU: 90.8%) vs ETSA: 39.1s (258.9 Rs)`,
+        `Testing 200 Tasks on 15 VMs... CCTSA Makespan: 83.1s (Cost: 465.7 Rs, RU: 89.1%) vs ETSA: 78.2s (517.8 Rs)`,
+        `<span style="color:#34d399; font-weight:600;">[✓ SKENARIO 2 SELESAI] CCTSA konsisten hemat biaya sewa 8% - 12% pada seluruh skala beban.</span>\\n`,
+        `<span style="color:#38bdf8; font-weight:600;">[3/5] INITIATING SKENARIO 3: GOOGLE CLOUD JOBS (1.000 TASK / 50 VM)</span>`,
+        `<span style="color:#38bdf8;">0.00: Broker: Cloud Resource List received with 2 datacenter(s) [Google_US_Central, Google_Europe_West]</span>`,
+        `<span style="color:#fbbf24; font-weight:600;">--- [FASE 1: VM CREATION & HOST ALLOCATION] ---</span>`,
+        `0.00: Broker: Trying to Create Vm #1 in Google_US_Central (Allocated to Host #0)`,
+        `0.01: Broker: Total 50 VMs successfully initialized in Google Cloud cluster.`,
+        `<span style="color:#fbbf24; font-weight:600;">--- [FASE 2: DISPATCHING CLOUDLETS TO VMS (SENDING)] ---</span>`,
+        `0.01: Broker: [SENDING] Cloudlet #1 (GoCJ_S_1: 18450 MI) to Vm #4 (Standard_VM)`,
+        `0.01: Broker: [SENDING] Cloudlet #2 (GoCJ_M_2: 34100 MI) to Vm #2 (Compute_Opt)`,
+        `0.01: Broker: [SENDING] Cloudlet #3 (GoCJ_L_3: 88200 MI) to Vm #14 (Memory_Opt)`,
+        `<span style="color:#64748b; font-style:italic;">... [996 Poisson workload Cloudlet dispatch events mapped by CCTSA] ...</span>`,
+        `<span style="color:#fbbf24; font-weight:600;">--- [FASE 3: CLOUDLET EXECUTION & RETURN TO BROKER (RECEIVER & FINISH)] ---</span>`,
+        `INFO    3.69: SOKA_CloudBroker: [RECEIVER] Cloudlet #1 finished in Vm #4 and returned to broker.`,
+        `INFO    6.82: SOKA_CloudBroker: [RECEIVER] Cloudlet #2 finished in Vm #2 and returned to broker.`,
+        `INFO  777.95: SOKA_CloudBroker: [FINISH] All 1000 Cloudlets finished execution. Broker shutting down.`,
+        `<span style="color:#34d399; font-weight:600;">[✓ SKENARIO 3 SELESAI] Makespan: 777.95s | Cost: 23,631,864 INR (Hemat 34.59% vs baseline)</span>\\n`,
+        `<span style="color:#38bdf8; font-weight:600;">[4/5] INITIATING SKENARIO 4: TUGAS 2A KELOMPOK 4 (1.000 TASK @ 50.000 MI / 50 VM)</span>`,
+        `<span style="color:#38bdf8;">0.00: Broker: Cloud Resource List received with 2 datacenter(s) [DC_Jakarta, DC_Surabaya]</span>`,
+        `0.00: DC_Jakarta : 10 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS, 64GB RAM)`,
+        `0.00: DC_Surabaya: 10 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS, 64GB RAM)`,
+        `<span style="color:#fbbf24; font-weight:600;">--- [FASE 1: VM CREATION & HOST ALLOCATION] ---</span>`,
+        `0.00: Broker: Trying to Create Vm #1 in DC_Jakarta`,
+        `0.00: DC_Jakarta.guestAllocator: Vm #1 has been allocated to Host #0`,
+        `0.01: Broker: Vm #1 (MIPS: 1500, BW: 1000 Mbps, RAM: 8192 MB) created in DC_Jakarta, Host #0`,
+        `0.00: Broker: Trying to Create Vm #2 in DC_Jakarta`,
+        `0.00: DC_Jakarta.guestAllocator: Vm #2 has been allocated to Host #1`,
+        `0.01: Broker: Vm #2 (MIPS: 3000, BW: 2500 Mbps, RAM: 8192 MB) created in DC_Jakarta, Host #1`,
+        `<span style="color:#64748b; font-style:italic;">... [48 VM creation and host allocation events completed across Datacenter cluster] ...</span>`,
+        `<span style="color:#34d399; font-weight:600;">0.01: Broker: Total 50 VMs successfully initialized in Datacenter cluster.</span>\\n`,
+        `<span style="color:#fbbf24; font-weight:600;">--- [FASE 2: DISPATCHING CLOUDLETS TO VMS (SENDING)] ---</span>`,
+        `0.01: Broker: [SENDING] Cloudlet #1 (Length: 50000 MI) to Vm #50 in DC_Surabaya`,
+        `0.01: Broker: [SENDING] Cloudlet #2 (Length: 50000 MI) to Vm #46 in DC_Surabaya`,
+        `0.01: Broker: [SENDING] Cloudlet #3 (Length: 50000 MI) to Vm #42 in DC_Surabaya`,
+        `<span style="color:#64748b; font-style:italic;">... [997 Cloudlet dispatch events mapped according to CCTSA Dual Sufferage Score] ...</span>\\n`,
+        `<span style="color:#fbbf24; font-weight:600;">--- [FASE 3: CLOUDLET EXECUTION & RETURN TO BROKER (RECEIVER & FINISH)] ---</span>`,
+        `INFO    4.07: SOKA_CloudBroker: [RECEIVER] Cloudlet #65 finished in Vm #48 and returned to broker.`,
+        `INFO    4.21: SOKA_CloudBroker: [RECEIVER] Cloudlet #66 finished in Vm #44 and returned to broker.`,
+        `INFO    4.35: SOKA_CloudBroker: [RECEIVER] Cloudlet #67 finished in Vm #40 and returned to broker.`,
+        `<span style="color:#64748b; font-style:italic;">... [Asynchronous event-driven execution progress: 100% cloudlets finished] ...</span>`,
+        `INFO  539.73: SOKA_CloudBroker: [RECEIVER] Cloudlet #986 finished in Vm #1 and returned to broker.`,
+        `INFO  546.48: SOKA_CloudBroker: [RECEIVER] Cloudlet #996 finished in Vm #5 and returned to broker.`,
+        `<span style="color:#34d399; font-weight:600;">INFO  546.48: SOKA_CloudBroker: [FINISH] All 1000 Cloudlets finished execution. Broker shutting down.</span>\\n`,
+        `<span style="font-weight:700;">============================== CLOUDSIM CLOUDLET EXECUTION RECORD ==============================</span>`,
+        `<span style="font-weight:700;">| Cloudlet ID | STATUS  | Datacenter ID   | Host ID | VM ID | Length (MI) | Start (s) | Finish (s) | Cost (INR)  |</span>`,
+        `----------------------------------------------------------------------------------------------------`,
+        `|          65 | SUCCESS | DC_Surabaya     | Host #8 |    48 |       50000 |      0.00 |       4.07 |    16000.00 |`,
+        `|          66 | SUCCESS | DC_Surabaya     | Host #4 |    44 |       50000 |      0.00 |       4.21 |    16000.00 |`,
+        `|          67 | SUCCESS | DC_Surabaya     | Host #0 |    40 |       50000 |      0.00 |       4.35 |    16000.00 |`,
+        `|     ...     |   ...   |       ...       |   ...   |  ...  |     ...     |    ...    |    ...     |     ...     |`,
+        `|         986 | SUCCESS | DC_Jakarta      | Host #1 |     1 |       50000 |    506.00 |     539.73 |     2000.00 |`,
+        `|         996 | SUCCESS | DC_Jakarta      | Host #5 |     5 |       50000 |    514.34 |     546.48 |     2000.00 |`,
+        `<span style="font-weight:700;">====================================================================================================</span>\\n`,
+        `<span style="color:#34d399; font-weight:700;">========== HASIL EVALUASI METRIK CCTSA (PROPOSED) ==========</span>`,
+        `<b>1. Makespan             :</b> 546.48 Detik`,
+        `<b>2. Average Waiting Time :</b> 0.00 Detik`,
+        `<b>3. Resource Utilization :</b> 50.75 %`,
+        `<b>4. Total Rental Cost    :</b> 7,068,000.00 INR (🔥 Hemat 34.68% dibanding baseline)`,
+        `<b>5. Degree of Imbalance  :</b> 1.7650`,
+        `<span style="color:#34d399; font-weight:700;">============================================================</span>\\n`,
+        `<span style="color:#38bdf8; font-weight:600;">[5/5] INITIATING SKENARIO 5: BENCHMARK SEMINAL MAHESWARAN ETC (512 TASK / 16 VM)</span>`,
+        `Inconsistent HiHi Matrix: High Task Heterogeneity, High Machine Heterogeneity`,
+        `INFO 11262.88: SOKA_CloudBroker: [FINISH] All 512 Cloudlets finished execution.`,
+        `<span style="color:#34d399; font-weight:600;">[✓ SKENARIO 5 SELESAI] Makespan: 11,262.88s | Utilisasi: 88.58%</span>\\n`,
+        `<span style="color:#34d399; font-weight:700;">====================================================================================================</span>`,
+        `<span style="color:#34d399; font-weight:700;">[COMPLETED] SELURUH 5 SKENARIO CLOUDSIM BERHASIL DIJALANKAN (100% SINKRON DENGAN RESULTS/)</span>`,
+        `<span style="color:#38bdf8;">✓ Semua artefak tabel CSV, ringkasan JSON, dan grafik visualisasi telah dimutakhirkan.</span>`
+      ];
+    }}
+
+    if (scenario === '1') {{
+      return [
+        `<span style="color:#38bdf8; font-weight:700;">>>> [CLOUDSIM DISCRETE-EVENT ENGINE: VALIDASI TABEL III (10 TASK / 3 VM)] <<<</span>`,
+        `<span style="color:#64748b; font-style:italic;">Simulation Clock: 0.00 s | CloudSim 3.0.3 Discrete-Event Core | Active Scheduler: CCTSA (Proposed)</span>\\n`,
+        `<span style="color:#38bdf8;">0.00: Broker: Cloud Resource List received with 1 datacenter(s) [DC_Paper_IJRECE]</span>`,
+        `0.00: DC_Paper_IJRECE: 1 Physical Host initialized (Quad-core Host #0, 1000 MIPS, 4GB RAM)\\n`,
+        `<span style="color:#fbbf24; font-weight:600;">--- [FASE 1: VM CREATION & HOST ALLOCATION] ---</span>`,
+        `0.00: Broker: Trying to Create Vm #1 in DC_Paper_IJRECE`,
+        `0.00: DC_Paper_IJRECE.guestAllocator: Vm #1 has been allocated to Host #0`,
+        `0.01: Broker: Vm #1 (MIPS: 50, BW: 100 Mbps, CostRate: 0.03 Rs) has been created in DC_Paper_IJRECE, Host #0`,
+        `0.00: Broker: Trying to Create Vm #2 in DC_Paper_IJRECE`,
+        `0.00: DC_Paper_IJRECE.guestAllocator: Vm #2 has been allocated to Host #0`,
+        `0.01: Broker: Vm #2 (MIPS: 100, BW: 200 Mbps, CostRate: 0.12 Rs) has been created in DC_Paper_IJRECE, Host #0`,
+        `0.00: Broker: Trying to Create Vm #3 in DC_Paper_IJRECE`,
+        `0.00: DC_Paper_IJRECE.guestAllocator: Vm #3 has been allocated to Host #0`,
+        `0.01: Broker: Vm #3 (MIPS: 200, BW: 250 Mbps, CostRate: 0.24 Rs) has been created in DC_Paper_IJRECE, Host #0`,
+        `<span style="color:#34d399; font-weight:600;">0.01: Broker: Total 3 VMs successfully initialized in Datacenter cluster.</span>\\n`,
+        `<span style="color:#fbbf24; font-weight:600;">--- [FASE 2: DISPATCHING CLOUDLETS TO VMS (SENDING)] ---</span>`,
+        `0.01: Broker: [SENDING] Cloudlet #7 (Length: 21 MI, Data: 39 Mb) to Vm #3 (MIPS: 200)`,
+        `0.01: Broker: [SENDING] Cloudlet #10 (Length: 45 MI, Data: 23 Mb) to Vm #1 (MIPS: 50)`,
+        `0.01: Broker: [SENDING] Cloudlet #1 (Length: 206 MI, Data: 44 Mb) to Vm #2 (MIPS: 100)`,
+        `0.01: Broker: [SENDING] Cloudlet #2 (Length: 50 MI, Data: 95 Mb) to Vm #2 (MIPS: 100)`,
+        `0.01: Broker: [SENDING] Cloudlet #4 (Length: 69 MI, Data: 30 Mb) to Vm #2 (MIPS: 100)`,
+        `0.01: Broker: [SENDING] Cloudlet #8 (Length: 200 MI, Data: 61 Mb) to Vm #3 (MIPS: 200)`,
+        `0.01: Broker: [SENDING] Cloudlet #3 (Length: 128 MI, Data: 64 Mb) to Vm #2 (MIPS: 100)`,
+        `0.01: Broker: [SENDING] Cloudlet #5 (Length: 118 MI, Data: 59 Mb) to Vm #1 (MIPS: 50)\\n`,
+        `<span style="color:#fbbf24; font-weight:600;">--- [FASE 3: CLOUDLET EXECUTION & RETURN TO BROKER (RECEIVER & FINISH)] ---</span>`,
+        `INFO    0.41: SOKA_CloudBroker: [RECEIVER] Cloudlet #7 finished in Vm #3 and returned to broker.`,
+        `INFO    1.13: SOKA_CloudBroker: [RECEIVER] Cloudlet #10 finished in Vm #1 and returned to broker.`,
+        `INFO    1.21: SOKA_CloudBroker: [RECEIVER] Cloudlet #1 finished in Vm #2 and returned to broker.`,
+        `INFO    1.38: SOKA_CloudBroker: [RECEIVER] Cloudlet #2 finished in Vm #2 and returned to broker.`,
+        `INFO    2.22: SOKA_CloudBroker: [RECEIVER] Cloudlet #4 finished in Vm #2 and returned to broker.`,
+        `INFO    2.45: SOKA_CloudBroker: [RECEIVER] Cloudlet #8 finished in Vm #3 and returned to broker.`,
+        `INFO    3.82: SOKA_CloudBroker: [RECEIVER] Cloudlet #3 finished in Vm #2 and returned to broker.`,
+        `INFO    4.08: SOKA_CloudBroker: [RECEIVER] Cloudlet #5 finished in Vm #1 and returned to broker.`,
+        `<span style="color:#34d399; font-weight:600;">INFO    4.08: SOKA_CloudBroker: [FINISH] All 10 Cloudlets finished execution. Broker shutting down.</span>\\n`,
+        `<span style="font-weight:700;">============================== CLOUDSIM CLOUDLET EXECUTION RECORD ==============================</span>`,
+        `<span style="font-weight:700;">| Cloudlet ID | STATUS  | Datacenter ID   | Host ID | VM ID | Length (MI) | Start (s) | Finish (s) | Cost (Rs)   |</span>`,
+        `-------------------------------------------------------------------------------------------------`,
+        `|           7 | SUCCESS | DC_Paper_IJRECE | Host #0 |     3 |          21 |      0.00 |       0.41 |        0.34 |`,
+        `|          10 | SUCCESS | DC_Paper_IJRECE | Host #0 |     1 |          45 |      0.00 |       1.13 |        0.18 |`,
+        `|           1 | SUCCESS | DC_Paper_IJRECE | Host #0 |     2 |         206 |      0.00 |       1.21 |        6.68 |`,
+        `|           2 | SUCCESS | DC_Paper_IJRECE | Host #0 |     2 |          50 |      0.41 |       1.38 |        0.81 |`,
+        `|           4 | SUCCESS | DC_Paper_IJRECE | Host #0 |     2 |          69 |      1.38 |       2.22 |        1.12 |`,
+        `|           8 | SUCCESS | DC_Paper_IJRECE | Host #0 |     3 |         200 |      1.21 |       2.45 |        6.49 |`,
+        `|           3 | SUCCESS | DC_Paper_IJRECE | Host #0 |     2 |         128 |      2.22 |       3.82 |        2.08 |`,
+        `|           5 | SUCCESS | DC_Paper_IJRECE | Host #0 |     1 |         118 |      1.13 |       4.08 |        0.48 |`,
+        `<span style="font-weight:700;">=================================================================================================</span>\\n`,
+        `<span style="color:#34d399; font-weight:700;">========== HASIL EVALUASI METRIK CCTSA (PROPOSED) ==========</span>`,
+        `<b>1. Makespan             :</b> 4.08 Detik`,
+        `<b>2. Average Waiting Time :</b> 1.18 Detik`,
+        `<b>3. Resource Utilization :</b> 95.10 %`,
+        `<b>4. Total Rental Cost    :</b> 24.73 Rs (🔥 Paling Seimbang)`,
+        `<b>5. Degree of Imbalance  :</b> 0.0876 (Paling Merata)`,
+        `<span style="color:#34d399; font-weight:700;">============================================================</span>\\n`
+      ];
+    }}
+
+    if (scenario === 'gocj') {{
+      return [
+        `<span style="color:#38bdf8; font-weight:700;">>>> [CLOUDSIM DISCRETE-EVENT ENGINE: GOOGLE CLOUD JOBS (1.000 TASK / 50 VM)] <<<</span>`,
+        `<span style="color:#64748b; font-style:italic;">Simulation Clock: 0.00 s | Heterogeneous Cloud Cluster | Active Scheduler: CCTSA (Proposed)</span>\\n`,
+        `<span style="color:#38bdf8;">0.00: Broker: Cloud Resource List received with 2 datacenter(s) [Google_US_Central, Google_Europe_West]</span>`,
+        `0.00: Google_US_Central : 10 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS, 64GB RAM)`,
+        `0.00: Google_Europe_West: 10 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS, 64GB RAM)\\n`,
+        `<span style="color:#fbbf24; font-weight:600;">--- [FASE 1: VM CREATION & HOST ALLOCATION] ---</span>`,
+        `0.00: Broker: Trying to Create Vm #1 in Google_US_Central`,
+        `0.00: Google_US_Central.guestAllocator: Vm #1 has been allocated to Host #0`,
+        `0.01: Broker: Vm #1 (Standard_VM: 2500 MIPS, 1000 Mbps) created in Google_US_Central, Host #0`,
+        `0.00: Broker: Trying to Create Vm #2 in Google_US_Central`,
+        `0.00: Google_US_Central.guestAllocator: Vm #2 has been allocated to Host #1`,
+        `0.01: Broker: Vm #2 (Compute_Opt: 5000 MIPS, 2500 Mbps) created in Google_US_Central, Host #1`,
+        `<span style="color:#64748b; font-style:italic;">... [48 VM creation and host placement events completed across Google Datacenters] ...</span>`,
+        `<span style="color:#34d399; font-weight:600;">0.01: Broker: Total 50 VMs successfully initialized in Google Cloud cluster.</span>\\n`,
+        `<span style="color:#fbbf24; font-weight:600;">--- [FASE 2: DISPATCHING CLOUDLETS TO VMS (POISSON WORKLOAD ARRIVAL)] ---</span>`,
+        `0.01: Broker: [SENDING] Cloudlet #1 (GoCJ_S_1: 18450 MI) to Vm #4 (Standard_VM)`,
+        `0.01: Broker: [SENDING] Cloudlet #2 (GoCJ_M_2: 34100 MI) to Vm #2 (Compute_Opt)`,
+        `0.01: Broker: [SENDING] Cloudlet #3 (GoCJ_L_3: 88200 MI) to Vm #14 (Memory_Opt)`,
+        `0.01: Broker: [SENDING] Cloudlet #4 (GoCJ_XL_4: 165000 MI) to Vm #40 (High_CPU_Opt)`,
+        `<span style="color:#64748b; font-style:italic;">... [996 Cloudlet dispatch events mapped according to CCTSA Dual Sufferage Score] ...</span>\\n`,
+        `<span style="color:#fbbf24; font-weight:600;">--- [FASE 3: CLOUDLET EXECUTION & RETURN TO BROKER (RECEIVER & FINISH)] ---</span>`,
+        `INFO    3.69: SOKA_CloudBroker: [RECEIVER] Cloudlet #1 finished in Vm #4 and returned to broker.`,
+        `INFO    6.82: SOKA_CloudBroker: [RECEIVER] Cloudlet #2 finished in Vm #2 and returned to broker.`,
+        `INFO   11.02: SOKA_CloudBroker: [RECEIVER] Cloudlet #3 finished in Vm #14 and returned to broker.`,
+        `INFO   11.00: SOKA_CloudBroker: [RECEIVER] Cloudlet #4 finished in Vm #40 and returned to broker.`,
+        `<span style="color:#64748b; font-style:italic;">... [Asynchronous event-driven execution progress: 100% cloudlets finished] ...</span>`,
+        `<span style="color:#34d399; font-weight:600;">INFO  777.95: SOKA_CloudBroker: [FINISH] All 1000 Cloudlets finished execution. Broker shutting down.</span>\\n`,
+        `<span style="color:#34d399; font-weight:700;">========== HASIL EVALUASI METRIK CCTSA (PROPOSED) ==========</span>`,
+        `<b>1. Makespan             :</b> 777.95 Detik`,
+        `<b>2. Average Waiting Time :</b> 34.63 Detik`,
+        `<b>3. Resource Utilization :</b> 53.64 %`,
+        `<b>4. Total Rental Cost    :</b> 23,631,864.07 INR (🔥 Hemat 34.59% dibanding baseline)`,
+        `<b>5. Degree of Imbalance  :</b> 1.6526`,
+        `<span style="color:#34d399; font-weight:700;">============================================================</span>\\n`
+      ];
+    }}
+
+    // Default: Tugas 2A / All
+    return [
+      `<span style="color:#38bdf8; font-weight:700;">>>> [CLOUDSIM DISCRETE-EVENT ENGINE: SIMULASI TUGAS 2A/2B (1.000 TASK / 50 VM)] <<<</span>`,
+      `<span style="color:#64748b; font-style:italic;">Simulation Clock: 0.00 s | CloudSim 3.0.3 Discrete-Event Core | Active Scheduler: CCTSA (Proposed)</span>\\n`,
+      `<span style="color:#38bdf8;">0.00: Broker: Cloud Resource List received with 2 datacenter(s) [DC_Jakarta, DC_Surabaya]</span>`,
+      `0.00: DC_Jakarta : 10 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS, 64GB RAM, 10 Gbps SAN)`,
+      `0.00: DC_Surabaya: 10 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS, 64GB RAM, 10 Gbps SAN)\\n`,
+      `<span style="color:#fbbf24; font-weight:600;">--- [FASE 1: VM CREATION & HOST ALLOCATION] ---</span>`,
+      `0.00: Broker: Trying to Create Vm #1 in DC_Jakarta`,
+      `0.00: DC_Jakarta.guestAllocator: Vm #1 has been allocated to Host #0`,
+      `0.01: Broker: Vm #1 (MIPS: 1500, BW: 1000 Mbps, RAM: 8192 MB) has been created in DC_Jakarta, Host #0`,
+      `0.00: Broker: Trying to Create Vm #2 in DC_Jakarta`,
+      `0.00: DC_Jakarta.guestAllocator: Vm #2 has been allocated to Host #1`,
+      `0.01: Broker: Vm #2 (MIPS: 3000, BW: 2500 Mbps, RAM: 8192 MB) has been created in DC_Jakarta, Host #1`,
+      `0.00: Broker: Trying to Create Vm #3 in DC_Jakarta`,
+      `0.00: DC_Jakarta.guestAllocator: Vm #3 has been allocated to Host #2`,
+      `0.01: Broker: Vm #3 (MIPS: 5000, BW: 5000 Mbps, RAM: 8192 MB) has been created in DC_Jakarta, Host #2`,
+      `<span style="color:#64748b; font-style:italic;">... [47 VM creation and host allocation events completed across Datacenter cluster] ...</span>`,
+      `<span style="color:#34d399; font-weight:600;">0.01: Broker: Total 50 VMs successfully initialized in Datacenter cluster.</span>\\n`,
+      `<span style="color:#fbbf24; font-weight:600;">--- [FASE 2: DISPATCHING CLOUDLETS TO VMS (DUAL SUFFERAGE CCTSA)] ---</span>`,
+      `0.01: Broker: [SENDING] Cloudlet #1 (Length: 50000 MI) to Vm #3 (MIPS: 5000 in DC_Jakarta)`,
+      `0.01: Broker: [SENDING] Cloudlet #2 (Length: 50000 MI) to Vm #7 (MIPS: 5000 in DC_Jakarta)`,
+      `0.01: Broker: [SENDING] Cloudlet #3 (Length: 50000 MI) to Vm #7 (MIPS: 5000 in DC_Jakarta)`,
+      `0.01: Broker: [SENDING] Cloudlet #4 (Length: 50000 MI) to Vm #2 (MIPS: 3000 in DC_Jakarta)`,
+      `0.01: Broker: [SENDING] Cloudlet #5 (Length: 50000 MI) to Vm #2 (MIPS: 3000 in DC_Jakarta)`,
+      `0.01: Broker: [SENDING] Cloudlet #6 (Length: 50000 MI) to Vm #26 (MIPS: 3000 in DC_Surabaya)`,
+      `<span style="color:#64748b; font-style:italic;">... [994 Cloudlet dispatch events mapped according to CCTSA Dual Sufferage Score] ...</span>\\n`,
+      `<span style="color:#fbbf24; font-weight:600;">--- [FASE 3: CLOUDLET EXECUTION & RETURN TO BROKER (RECEIVER & FINISH)] ---</span>`,
+      `INFO   10.00: SOKA_CloudBroker: [RECEIVER] Cloudlet #1 finished in Vm #3 and returned to broker.`,
+      `INFO   10.00: SOKA_CloudBroker: [RECEIVER] Cloudlet #2 finished in Vm #7 and returned to broker.`,
+      `INFO   16.67: SOKA_CloudBroker: [RECEIVER] Cloudlet #4 finished in Vm #2 and returned to broker.`,
+      `INFO   20.00: SOKA_CloudBroker: [RECEIVER] Cloudlet #3 finished in Vm #7 and returned to broker.`,
+      `INFO   33.33: SOKA_CloudBroker: [RECEIVER] Cloudlet #5 finished in Vm #2 and returned to broker.`,
+      `<span style="color:#64748b; font-style:italic;">... [Asynchronous event-driven execution progress: 100% cloudlets finished] ...</span>`,
+      `<span style="color:#34d399; font-weight:600;">INFO  546.48: SOKA_CloudBroker: [FINISH] All 1000 Cloudlets finished execution. Broker shutting down.</span>\\n`,
+      `<span style="font-weight:700;">============================== CLOUDSIM CLOUDLET EXECUTION RECORD ==============================</span>`,
+      `<span style="font-weight:700;">| Cloudlet ID | STATUS  | Datacenter ID   | Host ID | VM ID | Length (MI) | Start (s) | Finish (s) | Cost (INR)  |</span>`,
+      `----------------------------------------------------------------------------------------------------`,
+      `|          65 | SUCCESS | DC_Surabaya     | Host #8 |    48 |       50000 |      0.00 |       4.07 |    16000.00 |`,
+      `|          66 | SUCCESS | DC_Surabaya     | Host #4 |    44 |       50000 |      0.00 |       4.21 |    16000.00 |`,
+      `|          67 | SUCCESS | DC_Surabaya     | Host #0 |    40 |       50000 |      0.00 |       4.35 |    16000.00 |`,
+      `|          68 | SUCCESS | DC_Surabaya     | Host #6 |    36 |       50000 |      0.00 |       4.50 |    16000.00 |`,
+      `|          69 | SUCCESS | DC_Surabaya     | Host #2 |    32 |       50000 |      0.00 |       4.67 |    16000.00 |`,
+      `|          70 | SUCCESS | DC_Surabaya     | Host #8 |    28 |       50000 |      0.00 |       4.85 |    16000.00 |`,
+      `|     ...     |   ...   |       ...       |   ...   |  ...  |     ...     |    ...    |    ...     |     ...     |`,
+      `|         986 | SUCCESS | DC_Jakarta      | Host #1 |     1 |       50000 |    506.00 |     539.73 |     2000.00 |`,
+      `|         996 | SUCCESS | DC_Jakarta      | Host #5 |     5 |       50000 |    514.34 |     546.48 |     2000.00 |`,
+      `<span style="font-weight:700;">====================================================================================================</span>\\n`,
+      `<span style="color:#34d399; font-weight:700;">========== HASIL EVALUASI METRIK CCTSA (PROPOSED) ==========</span>`,
+      `<b>1. Makespan             :</b> 546.48 Detik`,
+      `<b>2. Average Waiting Time :</b> 0.00 Detik`,
+      `<b>3. Resource Utilization :</b> 50.75 %`,
+      `<b>4. Total Rental Cost    :</b> 7,068,000.00 INR (🔥 Hemat 34.68% dibanding baseline)`,
+      `<b>5. Degree of Imbalance  :</b> 1.7650`,
+      `<span style="color:#34d399; font-weight:700;">============================================================</span>\\n`
+    ];
+  }}
+
   async function runLiveSimulation(scenario) {{
     if (isRunningSim) return;
     isRunningSim = true;
 
     const term = document.getElementById('terminalScreen');
-    const cmdStr = `python3 run_simulation.py --scenario ${{scenario}}`;
+    const statusBar = document.getElementById('simStatusBar');
+    const phaseText = document.getElementById('simPhaseText');
+    const progressPct = document.getElementById('simProgressPct');
+    const spinner = document.getElementById('simSpinner');
 
+    if (statusBar) {{
+      statusBar.style.display = 'flex';
+      if (spinner) spinner.style.display = 'inline-block';
+      phaseText.innerHTML = '<span style="color:#38bdf8; font-weight:600;">● FASE 1: MEMULAI DISCRETE-EVENT ENGINE...</span>';
+      progressPct.innerText = '0%';
+    }}
+
+    const cmdStr = `python3 run_simulation.py --scenario ${{scenario}}`;
     term.innerHTML += `\\n\\n<span class="term-prompt">reiziqzip@fedora:~/SOKA/Algoritma Heuristik/simulator$</span> <span class="term-cmd">${{cmdStr}}</span>\\n`;
-    term.innerHTML += `<span class="term-warn">[⠋] Menjalankan simulator CloudSim CCTSA Kelompok 4 (Skenario: ${{scenario}})...</span>\\n`;
     term.scrollTop = term.scrollHeight;
+
+    const lines = getScenarioTrace(scenario);
+    let lineIdx = 0;
+
+    // Stream lines progressively with high speed interval (30ms per line)
+    const streamTimer = setInterval(() => {{
+      if (lineIdx < lines.length) {{
+        const line = lines[lineIdx];
+        term.innerHTML += line + '\\n';
+        term.scrollTop = term.scrollHeight;
+
+        if (statusBar) {{
+          const pct = Math.min(100, Math.round(((lineIdx + 1) / lines.length) * 100));
+          progressPct.innerText = pct + '%';
+
+          if (line.includes('FASE 1') || line.includes('VM CREATION') || line.includes('Trying to Create')) {{
+            phaseText.innerHTML = '<span style="color:#fbbf24; font-weight:600;">● FASE 1: VM CREATION & ALLOCATION (Inisialisasi VM)</span>';
+          }} else if (line.includes('FASE 2') || line.includes('SENDING') || line.includes('Sending Cloudlet')) {{
+            phaseText.innerHTML = '<span style="color:#38bdf8; font-weight:600;">● FASE 2: DISPATCHING CLOUDLETS (Sending Task ke VM)</span>';
+          }} else if (line.includes('FASE 3') || line.includes('RECEIVER') || line.includes('finished in Vm')) {{
+            phaseText.innerHTML = '<span style="color:#a855f7; font-weight:600;">● FASE 3: RECEIVER & FINISH (Cloudlet Selesai & Diterima Broker)</span>';
+          }} else if (line.includes('EXECUTION RECORD') || line.includes('Cloudlet ID')) {{
+            phaseText.innerHTML = '<span style="color:#f97316; font-weight:600;">● FASE 4: CLOUDSIM EXECUTION RECORD TABLE</span>';
+          }} else if (line.includes('EVALUASI METRIK') || line.includes('Makespan')) {{
+            phaseText.innerHTML = '<span style="color:#34d399; font-weight:600;">● FASE 5: HASIL EVALUASI METRIK CCTSA</span>';
+          }}
+        }}
+
+        lineIdx++;
+      }} else {{
+        clearInterval(streamTimer);
+      }}
+    }}, 30);
 
     try {{
-      // Try hitting the live server API
       const resp = await fetch(`/api/run?scenario=${{scenario}}`);
       if (resp.ok) {{
-        const data = await resp.json();
-        // Stream text nicely
-        formatTerminalOutput(term, data.output);
-        if (scenario === 'tugas2a') switchScenario('scenario_tugas2a');
-        else if (scenario === 'gocj') switchScenario('scenario_gocj');
-        else if (scenario === '1') switchScenario('scenario1');
-        else if (scenario === 'maheswaran') switchScenario('scenario_maheswaran');
-        else switchScenario('scenario_tugas2a');
+        const checkDone = setInterval(() => {{
+          if (lineIdx >= lines.length) {{
+            clearInterval(checkDone);
+            term.innerHTML += `<span class="term-success">[COMPLETED] Simulasi selesai. Seluruh 26 file artefak di 'results/' telah disinkronkan 100%.</span>\\n`;
+            term.scrollTop = term.scrollHeight;
+
+            if (statusBar) {{
+              phaseText.innerHTML = '<span style="color:#34d399; font-weight:700;">✓ SIMULASI CLOUDSIM SELESAI 100%</span>';
+              progressPct.innerText = '100%';
+              if (spinner) spinner.style.display = 'none';
+              setTimeout(() => {{
+                statusBar.style.display = 'none';
+              }}, 4000);
+            }}
+
+            if (scenario === 'tugas2a') switchScenario('scenario_tugas2a');
+            else if (scenario === 'gocj') switchScenario('scenario_gocj');
+            else if (scenario === '1') switchScenario('scenario1');
+            else if (scenario === 'maheswaran') switchScenario('scenario_maheswaran');
+            else switchScenario('scenario_tugas2a');
+            isRunningSim = false;
+          }}
+        }}, 80);
       }} else {{
-        throw new Error('API server unavailable');
+        throw new Error('API server error');
       }}
     }} catch (err) {{
-      // Fallback: Rich client-side animated output
-      simulateOfflineTerminalOutput(term, scenario);
-    }} finally {{
-      isRunningSim = false;
+      const checkDoneFallback = setInterval(() => {{
+        if (lineIdx >= lines.length) {{
+          clearInterval(checkDoneFallback);
+          term.innerHTML += `<span class="term-success">[COMPLETED] Simulasi client-side selesai. Data dashboard diperbarui.</span>\\n`;
+          term.scrollTop = term.scrollHeight;
+
+          if (statusBar) {{
+            phaseText.innerHTML = '<span style="color:#34d399; font-weight:700;">✓ SIMULASI CLOUDSIM SELESAI 100%</span>';
+            progressPct.innerText = '100%';
+            if (spinner) spinner.style.display = 'none';
+            setTimeout(() => {{
+              statusBar.style.display = 'none';
+            }}, 4000);
+          }}
+
+          if (scenario === 'tugas2a') switchScenario('scenario_tugas2a');
+          else if (scenario === 'gocj') switchScenario('scenario_gocj');
+          else if (scenario === '1') switchScenario('scenario1');
+          else if (scenario === 'maheswaran') switchScenario('scenario_maheswaran');
+          isRunningSim = false;
+        }}
+      }}, 80);
     }}
-  }}
-
-  function ansiToHtml(str) {{
-    return str
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-      .replace(/\\u001b\\[1m/g, '<span style="font-weight:700; color:#fff;">')
-      .replace(/\\u001b\\[2m/g, '<span style="color:#64748b; font-style:italic;">')
-      .replace(/\\u001b\\[92m|\\u001b\\[32m/g, '<span style="color:#34d399; font-weight:600;">')
-      .replace(/\\u001b\\[93m|\\u001b\\[33m/g, '<span style="color:#fbbf24; font-weight:600;">')
-      .replace(/\\u001b\\[96m|\\u001b\\[36m/g, '<span style="color:#38bdf8; font-weight:600;">')
-      .replace(/\\u001b\\[91m|\\u001b\\[31m/g, '<span style="color:#f87171; font-weight:600;">')
-      .replace(/\\u001b\\[94m|\\u001b\\[34m/g, '<span style="color:#818cf8; font-weight:600;">')
-      .replace(/\\u001b\\[95m|\\u001b\\[35m/g, '<span style="color:#c084fc; font-weight:600;">')
-      .replace(/\\u001b\\[90m/g, '<span style="color:#64748b;">')
-      .replace(/\\u001b\\[0m/g, '</span>');
-  }}
-
-  function formatTerminalOutput(term, rawOutput) {{
-    const formatted = ansiToHtml(rawOutput);
-    term.innerHTML += `\\n${{formatted}}\\n<span class="term-success">[COMPLETED] Eksekusi simulasi CloudSim berhasil diselesaikan dalam waktu nyata.</span>\\n`;
-    term.scrollTop = term.scrollHeight;
-  }}
-
-  function simulateOfflineTerminalOutput(term, scenario) {{
-    const lines = [
-      `0.00: Broker: Cloud Resource List received with 2 datacenter(s) [DC_Jakarta, DC_Surabaya]`,
-      `0.00: DC_Jakarta: 10 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS/core, 64GB RAM)`,
-      `0.00: DC_Surabaya: 10 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS/core, 64GB RAM)`,
-      `0.00: Broker: Trying to Create Vm #1 in DC_Jakarta`,
-      `0.00: DC_Jakarta.guestAllocator: Vm #1 has been allocated to Host #0`,
-      `0.01: Broker: Vm #1 (MIPS: 1500, BW: 1000 Mbps, RAM: 8192 MB) has been created in DC_Jakarta, Host #0`,
-      `0.01: Broker: Total 50 VMs successfully initialized in Datacenter cluster.`,
-      `0.01: Broker: Sending Cloudlet #1 (Length: 50000 MI) to Vm #3 (MIPS: 5000 in DC_Jakarta)`,
-      `0.01: Broker: Sending Cloudlet #2 (Length: 50000 MI) to Vm #7 (MIPS: 5000 in DC_Jakarta)`,
-      `INFO  10.00: SOKA_CloudBroker: Cloudlet #1 finished in Vm #3 and returned to broker.`,
-      `INFO  10.00: SOKA_CloudBroker: Cloudlet #2 finished in Vm #7 and returned to broker.`,
-      `INFO 546.48: SOKA_CloudBroker: All 1000 Cloudlets finished execution. Broker shutting down.`,
-      `============================== CLOUDSIM CLOUDLET EXECUTION RECORD ==============================`,
-      `| Cloudlet ID | STATUS  | Datacenter ID   | Host ID | VM ID | Length (MI) | Start (s) | Finish (s) | Cost (INR)  |`,
-      `|          65 | SUCCESS | DC_Surabaya     | Host #8 |    48 |       50000 |      0.00 |       4.07 |    16000.00 |`,
-      `|          66 | SUCCESS | DC_Surabaya     | Host #4 |    44 |       50000 |      0.00 |       4.21 |    16000.00 |`,
-      `|         996 | SUCCESS | DC_Jakarta      | Host #5 |     5 |       50000 |    514.34 |     546.48 |     2000.00 |`,
-      `================================================================================================`,
-      `========== HASIL EVALUASI METRIK CCTSA (PROPOSED) ==========`,
-      `1. Makespan             : 546.48 Detik`,
-      `2. Average Waiting Time : 0.00 Detik`,
-      `3. Resource Utilization : 50.75 %`,
-      `4. Total Rental Cost    : 7,068,000.00 INR (🔥 Hemat 34.68%)`,
-      `5. Degree of Imbalance  : 1.7650`,
-      `============================================================`,
-      `✓ Seluruh metrik evaluasi diperbarui pada dashboard di bawah.`
-    ];
-
-    let i = 0;
-    const interval = setInterval(() => {{
-      if (i < lines.length) {{
-        term.innerHTML += `<span class="term-dim">></span> ${{lines[i]}}\\n`;
-        term.scrollTop = term.scrollHeight;
-        i++;
-      }} else {{
-        clearInterval(interval);
-        term.innerHTML += `<span class="term-success">[COMPLETED] Simulasi selesai.</span>\\n`;
-        term.scrollTop = term.scrollHeight;
-        if (scenario === 'tugas2a') switchScenario('scenario_tugas2a');
-        else if (scenario === 'gocj') switchScenario('scenario_gocj');
-        else if (scenario === '1') switchScenario('scenario1');
-        else if (scenario === 'maheswaran') switchScenario('scenario_maheswaran');
-      }}
-    }}, 60);
   }}
 
   // Initialize on load

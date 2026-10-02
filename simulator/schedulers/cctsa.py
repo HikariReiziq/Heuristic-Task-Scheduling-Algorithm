@@ -46,16 +46,28 @@ class CCTSAScheduler(BaseScheduler):
                 cc_row = cc_dict[t_idx]
 
                 # Completion Time: First and Second Minimum
-                sorted_ct = sorted(ct_row)
-                fmict = sorted_ct[0]
-                smict = sorted_ct[1] if len(sorted_ct) > 1 else fmict
-                svct = smict - fmict
+                fmict = ct_row[0]
+                smict = float("inf")
+                for j in range(1, len(ct_row)):
+                    v = ct_row[j]
+                    if v < fmict:
+                        smict = fmict
+                        fmict = v
+                    elif v < smict:
+                        smict = v
+                svct = (smict - fmict) if len(ct_row) > 1 else 0.0
 
                 # Completion Cost: First and Second Maximum
-                sorted_cc = sorted(cc_row, reverse=True)
-                fmxc = sorted_cc[0]
-                smxc = sorted_cc[1] if len(sorted_cc) > 1 else fmxc
-                svc = fmxc - smxc
+                fmxc = cc_row[0]
+                smxc = float("-inf")
+                for j in range(1, len(cc_row)):
+                    v = cc_row[j]
+                    if v > fmxc:
+                        smxc = fmxc
+                        fmxc = v
+                    elif v > smxc:
+                        smxc = v
+                svc = (fmxc - smxc) if len(cc_row) > 1 else 0.0
 
                 task_metrics[t_idx] = {
                     "FMICT": fmict,

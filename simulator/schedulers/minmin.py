@@ -41,8 +41,12 @@ class MinMinScheduler(BaseScheduler):
 
             for t_idx in unassigned:
                 ct_row = ct_dict[t_idx]
-                vm_idx = min(range(len(vms)), key=lambda j: ct_row[j])
-                min_ct = ct_row[vm_idx]
+                min_ct = ct_row[0]
+                vm_idx = 0
+                for j in range(1, len(ct_row)):
+                    if ct_row[j] < min_ct:
+                        min_ct = ct_row[j]
+                        vm_idx = j
 
                 if min_ct < min_overall_ct:
                     min_overall_ct = min_ct

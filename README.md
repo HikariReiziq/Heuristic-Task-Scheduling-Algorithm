@@ -14,7 +14,7 @@ Repositori ini memuat implementasi *cloud task scheduling simulator*, kerangka k
 ## 📌 1. Informasi Proyek & Identitas Akademik
 
 - **Mata Kuliah**: Strategi Optimasi Komputasi Awan (SOKA) — Kelas C (Tahun Ajaran 2026)
-- **Departemen**: Teknik Komputer / Informatika, Fakultas Teknologi Elektro dan Informatika Cerdas (FTEIC)
+- **Departemen**: Teknologi Informasi, Fakultas Teknologi Elektro dan Informatika Cerdas (FTEIC)
 - **Institusi**: Institut Teknologi Sepuluh Nopember (ITS), Surabaya
 - **Dosen Pengampu**: Dr. Ir. Henning Titi Ciptaningtyas, S.Kom., M.Kom.
 - **Kelompok 4 (Tim Pengembang)**:
@@ -454,6 +454,6 @@ Hasil implementasi heuristik ini menjadi batu loncatan langsung (*strategic brid
 ---
 
 <p align="center">
-  <b>Departemen Teknik Komputer / Informatika — FTEIC ITS Surabaya (2026)</b><br>
+  <b>Departemen Teknologi Informasi — FTEIC ITS Surabaya (2026)</b><br>
   <i>Strategi Optimasi Komputasi Awan (SOKA) — Kelompok 4</i>
 </p>
