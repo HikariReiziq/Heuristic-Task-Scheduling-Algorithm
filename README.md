@@ -148,7 +148,31 @@ Simulator mendukung 5 skenario pengujian komprehensif:
 
 *(Catatan Validasi: Pada Standard Sufferage, simulator mereproduksi nilai Makespan **4.1720 s** dan Utilisasi **88.98%** persis sesuai angka publikasi paper)*.
 
-### 6.2 Beban Kerja Riil Google Cloud Jobs (GoCJ: 1.000 Task / 50 VM)
+| Perbandingan Biaya Finansial (Rs) | Perbandingan Waktu Makespan (s) | Utilisasi Sumber Daya (%) |
+| :---: | :---: | :---: |
+| [![Skenario 1 Biaya](simulator/results/scenario1_cost_comparison.png)](simulator/results/scenario1_cost_comparison.png) | [![Skenario 1 Makespan](simulator/results/scenario1_makespan_comparison.png)](simulator/results/scenario1_makespan_comparison.png) | [![Skenario 1 Utilisasi](simulator/results/scenario1_resource_utilization.png)](simulator/results/scenario1_resource_utilization.png) |
+| *Total Biaya sewa komputasi (Rs)* • [SVG](simulator/results/scenario1_cost_comparison.svg) | *Makespan penyelesaian (detik)* • [SVG](simulator/results/scenario1_makespan_comparison.svg) | *Efisiensi utilisasi VM (%)* • [SVG](simulator/results/scenario1_resource_utilization.svg) |
+
+---
+
+### 6.2 Evaluasi Skalabilitas Skenario 2 (Tabel IV–VI: 25 s.d. 200 Task)
+| Jumlah Task | Jumlah VM | CCTSA Makespan (s) | ETSA Makespan (s) | CCTSA Cost (Rs) | ETSA Cost (Rs) | CCTSA Utilisasi (%) | ETSA Utilisasi (%) |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| 25 | 5 | 10.23 s | 8.90 s | **30.10 Rs** | 33.30 Rs | **90.01%** | 87.00% |
+| 50 | 7 | 27.51 s | 22.40 s | **54.70 Rs** | 59.50 Rs | **91.40%** | 88.20% |
+| 75 | 8 | 48.30 s | 46.10 s | **82.50 Rs** | 93.90 Rs | **90.50%** | 86.92% |
+| 100 | 10 | 74.50 s | 67.90 s | **111.60 Rs** | 123.00 Rs | **90.00%** | 86.70% |
+| 150 | 12 | 122.40 s | 113.70 s | **143.40 Rs** | 162.80 Rs | **89.21%** | 86.50% |
+| 200 | 14 | 153.80 s | 137.80 s | **171.20 Rs** | 190.60 Rs | **89.05%** | 85.11% |
+
+| Kurva Skalabilitas Biaya Komputasi (Rs) | Kurva Skalabilitas Utilisasi Sumber Daya (%) |
+| :---: | :---: |
+| [![Skenario 2 Biaya](simulator/results/scenario2_scalability_cost.png)](simulator/results/scenario2_scalability_cost.png) | [![Skenario 2 Utilisasi](simulator/results/scenario2_scalability_utilization.png)](simulator/results/scenario2_scalability_utilization.png) |
+| *Efisiensi penghematan biaya CCTSA vs ETSA (25–200 Task)* • [SVG](simulator/results/scenario2_scalability_cost.svg) | *Konsistensi utilisasi sumber daya CCTSA ~90%* • [SVG](simulator/results/scenario2_scalability_utilization.svg) |
+
+---
+
+### 6.3 Beban Kerja Riil Google Cloud Jobs (GoCJ: 1.000 Task / 50 VM)
 | Algoritma | Makespan (s) | Total Cost (INR) | Utilisasi (%) | Degree of Imbalance (DI) | Waiting Time (s) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **CCTSA (Proposed)** | **777.95 s** | **23,631,864 INR (🔥 Hemat 34.59%)** | **53.64%** | **1.6526** | **34.63 s** |
@@ -159,7 +183,16 @@ Simulator mendukung 5 skenario pengujian komprehensif:
 
 > **Analisis Kunci**: CCTSA berhasil memangkas biaya sewa sebesar **~12,49 Juta INR (34.59%)** dibandingkan ETSA dan Min-Min. Makespan CCTSA (**777.95 detik**) juga jauh lebih unggul daripada Round Robin (**1.221,24 detik**, ~57% lebih lambat).
 
-### 6.3 Desain Infrastruktur Tugas 2A / 2B (1.000 Task @ 50.000 MI / 50 VM)
+<p align="center">
+  <a href="simulator/results/scenario3_gocj_cost_makespan.png">
+    <img src="simulator/results/scenario3_gocj_cost_makespan.png" width="850" alt="GoCJ Cost vs Makespan Benchmark" />
+  </a><br>
+  <i><b>Gambar 6.3</b>: Trade-off Makespan vs Biaya Finansial pada Google Cloud Jobs (1.000 Task / 50 VM). CCTSA memangkas 34.59% biaya sewa VM. (<a href="simulator/results/scenario3_gocj_cost_makespan.svg">Unduh Format Vektor SVG</a>)</i>
+</p>
+
+---
+
+### 6.4 Desain Infrastruktur Tugas 2A / 2B (1.000 Task @ 50.000 MI / 50 VM)
 | Algoritma | Makespan (s) | Total Cost (INR) | Utilisasi (%) | Degree of Imbalance (DI) | Waiting Time (s) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **CCTSA (Proposed)** | **546.48 s** | **7,068,000 INR (🔥 Hemat 34.68%)** | **50.75%** | **1.7650** | **0.00 s** |
@@ -170,7 +203,16 @@ Simulator mendukung 5 skenario pengujian komprehensif:
 
 > **Analisis Kunci**: Pada beban komputasi masif 50.000 MI, CCTSA secara cerdas mendistribusikan task ke tier Medium dan Large sehingga memangkas biaya sebesar **34.68%** (**7,06 Juta INR** vs **10,82 Juta INR**).
 
-### 6.4 Benchmark Maheswaran JPDC 1999 (Inconsistent HiHi: 512 Task / 16 VM)
+<p align="center">
+  <a href="simulator/results/scenario5_tugas2a_comparison.png">
+    <img src="simulator/results/scenario5_tugas2a_comparison.png" width="850" alt="Tugas 2A Infrastructure Benchmark" />
+  </a><br>
+  <i><b>Gambar 6.4</b>: Evaluasi Makespan vs Utilisasi pada Desain Infrastruktur Tugas 2A / 2B Kelompok 4 (2 Datacenter, 20 Host, 50 VM, 1.000 Task @ 50.000 MI). (<a href="simulator/results/scenario5_tugas2a_comparison.svg">Unduh Format Vektor SVG</a>)</i>
+</p>
+
+---
+
+### 6.5 Benchmark Maheswaran JPDC 1999 (Inconsistent HiHi: 512 Task / 16 VM)
 | Algoritma | Makespan (s) | Total Cost (INR) | Utilisasi (%) | Degree of Imbalance (DI) | Waiting Time (s) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Standard Sufferage** | **118,083 s (⭐ Unggul)** | **301,459 INR** | **95.31%** | **0.0685** | **62,975 s** |
@@ -179,6 +221,13 @@ Simulator mendukung 5 skenario pengujian komprehensif:
 | **Round Robin (RR)** | 675,444 s | 301,364 INR | 76.25% | 0.4641 | 246,757 s |
 
 > **Konfirmasi Hipotesis Teori**: Membuktikan secara empiris temuan Maheswaran dkk. bahwa dalam heterogenitas ekstrim inkonsisten, **Standard Sufferage mengungguli Min-Min** dan **Round Robin mengalami degradasi drastis (~5.7x lebih lambat)**.
+
+<p align="center">
+  <a href="simulator/results/scenario4_maheswaran_etc_comparison.png">
+    <img src="simulator/results/scenario4_maheswaran_etc_comparison.png" width="850" alt="Maheswaran Inconsistent HiHi Benchmark" />
+  </a><br>
+  <i><b>Gambar 6.5</b>: Validasi Teori Seminal Maheswaran (JPDC 1999) pada Heterogenitas Ekstrim Inconsistent High-Task High-Machine (HiHi). (<a href="simulator/results/scenario4_maheswaran_etc_comparison.svg">Unduh Format Vektor SVG</a>)</i>
+</p>
 
 ---
 
@@ -309,22 +358,60 @@ java cost.CostCTSA
 
 ## 🖼️ 9. Galeri Visualisasi Hasil Pengujian (Folder results/)
 
-Setiap kali simulasi dijalankan (baik via CLI `python3 run_simulation.py` maupun tombol terminal di website), seluruh grafik dan data numerik di folder `simulator/results/` otomatis diperbarui:
+Setiap kali simulasi dijalankan (baik via CLI `python3 run_simulation.py` maupun tombol terminal di website), seluruh grafik dan data numerik di folder [`simulator/results/`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/simulator/results) otomatis diperbarui dan disinkronkan secara konsisten.
+
+### 9.1 Showcase Grafik Skala Besar (Tugas 2A & Workload Riil GoCJ)
+
+| Desain Infrastruktur Tugas 2A / 2B (1.000 Task @ 50.000 MI) | Google Cloud Jobs (GoCJ: 1.000 Task / 50 VM) |
+| :---: | :---: |
+| [![Tugas 2A Comparison](simulator/results/scenario5_tugas2a_comparison.png)](simulator/results/scenario5_tugas2a_comparison.png) | [![GoCJ Comparison](simulator/results/scenario3_gocj_cost_makespan.png)](simulator/results/scenario3_gocj_cost_makespan.png) |
+| *Evaluasi Makespan vs Utilisasi VM Tugas 2A* • [Format SVG](simulator/results/scenario5_tugas2a_comparison.svg) | *Trade-off Makespan vs Biaya Finansial GoCJ* • [Format SVG](simulator/results/scenario3_gocj_cost_makespan.svg) |
+
+---
+
+### 9.2 Validasi Paper Acuan: Krishnaveni (2019) (Skenario 1 & 2)
+
+**Skenario 1 (Validasi Tabel III: 10 Task / 3 VM)**:
+| Biaya Finansial (Rs) | Waktu Makespan (detik) | Utilisasi Sumber Daya (%) |
+| :---: | :---: | :---: |
+| [![Skenario 1 Biaya](simulator/results/scenario1_cost_comparison.png)](simulator/results/scenario1_cost_comparison.png) | [![Skenario 1 Makespan](simulator/results/scenario1_makespan_comparison.png)](simulator/results/scenario1_makespan_comparison.png) | [![Skenario 1 Utilisasi](simulator/results/scenario1_resource_utilization.png)](simulator/results/scenario1_resource_utilization.png) |
+| *Total Biaya sewa (Rs)* • [SVG](simulator/results/scenario1_cost_comparison.svg) | *Makespan penyelesaian (s)* • [SVG](simulator/results/scenario1_makespan_comparison.svg) | *Efisiensi utilisasi VM (%)* • [SVG](simulator/results/scenario1_resource_utilization.svg) |
+
+**Skenario 2 (Skalabilitas Beban Kerja Tabel IV–VI: 25 s.d. 200 Task)**:
+| Kurva Skalabilitas Biaya Komputasi (Rs) | Kurva Skalabilitas Utilisasi Sumber Daya (%) |
+| :---: | :---: |
+| [![Skenario 2 Biaya](simulator/results/scenario2_scalability_cost.png)](simulator/results/scenario2_scalability_cost.png) | [![Skenario 2 Utilisasi](simulator/results/scenario2_scalability_utilization.png)](simulator/results/scenario2_scalability_utilization.png) |
+| *Efisiensi penghematan biaya CCTSA vs ETSA* • [SVG](simulator/results/scenario2_scalability_cost.svg) | *Konsistensi utilisasi sumber daya CCTSA ~90%* • [SVG](simulator/results/scenario2_scalability_utilization.svg) |
+
+---
+
+### 9.3 Validasi Teori Seminal: Maheswaran JPDC 1999 (Skenario 4)
+
+<p align="center">
+  <a href="simulator/results/scenario4_maheswaran_etc_comparison.png">
+    <img src="simulator/results/scenario4_maheswaran_etc_comparison.png" width="850" alt="Maheswaran Inconsistent HiHi Benchmark" />
+  </a><br>
+  <i><b>Validasi Heterogenitas Ekstrim Maheswaran 1999</b>: Standard Sufferage terbukti paling optimal dalam menangani konflik matriks ETC inkonsisten, mengungguli Min-Min dan Round Robin. (<a href="simulator/results/scenario4_maheswaran_etc_comparison.svg">Unduh Format Vektor SVG</a>)</i>
+</p>
+
+---
+
+### 9.4 Katalog Berkas & Artefak Luaran Simulasi
 
 | Nama File Hasil | Format | Visualisasi dan Makna Evaluasi |
 | :--- | :---: | :--- |
-| **`dashboard.html`** | HTML/JS | Dashboard visual interaktif dengan terminal console, chart interaktif, dan galeri unduhan. |
-| **`simulation_summary.json`** | JSON | Ringkasan terstruktur seluruh metrik performa kelima algoritma pada semua skenario. |
-| **`scenario5_tugas2a_comparison.png`** | PNG / SVG | Evaluasi Makespan vs Utilisasi pada desain infrastruktur Tugas 2A / 2B Kelompok 4. |
-| **`scenario3_gocj_cost_makespan.png`** | PNG / SVG | Evaluasi Makespan vs Biaya Finansial pada Google Cloud Jobs (GoCJ 1.000 Task). |
-| **`scenario4_maheswaran_etc_comparison.png`**| PNG / SVG | Evaluasi Makespan vs Utilisasi pada benchmark Maheswaran (Inconsistent HiHi). |
-| **`scenario1_cost_comparison.png`** | PNG / SVG | Perbandingan Total Biaya Finansial pada Skenario 1 (Validasi Paper Tabel III). |
-| **`scenario1_makespan_comparison.png`** | PNG / SVG | Perbandingan Makespan pada Skenario 1 (Validasi Paper Tabel III). |
-| **`scenario1_resource_utilization.png`** | PNG / SVG | Perbandingan Utilisasi Sumber Daya pada Skenario 1 (CCTSA mencapai 95.10%). |
-| **`scenario2_scalability_cost.png`** | PNG / SVG | Kurva efisiensi biaya CCTSA vs ETSA pada 25 s.d. 200 task. |
-| **`scenario2_scalability_utilization.png`**| PNG / SVG | Kurva stabilitas utilisasi sumber daya CCTSA vs ETSA. |
-| **`hasil_simulasi_cloudsim.csv`** | CSV | Log alokasi rinci 5.000 baris task kompatibel standar CloudSim. |
-| **`hasil_ringkasan_algoritma.csv`** | CSV | Tabel rekapitulasi komparasi ranking algoritma. |
+| **[`dashboard.html`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/simulator/results/dashboard.html)** | HTML/JS | Dashboard visual interaktif dengan terminal console, chart interaktif, dan galeri unduhan. |
+| **[`simulation_summary.json`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/simulator/results/simulation_summary.json)** | JSON | Ringkasan terstruktur seluruh metrik performa kelima algoritma pada semua skenario. |
+| **[`scenario5_tugas2a_comparison.png`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/simulator/results/scenario5_tugas2a_comparison.png)** | PNG / SVG | Evaluasi Makespan vs Utilisasi pada desain infrastruktur Tugas 2A / 2B Kelompok 4. |
+| **[`scenario3_gocj_cost_makespan.png`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/simulator/results/scenario3_gocj_cost_makespan.png)** | PNG / SVG | Evaluasi Makespan vs Biaya Finansial pada Google Cloud Jobs (GoCJ 1.000 Task). |
+| **[`scenario4_maheswaran_etc_comparison.png`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/simulator/results/scenario4_maheswaran_etc_comparison.png)**| PNG / SVG | Evaluasi Makespan vs Utilisasi pada benchmark Maheswaran (Inconsistent HiHi). |
+| **[`scenario1_cost_comparison.png`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/simulator/results/scenario1_cost_comparison.png)** | PNG / SVG | Perbandingan Total Biaya Finansial pada Skenario 1 (Validasi Paper Tabel III). |
+| **[`scenario1_makespan_comparison.png`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/simulator/results/scenario1_makespan_comparison.png)** | PNG / SVG | Perbandingan Makespan pada Skenario 1 (Validasi Paper Tabel III). |
+| **[`scenario1_resource_utilization.png`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/simulator/results/scenario1_resource_utilization.png)** | PNG / SVG | Perbandingan Utilisasi Sumber Daya pada Skenario 1 (CCTSA mencapai 95.10%). |
+| **[`scenario2_scalability_cost.png`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/simulator/results/scenario2_scalability_cost.png)** | PNG / SVG | Kurva efisiensi biaya CCTSA vs ETSA pada 25 s.d. 200 task. |
+| **[`scenario2_scalability_utilization.png`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/simulator/results/scenario2_scalability_utilization.png)**| PNG / SVG | Kurva stabilitas utilisasi sumber daya CCTSA vs ETSA. |
+| **[`hasil_simulasi_cloudsim.csv`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/simulator/results/hasil_simulasi_cloudsim.csv)** | CSV | Log alokasi rinci 5.000 baris task kompatibel standar CloudSim. |
+| **[`hasil_ringkasan_algoritma.csv`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/simulator/results/hasil_ringkasan_algoritma.csv)** | CSV | Tabel rekapitulasi komparasi ranking algoritma. |
 
 ---
 
