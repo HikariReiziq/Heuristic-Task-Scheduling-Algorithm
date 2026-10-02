@@ -43,6 +43,7 @@ from schedulers import (
     RoundRobinScheduler
 )
 from engine import CloudBroker
+from core.cloudsim_logger import print_cloudsim_event_trace
 from export_and_plot import (
     export_to_json,
     export_scenario1_csv,
@@ -171,6 +172,7 @@ def run_scenario_1() -> Dict[str, SimulationResult]:
     broker.register_scheduler(RoundRobinScheduler())
 
     results = broker.run_comparative_benchmark(tasks, vms)
+    print_cloudsim_event_trace("Skenario 1 (Validasi Tabel III: 10 Task / 3 VM)", tasks, vms, results["CCTSA (Proposed)"], "CCTSA (Proposed)", cost_unit="Rs", cost_divisor=7.40)
     print_results_table(results, cost_divisor=7.40, cost_unit="Rs")
 
     cctsa = results["CCTSA (Proposed)"]
@@ -260,6 +262,7 @@ def run_scenario_gocj(num_tasks: int = 1000, num_vms: int = 50) -> Dict[str, Sim
     elapsed = time.time() - start_t
 
     print(f"Simulasi 5 algoritma pada {num_tasks} task GoCJ selesai dalam {elapsed:.2f} detik.")
+    print_cloudsim_event_trace("Google Cloud Jobs (1.000 Task / 50 VM)", tasks, vms, results["CCTSA (Proposed)"], "CCTSA (Proposed)", cost_unit="INR", cost_divisor=1.0)
     print_results_table(results, cost_divisor=1.0, cost_unit="INR")
 
     cctsa = results["CCTSA (Proposed)"]
@@ -287,6 +290,7 @@ def run_scenario_tugas2a(num_tasks: int = 1000, num_vms: int = 50) -> Dict[str, 
     elapsed = time.time() - start_t
 
     print(f"Simulasi pada infrastruktur Tugas 2A selesai dalam {elapsed:.2f} detik.")
+    print_cloudsim_event_trace("Infrastruktur Tugas 2A/2B (1.000 Task @ 50.000 MI / 50 VM)", tasks, vms, results["CCTSA (Proposed)"], "CCTSA (Proposed)", cost_unit="INR", cost_divisor=1.0)
     print_results_table(results, cost_divisor=1.0, cost_unit="INR")
 
     cctsa = results["CCTSA (Proposed)"]
@@ -313,6 +317,7 @@ def run_scenario_maheswaran() -> Dict[str, SimulationResult]:
     elapsed = time.time() - start_t
 
     print(f"Simulasi Maheswaran ETC selesai dalam {elapsed:.2f} detik.")
+    print_cloudsim_event_trace("Maheswaran ETC (Inconsistent HiHi: 512 Task / 16 VM)", tasks, vms, results["Standard Sufferage"], "Standard Sufferage", cost_unit="INR", cost_divisor=1.0)
     print_results_table(results, cost_divisor=1.0, cost_unit="INR")
 
     suff = results["Standard Sufferage"]

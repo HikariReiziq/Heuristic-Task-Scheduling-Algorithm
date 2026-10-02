@@ -1623,31 +1623,50 @@ def build_dashboard():
     return str
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
       .replace(/\\u001b\\[1m/g, '<span style="font-weight:700; color:#fff;">')
+      .replace(/\\u001b\\[2m/g, '<span style="color:#64748b; font-style:italic;">')
       .replace(/\\u001b\\[92m|\\u001b\\[32m/g, '<span style="color:#34d399; font-weight:600;">')
       .replace(/\\u001b\\[93m|\\u001b\\[33m/g, '<span style="color:#fbbf24; font-weight:600;">')
       .replace(/\\u001b\\[96m|\\u001b\\[36m/g, '<span style="color:#38bdf8; font-weight:600;">')
       .replace(/\\u001b\\[91m|\\u001b\\[31m/g, '<span style="color:#f87171; font-weight:600;">')
       .replace(/\\u001b\\[94m|\\u001b\\[34m/g, '<span style="color:#818cf8; font-weight:600;">')
+      .replace(/\\u001b\\[95m|\\u001b\\[35m/g, '<span style="color:#c084fc; font-weight:600;">')
       .replace(/\\u001b\\[90m/g, '<span style="color:#64748b;">')
       .replace(/\\u001b\\[0m/g, '</span>');
   }}
 
   function formatTerminalOutput(term, rawOutput) {{
     const formatted = ansiToHtml(rawOutput);
-    term.innerHTML += `\\n${{formatted}}\\n<span class="term-success">[COMPLETED] Eksekusi simulasi berhasil diselesaikan dalam waktu nyata.</span>\\n`;
+    term.innerHTML += `\\n${{formatted}}\\n<span class="term-success">[COMPLETED] Eksekusi simulasi CloudSim berhasil diselesaikan dalam waktu nyata.</span>\\n`;
     term.scrollTop = term.scrollHeight;
   }}
 
   function simulateOfflineTerminalOutput(term, scenario) {{
     const lines = [
-      `[SIMULASI CLOUDSIM] Memuat dataset beban kerja skenario: ${{scenario}}...`,
-      `Infrastruktur Cloud: 2 Datacenter (Jakarta & Surabaya), 20 Host, 50 VM Heterogen.`,
-      `Menjalankan CCTSA (Dual Sufferage Metric: Waktu & Biaya)... Selesai.`,
-      `Menjalankan ETSA, Standard Sufferage, Min-Min, dan Round Robin... Selesai.`,
-      `Hasil Evaluasi Komparasi:`,
-      `  • CCTSA Biaya Sewa VM: Paling Hemat (34.68% lebih efisien dibanding baseline ETSA/Min-Min).`,
-      `  • Makespan CCTSA: Menjaga waktu penyelesaian seimbang dengan load balancing merata.`,
-      `  • Round Robin: Terjadi bottleneck ketimpangan beban (DI tinggi, makespan membengkak 3.5x).`,
+      `0.00: Broker: Cloud Resource List received with 2 datacenter(s) [DC_Jakarta, DC_Surabaya]`,
+      `0.00: DC_Jakarta: 10 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS/core, 64GB RAM)`,
+      `0.00: DC_Surabaya: 10 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS/core, 64GB RAM)`,
+      `0.00: Broker: Trying to Create Vm #1 in DC_Jakarta`,
+      `0.00: DC_Jakarta.guestAllocator: Vm #1 has been allocated to Host #0`,
+      `0.01: Broker: Vm #1 (MIPS: 1500, BW: 1000 Mbps, RAM: 8192 MB) has been created in DC_Jakarta, Host #0`,
+      `0.01: Broker: Total 50 VMs successfully initialized in Datacenter cluster.`,
+      `0.01: Broker: Sending Cloudlet #1 (Length: 50000 MI) to Vm #3 (MIPS: 5000 in DC_Jakarta)`,
+      `0.01: Broker: Sending Cloudlet #2 (Length: 50000 MI) to Vm #7 (MIPS: 5000 in DC_Jakarta)`,
+      `INFO  10.00: SOKA_CloudBroker: Cloudlet #1 finished in Vm #3 and returned to broker.`,
+      `INFO  10.00: SOKA_CloudBroker: Cloudlet #2 finished in Vm #7 and returned to broker.`,
+      `INFO 546.48: SOKA_CloudBroker: All 1000 Cloudlets finished execution. Broker shutting down.`,
+      `============================== CLOUDSIM CLOUDLET EXECUTION RECORD ==============================`,
+      `| Cloudlet ID | STATUS  | Datacenter ID   | Host ID | VM ID | Length (MI) | Start (s) | Finish (s) | Cost (INR)  |`,
+      `|          65 | SUCCESS | DC_Surabaya     | Host #8 |    48 |       50000 |      0.00 |       4.07 |    16000.00 |`,
+      `|          66 | SUCCESS | DC_Surabaya     | Host #4 |    44 |       50000 |      0.00 |       4.21 |    16000.00 |`,
+      `|         996 | SUCCESS | DC_Jakarta      | Host #5 |     5 |       50000 |    514.34 |     546.48 |     2000.00 |`,
+      `================================================================================================`,
+      `========== HASIL EVALUASI METRIK CCTSA (PROPOSED) ==========`,
+      `1. Makespan             : 546.48 Detik`,
+      `2. Average Waiting Time : 0.00 Detik`,
+      `3. Resource Utilization : 50.75 %`,
+      `4. Total Rental Cost    : 7,068,000.00 INR (🔥 Hemat 34.68%)`,
+      `5. Degree of Imbalance  : 1.7650`,
+      `============================================================`,
       `✓ Seluruh metrik evaluasi diperbarui pada dashboard di bawah.`
     ];
 
@@ -1666,7 +1685,7 @@ def build_dashboard():
         else if (scenario === '1') switchScenario('scenario1');
         else if (scenario === 'maheswaran') switchScenario('scenario_maheswaran');
       }}
-    }}, 80);
+    }}, 60);
   }}
 
   // Initialize on load
