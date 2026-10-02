@@ -68,10 +68,10 @@ RESET = "\033[0m"
 
 def print_banner() -> None:
     print(f"""
-{CYAN}========================================================================================{RESET}
-{BOLD}  SOKA (Strategi Optimasi Komputasi Awan) - Kelas C - Kelompok 4 (ITS 2026)
-  SIMULATOR PENJADWALAN TUGAS CLOUD: REPRODUKSI DAN EVALUASI ALGORITMA HEURISTIK CCTSA{RESET}
-{CYAN}========================================================================================{RESET}
+{CYAN}===================================================================================================={RESET}
+{BOLD}  SOKA (Strategi Optimasi Komputasi Awan) - Kelas C - Kelompok 4 (Tahun 2026)
+  SIMULATOR PENJADWALAN TUGAS CLOUD: REPRODUKSI & EVALUASI ALGORITMA HEURISTIK CCTSA{RESET}
+{CYAN}===================================================================================================={RESET}
   {BOLD}Dosen Pengampu:{RESET} Dr. Ir. Henning Titi Ciptaningtyas, S.Kom., M.Kom.
   {BOLD}Anggota Kelompok 4:{RESET}
     1. I Dewa Made Satya Raditya       (5027231051)
@@ -79,8 +79,59 @@ def print_banner() -> None:
     3. Muhammad Rakha Hananditya Rauf  (5027241015)
     4. Theodorus Aaron Ugraha          (5027241056)
     5. M. Hikari Reiziq Rakhmadinta    (5027241079)
-  {BOLD}Dataset Uji:{RESET} Paper Krishnaveni 2019, Google Cloud Jobs (GoCJ), Tugas 2A/2B, Maheswaran JPDC 1999
-{CYAN}----------------------------------------------------------------------------------------{RESET}
+
+{YELLOW}----------------------------------------------------------------------------------------------------
+📌 1. LANDASAN TEORI & PARADIGMA ALGORITMA HEURISTIK
+----------------------------------------------------------------------------------------------------{RESET}
+  • {BOLD}Mengapa Kategori Heuristik?{RESET}
+    Penjadwalan tugas cloud terbukti secara matematis bersifat {BOLD}NP-Hard{RESET}. Pendekatan eksak (brute-force)
+    membutuhkan waktu jutaan tahun untuk 1.000 task. Paradigma {BOLD}Heuristik{RESET} menggunakan aturan praktis
+    (rule of thumb) cerdas sekali jalan (single-pass) untuk menghasilkan jadwal mendekati optimal
+    dalam hitungan {BOLD}milidetik{RESET} tanpa beban komputasi berlebih.
+
+  • {BOLD}Algoritma Pilihan: CCTSA (Cost and Completion Time based Sufferage Algorithm){RESET}
+    - {BOLD}Paper Rujukan Utama:{RESET}
+      H. Krishnaveni, Dr. D. I. George Amalarethinam, Dr. V. Sinthu Janita (IJRECE 2019)
+      "Cost and Completion Time based Sufferage Algorithm for Task Scheduling in Cloud Environment"
+    - {BOLD}Paper Fondasi Seminal:{RESET}
+      Muthucumaru Maheswaran, Ali, Siegel, Hensgen, Freund (JPDC 1999)
+      "Dynamic Mapping of a Class of Independent Tasks onto Heterogeneous Computing Systems"
+
+  • {BOLD}Inovasi Dual Sufferage CCTSA:{RESET}
+    Sufferage klasik (1999) hanya menghitung penderitaan waktu (SVCT = CT2 - CT1), sehingga cenderung
+    memetakan semua task ke VM tercepat yang tarifnya paling mahal. CCTSA menyempurnakannya dengan
+    {BOLD}Dual Sufferage Metric{RESET}:
+      1. {BOLD}Sufferage Waktu (SVCT):{RESET} Selisih waktu selesai tercepat ke-2 dan ke-1.
+      2. {BOLD}Sufferage Biaya (SVC):{RESET} Selisih penghematan biaya sewa prosesor.
+    Task yang paling menderita jika tidak mendapatkan kombinasi terbaik akan diprioritaskan terlebih dahulu!
+
+{YELLOW}----------------------------------------------------------------------------------------------------
+🏢 2. SPESIFIKASI INFRASTRUKTUR CLOUD & WORKLOAD (DESAIN TUGAS 2A KELOMPOK 4)
+----------------------------------------------------------------------------------------------------{RESET}
+  • {BOLD}Datacenter Terdistribusi:{RESET} 2 Datacenter Geografis
+    - 📍 {BOLD}Datacenter 1 (Jakarta){RESET}   [ID: 2] -> Menampung 10 Host Fisik & 25 VM
+    - 📍 {BOLD}Datacenter 2 (Surabaya){RESET}  [ID: 3] -> Menampung 10 Host Fisik & 25 VM
+  • {BOLD}Host Fisik (Server):{RESET} 20 Server Fisik (10 Host/DC)
+    - Spesifikasi Host: 16 Core CPU, 64 GB RAM, 10 Gbps Bandwidth (Total: 320 Core, 1.280 GB RAM)
+  • {BOLD}Virtual Machines (VM):{RESET} 50 VM Heterogen Terdistribusi
+    - Tier Standard : 1.500 MIPS | 1.000 Mbps | Tarif sewa: 0.04 INR/MI
+    - Tier Medium   : 3.000 MIPS | 2.500 Mbps | Tarif sewa: 0.10 INR/MI
+    - Tier Large    : 5.000 MIPS | 5.000 Mbps | Tarif sewa: 0.18 INR/MI
+    - Tier Ultra    : 8.000 MIPS | 10.000 Mbps| Tarif sewa: 0.32 INR/MI
+  • {BOLD}Karakteristik Workload (Cloudlet):{RESET}
+    - 1.000 Task Komputasi Masif @ 50.000 MI (Million Instructions)
+    - Ukuran Berkas: 300 MB Input, 100 MB Output (Total Transfer Jaringan: 400 MB per task)
+    - Dataset Pembanding Riil: Google Cloud Jobs (GoCJ) 1.000 Task dengan kedatangan Poisson
+
+{YELLOW}----------------------------------------------------------------------------------------------------
+🔬 3. 5 ALGORITMA PENJADWALAN YANG DIBANDINGKAN
+----------------------------------------------------------------------------------------------------{RESET}
+  1. {BOLD}CCTSA (Proposed):{RESET} Dual Sufferage (Waktu + Biaya) dengan penugasan skor normalisasi terpadu.
+  2. {BOLD}ETSA (Baseline Paper):{RESET} Sufferage Waktu murni yang memprioritaskan makespan tercepat.
+  3. {BOLD}Standard Sufferage:{RESET} Heuristik klasik (Maheswaran 1999) berbasis resolusi konflik mesin.
+  4. {BOLD}Min-Min:{RESET} Benchmark populer yang memetakan task dengan waktu selesai minimum terendah.
+  5. {BOLD}Round Robin (RR):{RESET} Pemetaan statis bergilir tanpa memperhatikan heterogenitas VM.
+{CYAN}===================================================================================================={RESET}
 """)
 
 
@@ -377,11 +428,48 @@ def main():
             print(f"   - {f}")
 
     print(f"""
-{CYAN}========================================================================================{RESET}
-{BOLD}  SIMULASI BERHASIL DISELESAIKAN SECARA LENGKAP{RESET}
-{CYAN}========================================================================================{RESET}
-  Laporan dan visualisasi tersimpan di direktori:
+{CYAN}===================================================================================================={RESET}
+{BOLD}  KESIMPULAN KOMPARASI & ANALISIS EVALUASI TUGAS 3{RESET}
+{CYAN}===================================================================================================={RESET}
+  1. {BOLD}Dilema Waktu vs Biaya (Trade-off):{RESET}
+     Algoritma konvensional (ETSA, Min-Min) hanya mengejar Makespan terpendek sehingga memaksakan seluruh
+     task ke VM tier Ultra yang mahal. Hal ini menyebabkan pemborosan biaya sewa finansial sebesar {BOLD}+53%{RESET}!
+  2. {BOLD}Keunggulan Utama CCTSA:{RESET}
+     Dengan metrik {BOLD}Dual Sufferage (Waktu & Biaya){RESET}, CCTSA berhasil memangkas biaya sewa sebesar {BOLD}34.68%{RESET}
+     pada Tugas 2A dan {BOLD}34.59%{RESET} pada Google Cloud Jobs, dengan makespan yang tetap efisien dan utilisasi merata.
+  3. {BOLD}Kelemahan Fatal Round Robin:{RESET}
+     Round Robin mengabaikan heterogenitas VM, menyebabkan Makespan membengkak hingga 3.5x lebih lambat (674s vs 188s)
+     dan utilisasi CPU anjlok ke 40.04% dengan ketimpangan beban (DI) terburuk (2.1961).
+
+{YELLOW}----------------------------------------------------------------------------------------------------
+🌍 CONTOH KASUS NYATA DI INDUSTRI CLOUD COMPUTING (REAL-WORLD USE CASES)
+----------------------------------------------------------------------------------------------------{RESET}
+  🎬 {BOLD}1. Video Transcoding & Rendering Pipeline (Netflix / YouTube / TikTok):{RESET}
+     Ribuan fragmen video 4K/1080p perlu di-encode secara paralel. Algoritma CCTSA secara cerdas
+     mengalokasikan video dengan toleransi waktu ke server berbiaya murah, memangkas tagihan cloud jutaan dolar.
+
+  🛒 {BOLD}2. E-Commerce Flash Sale & Batch Log Analytics (Tokopedia / Shopee / Amazon):{RESET}
+     Pemrosesan data transaksi harian terdistribusi di Datacenter Jakarta dan Datacenter Surabaya.
+     CCTSA membagi beban kerja secara seimbang antar region tanpa membebani satu cluster server saja.
+
+  🏙️ {BOLD}3. Smart City Multi-Sensor & Edge-to-Cloud Pipeline (Jakarta & Surabaya Smart City):{RESET}
+     Aliran jutaan data telemetri sensor IoT (suhu, polusi udara, lalu lintas) dijadwalkan secara berkala
+     ke klaster VM cloud dengan biaya operasional fasilitas data center paling ekonomis.
+
+{CYAN}===================================================================================================={RESET}
+{BOLD}  PANDUAN MENAMPILKAN DASHBOARD PRESENTASI VISUAL (DEMO - 1){RESET}
+{CYAN}===================================================================================================={RESET}
+  {GREEN}► Opsi 1 (Sangat Direkomendasikan - Zero-Dependency):{RESET}
+    Buka Terminal dan jalankan web server bawaan Python:
+    $ {BOLD}python3 serve_dashboard.py{RESET}
+    Lalu buka browser Anda di: {CYAN}http://localhost:8080{RESET} (atau klik ganda {BOLD}dashboard.html{RESET})
+
+  {GREEN}► Opsi 2 (Streamlit Dashboard Ronn/Theo):{RESET}
+    $ {BOLD}streamlit run app.py{RESET}
+
+  Seluruh laporan numerik dan visualisasi grafik tersimpan di:
   📁 {BOLD}Algoritma Heuristik/simulator/results/{RESET}
+{CYAN}===================================================================================================={RESET}
 """)
 
 
