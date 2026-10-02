@@ -49,6 +49,8 @@ from export_and_plot import (
     export_scenario2_csv,
     export_scenario_results_csv,
     export_allocations_csv,
+    export_cloudsim_format_csv,
+    export_cloudsim_summary_csv,
     generate_all_plots,
     generate_gocj_plot,
     generate_maheswaran_plot,
@@ -336,6 +338,15 @@ def main():
         if tugas2a_res:
             export_scenario_results_csv(tugas2a_res, "scenario5_tugas2a.csv")
             generate_tugas2a_plot(tugas2a_res)
+            # CloudSim standard format for Streamlit & Ronn's dashboard
+            export_cloudsim_format_csv(tugas2a_res, "hasil_simulasi_cloudsim.csv")
+            export_cloudsim_summary_csv(tugas2a_res, "hasil_ringkasan_algoritma.csv")
+        elif gocj_res:
+            export_cloudsim_format_csv(gocj_res, "hasil_simulasi_cloudsim.csv")
+            export_cloudsim_summary_csv(gocj_res, "hasil_ringkasan_algoritma.csv")
+        elif scen1_res:
+            export_cloudsim_format_csv(scen1_res, "hasil_simulasi_cloudsim.csv")
+            export_cloudsim_summary_csv(scen1_res, "hasil_ringkasan_algoritma.csv")
 
         # Master JSON summary
         json_payload = {
@@ -354,6 +365,12 @@ def main():
             "scenario_maheswaran": {k: v.to_dict() for k, v in maheswaran_res.items()} if maheswaran_res else {}
         }
         export_to_json(json_payload, "simulation_summary.json")
+
+        try:
+            import generate_dashboard
+            generate_dashboard.build_dashboard()
+        except Exception:
+            pass
 
         print(f"{GREEN}✓ Berhasil menghasilkan seluruh file laporan dan grafik di folder 'results/':{RESET}")
         for f in sorted(os.listdir(os.path.join(os.path.dirname(__file__), "results"))):

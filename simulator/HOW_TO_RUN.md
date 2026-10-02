@@ -77,6 +77,22 @@ python3 run_simulation.py --scenario tugas2a
 python3 run_simulation.py --scenario maheswaran
 ```
 
+### Opsi G: Jalankan Interactive Web Dashboard (Zero-Dependency) 🌐
+Sangat disarankan saat **presentasi demo di hadapan dosen**:
+```bash
+# Jalankan web server lokal bawaan Python (Port 8080):
+python3 serve_dashboard.py
+# Lalu buka browser di: http://localhost:8080
+```
+*(Atau Anda bisa langsung mengklik ganda file `dashboard.html` di file manager untuk membukanya di browser secara instan tanpa perlu web server)*.
+
+### Opsi H: Jalankan Dashboard Streamlit (Integrasi Repositori Ronn / Theo) 🎨
+Jika lingkungan Python Anda memiliki `streamlit`, `pandas`, dan `plotly`:
+```bash
+streamlit run app.py
+```
+*(File data `hasil_simulasi_cloudsim.csv` sudah otomatis ter-generate dan kompatibel 100%)*.
+
 ---
 
 ## 🧪 4. Menjalankan Unit Test Otomatis

@@ -87,6 +87,112 @@ def export_allocations_csv(allocations: List[Any], filename: str = "task_allocat
     return filepath
 
 
+def export_cloudsim_format_csv(
+    results: Dict[str, SimulationResult],
+    filename: str = "hasil_simulasi_cloudsim.csv"
+) -> str:
+    """
+    Exports task allocations into CloudSim evaluation format compatible with Ronn's Streamlit dashboard:
+    Algorithm,CloudletId,Status,DatacenterId,VmId,StartTime,FinishTime,ExecutionTime,Cost
+    """
+    import shutil
+    ensure_results_dir()
+    filepath = os.path.join(RESULTS_DIR, filename)
+    root_filepath = os.path.join(os.path.dirname(__file__), filename)
+
+    with open(filepath, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Algorithm", "CloudletId", "Status", "DatacenterId", "VmId", "StartTime", "FinishTime", "ExecutionTime", "Cost"])
+        for algo_name, res in results.items():
+            clean_name = algo_name.replace(" (Proposed)", "").replace(" (Existing Baseline)", "")
+            for a in res.allocations:
+                dc_id = getattr(a, "datacenter_id", (2 if a.vm_id <= (res.num_vms // 2) else 3))
+                writer.writerow([
+                    clean_name,
+                    a.task_id,
+                    "SUCCESS",
+                    dc_id,
+                    a.vm_id,
+                    round(a.start_time, 2),
+                    round(a.finish_time, 2),
+                    round(a.execution_time, 2),
+                    round(a.cost, 2)
+                ])
+
+    try:
+        shutil.copyfile(filepath, root_filepath)
+    except Exception:
+        pass
+
+    # Also sync to Ronn's repo if present
+    ronn_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../SOKA-Data-Center-Simulation"))
+    if os.path.exists(ronn_dir):
+        try:
+            shutil.copyfile(filepath, os.path.join(ronn_dir, filename))
+        except Exception:
+            pass
+
+    return filepath
+
+
+def export_cloudsim_summary_csv(
+    results: Dict[str, SimulationResult],
+    filename: str = "hasil_ringkasan_algoritma.csv"
+) -> str:
+    """
+    Exports summary ranking table in Ronn's CloudSim summary format:
+    Rank,Algorithm,Cloudlets,Makespan,AverageExecutionTime,TotalCost,Score
+    """
+    import shutil
+    ensure_results_dir()
+    filepath = os.path.join(RESULTS_DIR, filename)
+    root_filepath = os.path.join(os.path.dirname(__file__), filename)
+
+    rows = []
+    for algo_name, res in results.items():
+        clean_name = algo_name.replace(" (Proposed)", "").replace(" (Existing Baseline)", "")
+        avg_exec = sum(a.execution_time for a in res.allocations) / max(1, len(res.allocations))
+        score = res.makespan * 0.6 + avg_exec * 0.4
+        rows.append({
+            "algorithm": clean_name,
+            "cloudlets": len(res.allocations),
+            "makespan": res.makespan,
+            "avg_exec": avg_exec,
+            "total_cost": res.total_cost,
+            "score": score
+        })
+
+    rows.sort(key=lambda x: x["score"])
+
+    with open(filepath, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Rank", "Algorithm", "Cloudlets", "Makespan", "AverageExecutionTime", "TotalCost", "Score"])
+        for rank, r in enumerate(rows, 1):
+            writer.writerow([
+                rank,
+                r["algorithm"],
+                r["cloudlets"],
+                round(r["makespan"], 2),
+                round(r["avg_exec"], 2),
+                round(r["total_cost"], 2),
+                round(r["score"], 2)
+            ])
+
+    try:
+        shutil.copyfile(filepath, root_filepath)
+    except Exception:
+        pass
+
+    ronn_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../SOKA-Data-Center-Simulation"))
+    if os.path.exists(ronn_dir):
+        try:
+            shutil.copyfile(filepath, os.path.join(ronn_dir, filename))
+        except Exception:
+            pass
+
+    return filepath
+
+
 def convert_svg_to_png(svg_path: str, png_path: str) -> bool:
     """Uses sharp in node to convert SVG to PNG if available."""
     if not os.path.exists(NODE_MODULES_SHARP):

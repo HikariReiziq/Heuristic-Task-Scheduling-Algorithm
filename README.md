@@ -204,9 +204,15 @@ Heuristic-Task-Scheduling-Algorithm/
     ├── engine.py                                       # CloudBroker (Orkestrasi eksekusi simulasi)
     ├── run_simulation.py                               # CLI Runner utama (Semua skenario)
     ├── export_and_plot.py                              # Generator ekspor CSV, JSON, grafik PNG/SVG
+    ├── app.py                                          # Dashboard Streamlit terintegrasi (CCTSA & 2 Datacenter)
+    ├── dashboard.html                                  # Interactive Web Dashboard mandiri (Zero-Dependency)
+    ├── serve_dashboard.py                              # Web server lokal bawaan Python (Port 8080)
+    ├── generate_dashboard.py                           # Compiler generator dashboard HTML
     ├── test_simulator.py                               # Automated unit test suite (11 tests)
     ├── HOW_TO_RUN.md                                  # Panduan eksekusi terminal Fedora Linux
-    └── results/                                        # Seluruh file luaran CSV, JSON, PNG, SVG
+    ├── hasil_simulasi_cloudsim.csv                     # Dataset alokasi CloudSim standar (5.000 baris)
+    ├── hasil_ringkasan_algoritma.csv                   # Ringkasan ranking skor performa algoritma
+    └── results/                                        # Seluruh file luaran CSV, JSON, PNG, SVG, HTML
 ```
 
 ---
@@ -243,13 +249,30 @@ python3 run_simulation.py --scenario tugas2a
 python3 run_simulation.py --scenario maheswaran
 ```
 
-### 8.3 Menjalankan Unit Test Otomatis
+### 8.3 Menjalankan Interactive Web Dashboard (Sangat Direkomendasikan untuk Demo!)
+Anda dapat menyajikan simulasi secara visual dan interaktif melalui 2 cara:
+
+#### Cara 1: Standalone Web Dashboard (Zero-Dependency) 🌐
+Dapat dibuka langsung di Google Chrome atau Firefox tanpa perlu menginstal pustaka apapun:
+```bash
+python3 serve_dashboard.py
+# Buka browser di: http://localhost:8080
+```
+*(Atau klik ganda file `dashboard.html` di file manager)*.
+
+#### Cara 2: Streamlit Performance Dashboard (Integrasi Repositori Ronn / Theo) 🎨
+Jika lingkungan Python memiliki pustaka `streamlit`:
+```bash
+streamlit run app.py
+```
+
+### 8.4 Menjalankan Unit Test Otomatis
 ```bash
 python3 test_simulator.py
 ```
 *Output yang diharapkan:* `Ran 11 tests in 0.006s ... OK`
 
-### 8.4 Menjalankan Referensi Java (Opsional)
+### 8.5 Menjalankan Referensi Java (Opsional)
 ```bash
 cd "../java_reference"
 javac cost/*.java 2>/dev/null || javac *.java

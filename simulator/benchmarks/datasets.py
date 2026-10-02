@@ -281,17 +281,22 @@ def get_tugas2a_vms(num_vms: int = 50) -> List[VirtualMachine]:
     ]
 
     vms: List[VirtualMachine] = []
+    half = num_vms // 2
     for i in range(num_vms):
         t = tiers[i % len(tiers)]
         multiplier = 1.0 + (i // len(tiers)) * 0.05
+        dc_id = 2 if i < half else 3
+        dc_name = "Datacenter Jakarta" if dc_id == 2 else "Datacenter Surabaya"
         vms.append(VirtualMachine(
             id=i + 1,
-            name=f"DC_VM{i+1}_{t['name']}",
+            name=f"{'JKT' if dc_id == 2 else 'SBY'}_VM{i+1}_{t['name']}",
             mips=round(t["mips"] * multiplier, 1),
             bandwidth_mbps=t["bw"],
             cost_per_mi=t["cost"],
             ram_mb=8192,
-            cores=4
+            cores=4,
+            datacenter_id=dc_id,
+            datacenter_name=dc_name
         ))
     return vms
 

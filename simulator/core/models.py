@@ -35,6 +35,8 @@ class VirtualMachine:
     ready_time: float = 0.0 # Time when the VM becomes available
     ready_cost: float = 0.0 # Accumulated execution cost on this VM
     allocated_task_ids: List[int] = field(default_factory=list)
+    datacenter_id: int = 2
+    datacenter_name: str = "Datacenter Jakarta"
 
     def reset(self) -> None:
         """Reset dynamic state of the VM for a new simulation run."""
@@ -44,7 +46,8 @@ class VirtualMachine:
 
     def __repr__(self) -> str:
         return (f"VM(id={self.id}, name='{self.name}', MIPS={self.mips}, "
-                f"BW={self.bandwidth_mbps}Mbps, CostRate={self.cost_per_mi})")
+                f"BW={self.bandwidth_mbps}Mbps, CostRate={self.cost_per_mi}, "
+                f"DC='{self.datacenter_name}')")
 
 
 @dataclass
@@ -59,6 +62,8 @@ class TaskAllocation:
     finish_time: float
     cost: float
     waiting_time: float
+    datacenter_id: int = 2
+    datacenter_name: str = "Datacenter Jakarta"
 
 
 @dataclass

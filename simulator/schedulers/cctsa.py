@@ -131,7 +131,9 @@ class CCTSAScheduler(BaseScheduler):
                 execution_time=exec_time,
                 finish_time=finish_time,
                 cost=cost,
-                waiting_time=waiting_time
+                waiting_time=waiting_time,
+                datacenter_id=getattr(vm, "datacenter_id", 2),
+                datacenter_name=getattr(vm, "datacenter_name", "Datacenter Jakarta")
             ))
 
             unassigned.remove(chosen_task_idx)
