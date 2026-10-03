@@ -1,6 +1,6 @@
 Algorithm,Num Tasks,Num VMs,Makespan (s),Total Cost (Raw),Total Cost (Rs / Paper),Resource Utilization (%),Degree of Imbalance,Avg Waiting Time (s),Runtime (ms)
-CCTSA (Proposed),10,3,4.08,182.97,24.73,95.1,0.0876,1.1783,0.383
-ETSA (Existing Baseline),10,3,4.024,188.85,25.52,93.06,0.1159,1.3232,0.144
-Standard Sufferage,10,3,4.172,190.77,25.78,88.98,0.2228,1.3057,0.142
-Min-Min,10,3,4.61,180.6,24.41,85.31,0.3738,0.9218,0.142
-Round Robin (RR),10,3,8.18,133.59,18.05,61.62,1.1892,2.3815,0.043
+CCTSA (Proposed),10,3,4.08,182.97,24.73,95.1,0.0876,1.1783,0.179
+ETSA (Existing Baseline),10,3,4.024,188.85,25.52,93.06,0.1159,1.3232,0.075
+Standard Sufferage,10,3,4.172,190.77,25.78,88.98,0.2228,1.3057,0.075
+Min-Min,10,3,4.61,180.6,24.41,85.31,0.3738,0.9218,0.072
+Round Robin (RR),10,3,8.18,133.59,18.05,61.62,1.1892,2.3815,0.024
