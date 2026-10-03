@@ -5,7 +5,7 @@
     "year": 2026,
     "group": "Kelompok 4",
     "lecturer": "Dr. Ir. Henning Titi Ciptaningtyas, S.Kom., M.Kom.",
-    "timestamp": "2026-10-02 23:09:55"
+    "timestamp": "2026-10-03 08:08:15"
   },
   "scenario1": {
     "CCTSA (Proposed)": {
@@ -28,7 +28,7 @@
         "3": 145.92
       },
       "allocations_count": 10,
-      "engine_runtime_ms": 0.174
+      "engine_runtime_ms": 0.383
     },
     "ETSA (Existing Baseline)": {
       "algorithm_name": "ETSA (Existing Baseline)",
@@ -50,7 +50,7 @@
         "3": 152.64
       },
       "allocations_count": 10,
-      "engine_runtime_ms": 0.081
+      "engine_runtime_ms": 0.144
     },
     "Standard Sufferage": {
       "algorithm_name": "Standard Sufferage",
@@ -72,7 +72,7 @@
         "3": 156.48
       },
       "allocations_count": 10,
-      "engine_runtime_ms": 0.085
+      "engine_runtime_ms": 0.142
     },
     "Min-Min": {
       "algorithm_name": "Min-Min",
@@ -94,7 +94,7 @@
         "3": 147.84
       },
       "allocations_count": 10,
-      "engine_runtime_ms": 0.078
+      "engine_runtime_ms": 0.142
     },
     "Round Robin (RR)": {
       "algorithm_name": "Round Robin (RR)",
@@ -116,7 +116,7 @@
         "3": 79.2
       },
       "allocations_count": 10,
-      "engine_runtime_ms": 0.024
+      "engine_runtime_ms": 0.043
     }
   },
   "scenario2": [
@@ -296,7 +296,7 @@
         "50": 440797.308
       },
       "allocations_count": 1000,
-      "engine_runtime_ms": 6560.361
+      "engine_runtime_ms": 5615.778
     },
     "ETSA (Existing Baseline)": {
       "algorithm_name": "ETSA (Existing Baseline)",
@@ -412,7 +412,7 @@
         "50": 266767.656
       },
       "allocations_count": 1000,
-      "engine_runtime_ms": 5278.472
+      "engine_runtime_ms": 4264.895
     },
     "Standard Sufferage": {
       "algorithm_name": "Standard Sufferage",
@@ -528,7 +528,7 @@
         "50": 262548.024
       },
       "allocations_count": 1000,
-      "engine_runtime_ms": 1538.179
+      "engine_runtime_ms": 1112.896
     },
     "Min-Min": {
       "algorithm_name": "Min-Min",
@@ -644,7 +644,7 @@
         "50": 239918.364
       },
       "allocations_count": 1000,
-      "engine_runtime_ms": 6050.51
+      "engine_runtime_ms": 3959.451
     },
     "Round Robin (RR)": {
       "algorithm_name": "Round Robin (RR)",
@@ -760,7 +760,7 @@
         "50": 351370.716
       },
       "allocations_count": 1000,
-      "engine_runtime_ms": 25.865
+      "engine_runtime_ms": 10.242
     }
   },
   "scenario_tugas2a": {
@@ -878,7 +878,7 @@
         "50": 140000.0
       },
       "allocations_count": 1000,
-      "engine_runtime_ms": 7412.447
+      "engine_runtime_ms": 5397.707
     },
     "ETSA (Existing Baseline)": {
       "algorithm_name": "ETSA (Existing Baseline)",
@@ -994,7 +994,7 @@
         "50": 85000.0
       },
       "allocations_count": 1000,
-      "engine_runtime_ms": 4458.11
+      "engine_runtime_ms": 4188.796
     },
     "Standard Sufferage": {
       "algorithm_name": "Standard Sufferage",
@@ -1110,7 +1110,7 @@
         "50": 85000.0
       },
       "allocations_count": 1000,
-      "engine_runtime_ms": 1278.297
+      "engine_runtime_ms": 1095.224
     },
     "Min-Min": {
       "algorithm_name": "Min-Min",
@@ -1226,7 +1226,7 @@
         "50": 85000.0
       },
       "allocations_count": 1000,
-      "engine_runtime_ms": 4256.712
+      "engine_runtime_ms": 3981.662
     },
     "Round Robin (RR)": {
       "algorithm_name": "Round Robin (RR)",
@@ -1342,7 +1342,7 @@
         "50": 100000.0
       },
       "allocations_count": 1000,
-      "engine_runtime_ms": 12.363
+      "engine_runtime_ms": 11.424
     }
   },
   "scenario_maheswaran": {
@@ -1392,7 +1392,7 @@
         "16": 17420.5011
       },
       "allocations_count": 512,
-      "engine_runtime_ms": 593.857
+      "engine_runtime_ms": 635.541
     },
     "ETSA (Existing Baseline)": {
       "algorithm_name": "ETSA (Existing Baseline)",
@@ -1440,7 +1440,7 @@
         "16": 15450.4644
       },
       "allocations_count": 512,
-      "engine_runtime_ms": 406.677
+      "engine_runtime_ms": 452.929
     },
     "Standard Sufferage": {
       "algorithm_name": "Standard Sufferage",
@@ -1488,7 +1488,7 @@
         "16": 17996.5731
       },
       "allocations_count": 512,
-      "engine_runtime_ms": 135.948
+      "engine_runtime_ms": 132.507
     },
     "Min-Min": {
       "algorithm_name": "Min-Min",
@@ -1536,7 +1536,7 @@
         "16": 19129.7052
       },
       "allocations_count": 512,
-      "engine_runtime_ms": 377.295
+      "engine_runtime_ms": 371.991
     },
     "Round Robin (RR)": {
       "algorithm_name": "Round Robin (RR)",
@@ -1584,7 +1584,7 @@
         "16": 22451.4156
       },
       "allocations_count": 512,
-      "engine_runtime_ms": 1.412
+      "engine_runtime_ms": 1.185
     }
   }
 }
