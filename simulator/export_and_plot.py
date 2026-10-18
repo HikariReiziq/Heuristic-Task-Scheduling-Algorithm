@@ -106,6 +106,7 @@ def export_cloudsim_format_csv(
         for algo_name, res in results.items():
             clean_name = algo_name.replace(" (Proposed)", "").replace(" (Existing Baseline)", "")
             for a in res.allocations:
+                # [UBAH DATACENTER] ID DC diambil dari alokasi (disalin dari VM); cadangan lama 2/3 jarang terpakai
                 dc_id = getattr(a, "datacenter_id", (2 if a.vm_id <= (res.num_vms // 2) else 3))
                 writer.writerow([
                     clean_name,
@@ -627,7 +628,7 @@ def generate_tugas2a_plot(results: Dict[str, SimulationResult]) -> str:
 
     generate_dual_metric_chart_svg(
         title="Tugas 2A/2B Infrastructure Benchmark (1.000 Tasks @ 50.000 MI)",
-        subtitle="Makespan (s) and Resource Utilization (%) on 2-Datacenter 20-Host Cloud Infrastructure.",
+        subtitle="Makespan (s) and Resource Utilization (%) on 3-Datacenter 15-Host 24-VM Cloud Infrastructure.",
         categories=algos,
         metric1_name="Makespan (s)",
         metric1_vals=makespans,

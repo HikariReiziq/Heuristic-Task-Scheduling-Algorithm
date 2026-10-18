@@ -1,14 +1,27 @@
 """
-Benchmark Datasets for Cloud Task Scheduling.
+Dataset Benchmark Penjadwalan Tugas Cloud.
 SOKA (Strategi Optimasi Komputasi Awan) - Kelompok 4 (ITS 2026).
 
-Includes:
-1. Exact Table I and Table II from paper Krishnaveni dkk. (IJRECE 2019).
-2. Reference validation targets from Tables III, IV, V, VI.
-3. Scalability workload generator for 25, 50, 75, 100, 150, 200 tasks across 5-14 VMs.
-4. Google Cloud Jobs (GoCJ) real-world dataset generator (1.000 tasks: Small, Med, Large, XL).
-5. Tugas 2A / 2B Cloudlet Benchmark (1.000 tasks @ 50.000 MI, 300 MB input, 100 MB output).
-6. Maheswaran et al. (JPDC 1999) 16-quadrant ETC matrix benchmark (Inconsistent HiHi, etc.).
+FILE INI ADALAH TEMPAT UTAMA KONFIGURASI INFRASTRUKTUR CLOUDSIM.
+Cari tag berikut jika diminta mengubah konfigurasi:
+  [UBAH VM]          -> spesifikasi VM (MIPS, bandwidth, tarif, RAM, core, jumlah)
+  [UBAH DATACENTER]  -> pembagian VM ke datacenter (ID & nama datacenter)
+  [UBAH CLOUDLET]    -> spesifikasi task/cloudlet (panjang MI, ukuran file, jumlah, kedatangan)
+  [UBAH BIAYA]       -> tarif biaya per MI
+Peta fungsi -> skenario (dipanggil dari run_simulation.py):
+  Skenario 1          : get_paper_table1_vms() + get_paper_table2_tasks()
+  Skenario 2          : generate_heterogeneous_vms() + generate_synthetic_workload()
+  Skenario GoCJ       : generate_gocj_vms() + get_gocj_workload()
+  Skenario Tugas 2A   : get_tugas2a_vms() + get_tugas2a_workload()   <- satu-satunya yang multi-datacenter (3 DC)
+  Skenario Maheswaran : generate_maheswaran_etc()
+
+Isi:
+1. Tabel I dan Tabel II persis dari paper Krishnaveni dkk. (IJRECE 2019).
+2. Target validasi dari Tabel III, IV, V, VI.
+3. Generator workload skalabilitas untuk 25, 50, 75, 100, 150, 200 task pada 5-14 VM.
+4. Generator dataset riil Google Cloud Jobs (GoCJ) (1.000 task: Small, Med, Large, XL).
+5. Benchmark Cloudlet Tugas 2A / 2B (1.000 task @ 50.000 MI, input 300 MB, output 100 MB).
+6. Benchmark matriks ETC 16-kuadran Maheswaran dkk. (JPDC 1999) (Inconsistent HiHi, dll.).
 """
 
 import random
@@ -16,16 +29,21 @@ from typing import List, Dict, Any, Tuple
 from core.models import Task, VirtualMachine
 
 # ============================================================================
-# 1. Paper Krishnaveni (2019) Base Datasets (Table I & II)
+# 1. Dataset Dasar Paper Krishnaveni (2019) (Tabel I & II)
 # ============================================================================
 
 def get_paper_table1_vms() -> List[VirtualMachine]:
     """
-    Table I: Specification of the Resources (from paper):
-    R1: 50 MIPS, 100 Mbps, Cost: 0.03 INR
-    R2: 100 MIPS, 200 Mbps, Cost: 0.12 INR
-    R3: 200 MIPS, 250 Mbps, Cost: 0.24 INR
+    Tabel I: Spesifikasi Resource (dari paper) -> dipakai Skenario 1:
+    R1: 50 MIPS, 100 Mbps, Biaya: 0.03 INR
+    R2: 100 MIPS, 200 Mbps, Biaya: 0.12 INR
+    R3: 200 MIPS, 250 Mbps, Biaya: 0.24 INR
     """
+    # [UBAH VM] [UBAH BIAYA] Skenario 1: tambah/hapus baris untuk mengubah jumlah VM,
+    # ubah mips / bandwidth_mbps / cost_per_mi untuk mengubah spesifikasi.
+    # [UBAH DATACENTER] Tidak diisi -> semua VM masuk default "Datacenter Jakarta" (core/models.py).
+    # Tambahkan datacenter_id=..., datacenter_name="..." per baris jika ingin dipisah.
+    # Catatan: mengubah nilai di sini membuat hasil tidak lagi cocok dengan Tabel III paper.
     return [
         VirtualMachine(id=1, name="R1", mips=50.0, bandwidth_mbps=100.0, cost_per_mi=0.03),
         VirtualMachine(id=2, name="R2", mips=100.0, bandwidth_mbps=200.0, cost_per_mi=0.12),
@@ -35,7 +53,7 @@ def get_paper_table1_vms() -> List[VirtualMachine]:
 
 def get_paper_table2_tasks() -> List[Task]:
     """
-    Table II: Specification of the Tasks (from paper):
+    Tabel II: Spesifikasi Task (dari paper) -> dipakai Skenario 1:
     T1: 206 MI, 44 Mb
     T2: 50 MI, 95 Mb
     T3: 128 MI, 64 Mb
@@ -47,6 +65,7 @@ def get_paper_table2_tasks() -> List[Task]:
     T9: 90 MI, 23 Mb
     T10: 45 MI, 23 Mb
     """
+    # [UBAH CLOUDLET] Skenario 1: format (id, panjang MI, ukuran file Mb). Tambah/hapus tuple untuk jumlah task.
     specs = [
         (1, 206.0, 44.0),
         (2, 50.0, 95.0),
@@ -63,7 +82,7 @@ def get_paper_table2_tasks() -> List[Task]:
 
 
 def get_paper_reference_results() -> Dict[str, Any]:
-    """Published results from Krishnaveni et al. (IJRECE 2019) for verification."""
+    """Hasil publikasi Krishnaveni dkk. (IJRECE 2019) untuk verifikasi (bukan hasil simulasi)."""
     return {
         "table3_base": {
             "CCTSA": {
@@ -77,6 +96,8 @@ def get_paper_reference_results() -> Dict[str, Any]:
                 "resource_utilization": 88.98
             }
         },
+        # Key = jumlah task, "resources" = jumlah VM yang dipakai Skenario 2.
+        # [UBAH VM] Jumlah VM per titik skalabilitas Skenario 2 diatur lewat "resources" di sini.
         "scalability": {
             25: {"resources": 5, "cctsa_ms": 10.23, "etsa_ms": 8.90, "cctsa_cost": 30.1, "etsa_cost": 33.3, "cctsa_ru": 90.01, "etsa_ru": 87.00},
             50: {"resources": 7, "cctsa_ms": 27.51, "etsa_ms": 22.40, "cctsa_cost": 54.7, "etsa_cost": 59.5, "cctsa_ru": 91.40, "etsa_ru": 88.20},
@@ -90,8 +111,11 @@ def get_paper_reference_results() -> Dict[str, Any]:
 
 def generate_heterogeneous_vms(count: int) -> List[VirtualMachine]:
     """
-    Generates a pool of heterogeneous VMs scaling from 5 to 14 VMs (Tables IV-VI).
+    Membangkitkan kumpulan VM heterogen 5 s.d. 14 VM (Tabel IV-VI) -> dipakai Skenario 2.
     """
+    # [UBAH VM] [UBAH BIAYA] Skenario 2: template tipe VM. VM ke-i memakai template i % 7,
+    # dan setiap putaran template MIPS-nya naik 10%.
+    # [UBAH DATACENTER] Tidak diisi -> semua VM masuk default "Datacenter Jakarta".
     base_templates = [
         {"name": "R1_Micro", "mips": 50.0, "bw": 100.0, "cost": 0.03},
         {"name": "R2_Small", "mips": 100.0, "bw": 200.0, "cost": 0.12},
@@ -122,20 +146,21 @@ def generate_synthetic_workload(
     mean_mb: float = 50.0
 ) -> List[Task]:
     """
-    Generates synthetic cloud task workload mimicking the paper's distribution.
-    Uses Poisson arrival and bounded normal distributions for MI and Mb.
+    Membangkitkan workload task sintetis yang meniru distribusi paper -> dipakai Skenario 2.
+    Kedatangan Poisson, MI dan Mb dari distribusi normal yang dibatasi.
     """
+    # [UBAH CLOUDLET] Skenario 2: ubah mean_mi / mean_mb (parameter) atau batas min/max di bawah.
     rng = random.Random(seed)
     tasks: List[Task] = []
     current_time = 0.0
 
     for i in range(num_tasks):
-        inter_arrival = rng.expovariate(1.0 / 0.5)
+        inter_arrival = rng.expovariate(1.0 / 0.5)  # rata-rata jeda kedatangan 0.5 detik
         current_time += inter_arrival
 
         mi = max(20.0, min(300.0, rng.gauss(mean_mi, 45.0)))
         mb = max(20.0, min(120.0, rng.gauss(mean_mb, 20.0)))
-        priority = 2 if (i % 5 == 0) else 1
+        priority = 2 if (i % 5 == 0) else 1  # setiap task ke-5 berprioritas tinggi
 
         tasks.append(Task(
             id=i + 1,
@@ -150,47 +175,49 @@ def generate_synthetic_workload(
 
 
 # ============================================================================
-# 2. Google Cloud Jobs (GoCJ) Real-World Workload Generator (Tugas 2B & 3)
+# 2. Generator Workload Riil Google Cloud Jobs (GoCJ) (Tugas 2B & 3)
 # ============================================================================
 
 def get_gocj_workload(num_tasks: int = 1000, seed: int = 42) -> List[Task]:
     """
-    Models real-world Google Cloud Jobs (GoCJ) workload distribution.
-    Job categorization based on Silvia & Moreno (2018):
-      - Small (S)       : 10,000 - 50,000 MI   (30% probability)
-      - Medium (M)      : 50,000 - 150,000 MI  (40% probability)
-      - Large (L)       : 150,000 - 300,000 MI (20% probability)
-      - Extra-Large (XL): 300,000 - 500,000 MI (10% probability)
-    Data transfer sizes (file input/output) range from 100 MB to 1000 MB.
-    Arrival timestamps follow a Poisson process (arrival rate lambda = 2.0 jobs/s).
+    Memodelkan distribusi workload riil Google Cloud Jobs (GoCJ) -> dipakai Skenario GoCJ.
+    Kategori job berdasarkan Silvia & Moreno (2018):
+      - Small (S)       : 10,000 - 50,000 MI   (peluang 30%)
+      - Medium (M)      : 50,000 - 150,000 MI  (peluang 40%)
+      - Large (L)       : 150,000 - 300,000 MI (peluang 20%)
+      - Extra-Large (XL): 300,000 - 500,000 MI (peluang 10%)
+    Ukuran transfer data (file input/output) 100 MB s.d. 1000 MB.
+    Waktu kedatangan mengikuti proses Poisson (laju lambda = 2.0 job/detik).
     """
+    # [UBAH CLOUDLET] Skenario GoCJ: jumlah task lewat argumen --tasks di run_simulation.py,
+    # rentang MI/Mb dan peluang tiap kategori diubah di blok if/elif di bawah.
     rng = random.Random(seed)
     tasks: List[Task] = []
     current_time = 0.0
 
     for i in range(num_tasks):
-        # Poisson process inter-arrival
+        # Jeda kedatangan proses Poisson
         inter_arrival = rng.expovariate(2.0)
         current_time += inter_arrival
 
         p = rng.random()
         if p < 0.30:
-            # Small Task
+            # Task Small
             mi = rng.uniform(10_000.0, 50_000.0)
             mb = rng.uniform(100.0, 250.0)
             tag = "S"
         elif p < 0.70:
-            # Medium Task
+            # Task Medium
             mi = rng.uniform(50_000.0, 150_000.0)
             mb = rng.uniform(250.0, 500.0)
             tag = "M"
         elif p < 0.90:
-            # Large Task
+            # Task Large
             mi = rng.uniform(150_000.0, 300_000.0)
             mb = rng.uniform(500.0, 800.0)
             tag = "L"
         else:
-            # Extra-Large Task
+            # Task Extra-Large
             mi = rng.uniform(300_000.0, 500_000.0)
             mb = rng.uniform(800.0, 1000.0)
             tag = "XL"
@@ -209,9 +236,13 @@ def get_gocj_workload(num_tasks: int = 1000, seed: int = 42) -> List[Task]:
 
 def generate_gocj_vms(num_vms: int = 50) -> List[VirtualMachine]:
     """
-    Generates a cloud datacenter cluster suitable for executing GoCJ workloads.
-    MIPS spans from 2,000 to 20,000 MIPS across 4 tiers (Standard, Compute, Memory, High-CPU).
+    Membangkitkan klaster VM datacenter untuk menjalankan workload GoCJ -> dipakai Skenario GoCJ.
+    MIPS 2.000 s.d. 20.000 dalam 4 tier (Standard, Compute, Memory, High-CPU).
     """
+    # [UBAH VM] [UBAH BIAYA] Skenario GoCJ: spesifikasi tier VM. Jumlah VM lewat argumen --vms.
+    # VM ke-i memakai tier i % 4, dan setiap putaran tier MIPS-nya naik 5%.
+    # [UBAH DATACENTER] Tidak diisi -> semua VM masuk default "Datacenter Jakarta".
+    # Tiru pola dc_id di get_tugas2a_vms() jika ingin dibagi ke beberapa datacenter.
     tiers = [
         {"name": "Standard_VM", "mips": 2500.0, "bw": 1000.0, "cost": 0.05},
         {"name": "Compute_Opt", "mips": 5000.0, "bw": 2500.0, "cost": 0.12},
@@ -234,31 +265,33 @@ def generate_gocj_vms(num_vms: int = 50) -> List[VirtualMachine]:
 
 
 # ============================================================================
-# 3. Tugas 2A / 2B Cloudlet Benchmark (1.000 Tasks @ 50.000 MI, 400 MB)
+# 3. Benchmark Cloudlet Tugas 2A / 2B (1.000 Task @ 50.000 MI, 400 MB)
 # ============================================================================
 
 def get_tugas2a_workload(num_tasks: int = 1000, seed: int = 42) -> List[Task]:
     """
-    Workload specifications directly from SOKA Tugas 2A / Tugas 2B (Slide 11-13):
-      - 1.000 Cloudlet Tasks
-      - Task Length: 50.000 MI (Million Instructions)
-      - Input File Size: 300 MB
-      - Output File Size: 100 MB (Total network data: 400 MB)
-      - Poisson Process arrival.
+    Spesifikasi workload langsung dari SOKA Tugas 2A / Tugas 2B (Slide 11-13) -> dipakai Skenario Tugas 2A:
+      - 1.000 Cloudlet
+      - Panjang Task: 50.000 MI (Million Instructions)
+      - Ukuran File Input: 300 MB
+      - Ukuran File Output: 100 MB (Total data jaringan: 400 MB)
+      - Kedatangan proses Poisson.
     """
+    # [UBAH CLOUDLET] Skenario Tugas 2A: jumlah cloudlet lewat argumen --tasks,
+    # panjang (length_mi) dan ukuran file (file_size_mb) diubah langsung di Task(...) di bawah.
     rng = random.Random(seed)
     tasks: List[Task] = []
     current_time = 0.0
 
     for i in range(num_tasks):
-        inter_arrival = rng.expovariate(1.5)
+        inter_arrival = rng.expovariate(1.5)  # laju kedatangan 1.5 cloudlet/detik
         current_time += inter_arrival
 
         tasks.append(Task(
             id=i + 1,
             name=f"Cloudlet_Tugas2A_{i+1}",
             length_mi=50_000.0,
-            file_size_mb=400.0,  # 300 MB input + 100 MB output
+            file_size_mb=400.0,  # 300 MB input + 100 MB output, ubah di sini jika ukuran file berubah
             arrival_time=round(current_time, 4),
             priority=1
         ))
@@ -266,13 +299,15 @@ def get_tugas2a_workload(num_tasks: int = 1000, seed: int = 42) -> List[Task]:
     return tasks
 
 
-def get_tugas2a_vms(num_vms: int = 50) -> List[VirtualMachine]:
+def get_tugas2a_vms(num_vms: int = 24) -> List[VirtualMachine]:
     """
-    Infrastruktur VM Heterogen Tugas 2A / 2B:
-    Berasal dari arsitektur 2 Datacenter, 20 Host (16-core, 64 GB RAM),
-    1.000 VM (50 VM/host, 4 vCPU, 8 GB RAM) dengan Resource Over-commitment.
-    MIPS disesuaikan secara heterogen antara 1.000 MIPS s.d. 8.000 MIPS.
+    Infrastruktur VM Heterogen Tugas 2A / 2B -> dipakai Skenario Tugas 2A:
+    3 Datacenter (Jakarta, Surabaya, Makassar), masing-masing 5 Host (16-core, 64 GB RAM)
+    dan 8 VM (4 vCPU, 8 GB RAM) -> total 15 Host dan 24 VM.
+    MIPS heterogen antara 1.500 MIPS s.d. 8.000 MIPS (ditambah kenaikan 5% per putaran tier).
     """
+    # [UBAH VM] [UBAH BIAYA] Skenario Tugas 2A: spesifikasi 4 tier VM. Jumlah VM lewat argumen --vms.
+    # VM ke-i memakai tier i % 4, dan setiap putaran tier MIPS-nya naik 5%.
     tiers = [
         {"name": "Standard_Host1", "mips": 1500.0, "bw": 1000.0, "cost": 0.04},
         {"name": "Medium_Host2", "mips": 3000.0, "bw": 2500.0, "cost": 0.10},
@@ -281,19 +316,26 @@ def get_tugas2a_vms(num_vms: int = 50) -> List[VirtualMachine]:
     ]
 
     vms: List[VirtualMachine] = []
-    half = num_vms // 2
+    # [UBAH DATACENTER] Daftar datacenter: (ID, nama, prefix nama VM). VM dibagi rata berurutan:
+    # 8 VM pertama -> Jakarta, 8 berikutnya -> Surabaya, 8 terakhir -> Makassar.
+    # Jika menambah/mengganti datacenter, sesuaikan juga DATACENTER_NAMES di generate_dashboard.py
+    # dan dc_map di app.py.
+    datacenters = [
+        (2, "Datacenter Jakarta", "JKT"),
+        (3, "Datacenter Surabaya", "SBY"),
+        (4, "Datacenter Makassar", "MKS"),
+    ]
     for i in range(num_vms):
         t = tiers[i % len(tiers)]
         multiplier = 1.0 + (i // len(tiers)) * 0.05
-        dc_id = 2 if i < half else 3
-        dc_name = "Datacenter Jakarta" if dc_id == 2 else "Datacenter Surabaya"
+        dc_id, dc_name, dc_prefix = datacenters[i * len(datacenters) // num_vms]
         vms.append(VirtualMachine(
             id=i + 1,
-            name=f"{'JKT' if dc_id == 2 else 'SBY'}_VM{i+1}_{t['name']}",
+            name=f"{dc_prefix}_VM{i+1}_{t['name']}",
             mips=round(t["mips"] * multiplier, 1),
             bandwidth_mbps=t["bw"],
             cost_per_mi=t["cost"],
-            ram_mb=8192,
+            ram_mb=8192,  # [UBAH VM] RAM & core hanya tampil di log, tidak memengaruhi hasil
             cores=4,
             datacenter_id=dc_id,
             datacenter_name=dc_name
@@ -302,7 +344,7 @@ def get_tugas2a_vms(num_vms: int = 50) -> List[VirtualMachine]:
 
 
 # ============================================================================
-# 4. Maheswaran et al. (JPDC 1999) 16-Quadrant ETC Matrix Generator
+# 4. Generator Matriks ETC 16-Kuadran Maheswaran dkk. (JPDC 1999)
 # ============================================================================
 
 def generate_maheswaran_etc(
@@ -314,27 +356,31 @@ def generate_maheswaran_etc(
     seed: int = 42
 ) -> Tuple[List[Task], List[VirtualMachine], List[List[float]]]:
     """
-    Reproduces the seminal 16-quadrant ETC (Expected Time to Compute) benchmark
-    from Maheswaran, Ali, Siegel, Hensgen, Freund (JPDC 1999):
+    Mereproduksi benchmark ETC (Expected Time to Compute) 16-kuadran
+    dari Maheswaran, Ali, Siegel, Hensgen, Freund (JPDC 1999) -> dipakai Skenario Maheswaran:
       "Dynamic Mapping of a Class of Independent Tasks onto Heterogeneous Computing Systems"
 
-    Parameters:
-      - task_het    : 'high' (U(100, 3000)) or 'low' (U(10, 100))
-      - machine_het : 'high' (multiplier U(1, 20)) or 'low' (multiplier U(1, 10))
-      - consistency : 'consistent', 'inconsistent', or 'semi-consistent'
+    Parameter:
+      - task_het    : 'high' (U(100, 3000)) atau 'low' (U(10, 100))
+      - machine_het : 'high' (pengali U(1, 20)) atau 'low' (pengali U(1, 10))
+      - consistency : 'consistent', 'inconsistent', atau 'semi-consistent'
 
-    Returns:
-      (tasks, vms, etc_matrix) where each Task has its etc_row populated.
+    Mengembalikan:
+      (tasks, vms, etc_matrix) dengan etc_row tiap Task sudah terisi.
+
+    [UBAH VM] [UBAH CLOUDLET] Jumlah task/VM dan jenis heterogenitas diatur lewat argumen
+    saat dipanggil di run_scenario_maheswaran() (run_simulation.py).
+    Catatan: waktu eksekusi di skenario ini diambil dari etc_row, BUKAN dari MIPS/bandwidth VM.
     """
     rng = random.Random(seed)
 
-    # 1. Base Task Heterogeneity Range
+    # 1. Rentang heterogenitas dasar task
     if task_het.lower() == "high":
         task_min, task_max = 100.0, 3000.0
     else:
         task_min, task_max = 10.0, 100.0
 
-    # 2. Machine Heterogeneity Factor Range
+    # 2. Rentang faktor heterogenitas mesin
     if machine_het.lower() == "high":
         mach_min, mach_max = 1.0, 20.0
     else:
@@ -342,7 +388,7 @@ def generate_maheswaran_etc(
 
     base_machine_multipliers = [rng.uniform(mach_min, mach_max) for _ in range(num_vms)]
     if consistency.lower() == "consistent":
-        base_machine_multipliers.sort()  # Machine 0 is consistently fastest, etc.
+        base_machine_multipliers.sort()  # Mesin 0 selalu tercepat, dst.
 
     etc_matrix: List[List[float]] = []
     tasks: List[Task] = []
@@ -358,11 +404,11 @@ def generate_maheswaran_etc(
             if consistency.lower() == "consistent":
                 exec_time = base_t * base_machine_multipliers[j]
             elif consistency.lower() == "inconsistent":
-                # Each machine has an independent random execution factor for this task
+                # Tiap mesin punya faktor eksekusi acak sendiri untuk task ini
                 factor = rng.uniform(mach_min, mach_max)
                 exec_time = base_t * factor
             elif consistency.lower() == "semi-consistent":
-                # Even columns are consistent, odd columns are inconsistent
+                # Kolom genap konsisten, kolom ganjil tidak konsisten
                 if j % 2 == 0:
                     exec_time = base_t * base_machine_multipliers[j]
                 else:
@@ -384,13 +430,14 @@ def generate_maheswaran_etc(
             etc_row=row
         ))
 
-    # Generate VMs with cost rates inversely related to their average execution time
+    # Bangkitkan VM dengan tarif berbanding terbalik terhadap rata-rata waktu eksekusinya
     avg_times = [sum(etc_matrix[i][j] for i in range(num_tasks)) / num_tasks for j in range(num_vms)]
     min_avg = min(avg_times)
 
     vms: List[VirtualMachine] = []
     for j in range(num_vms):
-        # Faster machines (lower avg time) have higher cost rate
+        # Mesin lebih cepat (rata-rata waktu lebih kecil) bertarif lebih mahal
+        # [UBAH BIAYA] Rumus tarif Skenario Maheswaran: 0.05 + 0.35 * speed_factor
         speed_factor = min_avg / avg_times[j]
         cost_rate = round(0.05 + 0.35 * speed_factor, 3)
         vms.append(VirtualMachine(

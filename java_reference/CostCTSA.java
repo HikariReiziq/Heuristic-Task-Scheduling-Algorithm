@@ -4,18 +4,23 @@ import java.util.*;
 
 /**
  * Cost and Completion Time based Sufferage Algorithm (CCTSA).
- * CloudSim-compatible reference implementation based on Krishnaveni et al. (IJRECE 2019).
- * Matches the NetBeans project structure shown in Implementation_Window.png.
+ * Implementasi referensi yang kompatibel dengan CloudSim, berdasarkan Krishnaveni dkk. (IJRECE 2019).
+ * Sesuai struktur proyek NetBeans pada Implementation_Window.png.
+ *
+ * [UBAH VM] [UBAH CLOUDLET] [UBAH BIAYA] -> ubah di Details.java, bukan di sini.
  */
 public class CostCTSA {
 
     public static void main(String[] args) {
-        // 1. Print header matching console in Implementation_Window.png
+        // 1. Cetak header sesuai konsol pada Implementation_Window.png
+        // [UBAH DATACENTER] [UBAH HOST] Baris "Data Center Created" hanya teks log; versi Java
+        // tidak membuat Datacenter/Host sungguhan. Ubah teksnya di sini bila perlu.
         Details.printResourceTable();
         System.out.println("Starting CloudSim");
         System.out.println("Initializing...");
         System.out.println("Data Center Created");
 
+        // Jumlah VM otomatis mengikuti panjang array di Details.java
         int numResources = Details.RESOURCE_NAMES.length;
         for (int j = 0; j < numResources; j++) {
             System.out.println("VM " + (j + 1) + " is Created with " + 
@@ -34,28 +39,28 @@ public class CostCTSA {
         }
         System.out.println("Remaining tasks: " + unassignedTasks);
 
-        // 2. Build ETC and Cost Matrices
+        // 2. Bangun matriks ETC (waktu) dan ECC (biaya)
         double[][] etc = new double[numTasks][numResources];
         double[][] ecc = new double[numTasks][numResources];
 
         for (int i = 0; i < numTasks; i++) {
             for (int j = 0; j < numResources; j++) {
-                // Eq (2): Execution Time = MI/MIPS + Mb/Mbps
+                // Pers. (2): Waktu Eksekusi = MI/MIPS + Mb/Mbps
                 etc[i][j] = (Details.TASK_MI[i] / Details.RESOURCE_MIPS[j]) + 
                             (Details.TASK_MB[i] / Details.RESOURCE_BW[j]);
-                // Eq (3): Execution Cost = MI * Cost of Processor
+                // Pers. (3): Biaya Eksekusi = MI * Biaya Prosesor
                 ecc[i][j] = Details.TASK_MI[i] * Details.RESOURCE_COST[j];
             }
         }
 
         List<TaskTime> scheduledTasks = new ArrayList<>();
 
-        // 3. Main CCTSA Scheduling Loop
+        // 3. Loop utama penjadwalan CCTSA
         while (!unassignedTasks.isEmpty()) {
             double[][] completionTime = new double[numTasks][numResources];
             double[][] completionCost = new double[numTasks][numResources];
 
-            // Update Completion Time and Cost matrices
+            // Perbarui matriks Completion Time dan Completion Cost
             for (int tIdx : unassignedTasks) {
                 for (int j = 0; j < numResources; j++) {
                     completionTime[tIdx][j] = etc[tIdx][j] + readyTime[j];
@@ -63,21 +68,21 @@ public class CostCTSA {
                 }
             }
 
-            // Calculate SVCT and SVC for each unassigned task
+            // Hitung SVCT dan SVC untuk setiap task yang belum dialokasikan
             double[] svct = new double[numTasks];
             double[] svc = new double[numTasks];
             double[] fmict = new double[numTasks];
             double[] fmxc = new double[numTasks];
 
             for (int tIdx : unassignedTasks) {
-                // Sort completion times to find First and Second Minimum
+                // Urutkan completion time untuk mencari minimum pertama dan kedua
                 double[] sortedTimes = completionTime[tIdx].clone();
                 Arrays.sort(sortedTimes);
                 fmict[tIdx] = sortedTimes[0];
                 double smict = (sortedTimes.length > 1) ? sortedTimes[1] : sortedTimes[0];
                 svct[tIdx] = smict - fmict[tIdx];
 
-                // Sort completion costs to find First and Second Maximum
+                // Urutkan completion cost untuk mencari maksimum pertama dan kedua
                 double[] sortedCosts = completionCost[tIdx].clone();
                 Arrays.sort(sortedCosts);
                 fmxc[tIdx] = sortedCosts[sortedCosts.length - 1];
@@ -85,7 +90,7 @@ public class CostCTSA {
                 svc[tIdx] = fmxc[tIdx] - smxc;
             }
 
-            // Select Task: For i = Unassigned_Task_Count to 0
+            // Pilih Task: untuk i = Jumlah_Task_Belum_Dialokasikan sampai 0
             Integer chosenTask = null;
             for (int k = unassignedTasks.size() - 1; k >= 0; k--) {
                 int tIdx = unassignedTasks.get(k);
@@ -95,7 +100,7 @@ public class CostCTSA {
                 }
             }
 
-            // Fallback selection if strict double-condition is not met
+            // Pemilihan cadangan jika dua syarat ketat di atas tidak terpenuhi
             if (chosenTask == null) {
                 double maxSufferage = -1.0;
                 for (int tIdx : unassignedTasks) {
@@ -107,7 +112,7 @@ public class CostCTSA {
                 }
             }
 
-            // Select Resource: Find VM that minimizes normalized time and cost
+            // Pilih Resource: cari VM dengan skor gabungan waktu & biaya ternormalisasi terkecil
             int bestVm = 0;
             double bestScore = Double.MAX_VALUE;
             double maxCt = 0.0, maxCc = 0.0;
@@ -119,6 +124,7 @@ public class CostCTSA {
             for (int j = 0; j < numResources; j++) {
                 double normTime = (maxCt > 0) ? completionTime[chosenTask][j] / maxCt : 0;
                 double normCost = (maxCc > 0) ? completionCost[chosenTask][j] / maxCc : 0;
+                // Bobot waktu 0.80 dan biaya 0.20 (sama dengan Skenario 1 versi Python)
                 double combinedScore = 0.80 * normTime + 0.20 * normCost;
                 if (combinedScore < bestScore) {
                     bestScore = combinedScore;
@@ -126,7 +132,7 @@ public class CostCTSA {
                 }
             }
 
-            // Assign chosenTask to bestVm
+            // Alokasikan chosenTask ke bestVm
             double execTime = etc[chosenTask][bestVm];
             double compTime = readyTime[bestVm] + execTime;
             double cost = ecc[chosenTask][bestVm];
@@ -138,7 +144,7 @@ public class CostCTSA {
             unassignedTasks.remove(chosenTask);
         }
 
-        // 4. Compute Final Metrics
+        // 4. Hitung metrik akhir
         double makespan = 0.0;
         double totalTime = 0.0;
         double totalCost = 0.0;
@@ -150,9 +156,10 @@ public class CostCTSA {
         }
 
         double resourceUtilization = (totalTime / (numResources * makespan)) * 100.0;
+        // [UBAH BIAYA] Faktor konversi ke Rs agar sama dengan Tabel III paper
         double costInRupees = totalCost / 7.40;
 
-        // 5. Output Summary Results
+        // 5. Cetak ringkasan hasil
         System.out.println("\n========== CCTSA Simulation Results ==========");
         System.out.printf("Makespan (sec)            : %.4f s\n", makespan);
         System.out.printf("Total Execution Cost (Rs) : %.2f Rs\n", costInRupees);

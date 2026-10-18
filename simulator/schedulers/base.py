@@ -1,6 +1,9 @@
 """
-Base Scheduler Interface and Common Utilities for Cloud Task Scheduling.
-Designed for SOKA - Kelompok 4 (ITS 2026).
+Antarmuka Dasar Scheduler dan Utilitas Umum Penjadwalan Tugas Cloud.
+Dirancang untuk SOKA - Kelompok 4 (ITS 2026).
+
+Di sinilah spesifikasi VM (MIPS, bandwidth, tarif) dan Cloudlet (MI, Mb) benar-benar
+dipakai untuk menghitung waktu dan biaya. Datacenter & Host tidak ikut dalam rumus.
 """
 
 from abc import ABC, abstractmethod
@@ -17,7 +20,7 @@ from core.metrics import (
 )
 
 class BaseScheduler(ABC):
-    """Abstract base class for all cloud scheduling policies."""
+    """Kelas dasar abstrak untuk semua kebijakan penjadwalan cloud."""
 
     def __init__(self, name: str):
         self.name = name
@@ -25,10 +28,11 @@ class BaseScheduler(ABC):
     @staticmethod
     def compute_etc_matrix(tasks: List[Task], vms: List[VirtualMachine]) -> List[List[float]]:
         """
-        Expected Time to Compute (ETC) Matrix:
-        If task.etc_row is provided (e.g. Maheswaran benchmark), use it directly.
-        Otherwise: ET_ij = (MI_i / MIPS_j) + (Mb_i / Mbps_j) [Equation 2 from paper]
+        Matriks Expected Time to Compute (ETC):
+        Jika task.etc_row tersedia (mis. benchmark Maheswaran), langsung dipakai.
+        Jika tidak: ET_ij = (MI_i / MIPS_j) + (Mb_i / Mbps_j) [Persamaan 2 paper]
         """
+        # [UBAH VM] Perubahan vm.mips / vm.bandwidth_mbps di datasets.py berpengaruh lewat rumus ini.
         matrix = []
         for task in tasks:
             if task.etc_row is not None and len(task.etc_row) == len(vms):
@@ -44,9 +48,10 @@ class BaseScheduler(ABC):
     @staticmethod
     def compute_ecc_matrix(tasks: List[Task], vms: List[VirtualMachine]) -> List[List[float]]:
         """
-        Expected Cost to Compute (ECC) Matrix:
-        Cost_ij = MI_i * Cost of processor_j (INR) [Equation 3 from paper]
+        Matriks Expected Cost to Compute (ECC):
+        Cost_ij = MI_i * Biaya prosesor_j (INR) [Persamaan 3 paper]
         """
+        # [UBAH BIAYA] Rumus biaya; tarif per VM (cost_per_mi) diatur di datasets.py.
         matrix = []
         for task in tasks:
             row = []
@@ -65,9 +70,9 @@ class BaseScheduler(ABC):
         unassigned_indices: List[int]
     ) -> Tuple[Dict[int, List[float]], Dict[int, List[float]]]:
         """
-        Computes dynamic Completion Time and Completion Cost matrices for unassigned tasks:
+        Menghitung matriks Completion Time dan Completion Cost dinamis untuk task yang belum dialokasikan:
         Completion Time_ij = ET_ij + ReadyTime_j
-        Completion Cost_ij = Cost_ij + ReadyCost_j [Equation 1 from paper]
+        Completion Cost_ij = Cost_ij + ReadyCost_j [Persamaan 1 paper]
         """
         ct_dict = {}
         cc_dict = {}
@@ -80,7 +85,7 @@ class BaseScheduler(ABC):
 
     @abstractmethod
     def schedule(self, tasks: List[Task], vms: List[VirtualMachine]) -> SimulationResult:
-        """Execute the scheduling heuristic and return full simulation results."""
+        """Menjalankan heuristik penjadwalan dan mengembalikan hasil simulasi lengkap."""
         pass
 
     def _build_result(
@@ -90,7 +95,7 @@ class BaseScheduler(ABC):
         allocations: List[TaskAllocation],
         runtime_ms: float
     ) -> SimulationResult:
-        """Helper to construct a standardized SimulationResult object."""
+        """Helper untuk menyusun objek SimulationResult yang seragam."""
         vm_ready_times = {vm.id: vm.ready_time for vm in vms}
         vm_costs = {vm.id: vm.ready_cost for vm in vms}
         makespan = calculate_makespan(vm_ready_times)

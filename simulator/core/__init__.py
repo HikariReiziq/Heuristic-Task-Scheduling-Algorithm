@@ -1,4 +1,4 @@
-"""Core models and metrics package."""
+"""Paket model inti (entitas CloudSim) dan metrik."""
 from core.models import Task, VirtualMachine, TaskAllocation, SimulationResult
 from core.metrics import (
     calculate_makespan,

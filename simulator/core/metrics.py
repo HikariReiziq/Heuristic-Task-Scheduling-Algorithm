@@ -1,28 +1,28 @@
 """
-Metrics calculation module for Cloud Task Scheduling.
-Provides mathematical formulations for Makespan, Total Cost, Resource Utilization,
-Degree of Imbalance (DI), and Waiting Time.
+Modul perhitungan metrik penjadwalan tugas cloud.
+Berisi rumus Makespan, Total Biaya, Utilisasi Sumber Daya,
+Degree of Imbalance (DI), dan Waktu Tunggu.
 """
 
 from typing import List, Dict
 from core.models import TaskAllocation, VirtualMachine
 
 def calculate_makespan(vm_ready_times: Dict[int, float]) -> float:
-    """Makespan = max(ready_time_j for all VMs)."""
+    """Makespan = max(ready_time_j untuk semua VM)."""
     if not vm_ready_times:
         return 0.0
     return max(vm_ready_times.values())
 
 
 def calculate_total_cost(allocations: List[TaskAllocation]) -> float:
-    """Total financial cost = sum of costs of all allocated tasks."""
+    """Total biaya finansial = jumlah biaya seluruh task yang dialokasikan."""
     return sum(a.cost for a in allocations)
 
 
 def calculate_resource_utilization(vm_ready_times: Dict[int, float], makespan: float) -> float:
     """
-    Resource Utilization (RU in %) = (sum(RT_j) / (num_vms * Makespan)) * 100%
-    Measures how efficiently VMs are utilized rather than remaining idle.
+    Utilisasi Sumber Daya (RU dalam %) = (sum(RT_j) / (jumlah_vm * Makespan)) * 100%
+    Mengukur seberapa efisien VM dipakai dibanding menganggur.
     """
     num_vms = len(vm_ready_times)
     if num_vms == 0 or makespan <= 0:
@@ -34,8 +34,8 @@ def calculate_resource_utilization(vm_ready_times: Dict[int, float], makespan: f
 def calculate_degree_of_imbalance(vm_ready_times: Dict[int, float]) -> float:
     """
     Degree of Imbalance (DI) = (T_max - T_min) / T_avg
-    Measures load distribution uniformity across heterogeneous VMs.
-    Lower values indicate more balanced workloads.
+    Mengukur keseragaman distribusi beban di antara VM heterogen.
+    Nilai lebih kecil berarti beban lebih seimbang.
     """
     if not vm_ready_times:
         return 0.0
@@ -49,7 +49,7 @@ def calculate_degree_of_imbalance(vm_ready_times: Dict[int, float]) -> float:
 
 
 def calculate_avg_waiting_time(allocations: List[TaskAllocation]) -> float:
-    """Average time tasks spend waiting in the queue before execution starts."""
+    """Rata-rata waktu yang dihabiskan task menunggu di antrean sebelum dieksekusi."""
     if not allocations:
         return 0.0
     return sum(a.waiting_time for a in allocations) / len(allocations)

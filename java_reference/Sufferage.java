@@ -3,8 +3,10 @@ package cost;
 import java.util.*;
 
 /**
- * Standard Sufferage Algorithm.
- * Classic heuristic benchmark from Maheswaran et al. (1999).
+ * Algoritma Sufferage Standar.
+ * Heuristik klasik pembanding dari Maheswaran dkk. (1999).
+ *
+ * [UBAH VM] [UBAH CLOUDLET] [UBAH BIAYA] -> ubah di Details.java, bukan di sini.
  */
 public class Sufferage {
 
@@ -22,6 +24,7 @@ public class Sufferage {
             unassignedTasks.add(i);
         }
 
+        // Matriks ETC (waktu) dan ECC (biaya), rumus sama dengan CostCTSA.java
         double[][] etc = new double[numTasks][numResources];
         double[][] ecc = new double[numTasks][numResources];
 
@@ -34,7 +37,7 @@ public class Sufferage {
         }
 
         while (!unassignedTasks.isEmpty()) {
-            // Map each VM to candidate tasks and their sufferage
+            // Petakan tiap VM ke task kandidat (yang VM terbaiknya adalah VM tsb) beserta sufferage-nya
             Map<Integer, List<int[]>> vmProposals = new HashMap<>();
             for (int j = 0; j < numResources; j++) {
                 vmProposals.put(j, new ArrayList<>());
@@ -67,7 +70,7 @@ public class Sufferage {
                 List<int[]> proposals = vmProposals.get(j);
                 if (proposals.isEmpty()) continue;
 
-                // Pick task with highest sufferage for this VM
+                // Pilih task dengan sufferage tertinggi untuk VM ini
                 int bestTask = proposals.get(0)[0];
                 double maxSuf = taskSufferage.get(bestTask);
                 for (int[] p : proposals) {
@@ -86,6 +89,7 @@ public class Sufferage {
                 break;
             }
 
+            // Cadangan: jika tidak ada yang teralokasi, task pertama dipaksa ke VM pertama
             if (!assigned && !unassignedTasks.isEmpty()) {
                 int fallbackTask = unassignedTasks.get(0);
                 readyTime[0] += etc[fallbackTask][0];
@@ -105,6 +109,7 @@ public class Sufferage {
         }
 
         double resourceUtilization = (totalTime / (numResources * makespan)) * 100.0;
+        // [UBAH BIAYA] Faktor konversi ke Rs agar sama dengan Tabel III paper
         double costInRupees = totalCost / 7.40;
 
         System.out.println("\n========== Standard Sufferage Simulation Results ==========");

@@ -1,16 +1,27 @@
 #!/usr/bin/env python3
 """
-Main Execution Script for Cloud Task Scheduling Simulator.
+Skrip Utama Eksekusi Simulator Penjadwalan Tugas Cloud.
 SOKA (Strategi Optimasi Komputasi Awan) - Kelas C - Kelompok 4 (ITS 2026).
 Dosen Pengampu: Dr. Ir. Henning Titi Ciptaningtyas, S.Kom., M.Kom.
 
-Supported Scenarios:
-  1. scenario 1          : Base validation of Table III (10 tasks on 3 VMs)
-  2. scenario 2          : Scalability assessment of Tables IV, V, VI (25 to 200 tasks on 5 to 14 VMs)
-  3. scenario gocj       : Real-world Google Cloud Jobs dataset (1.000 tasks on 50 cloud VMs)
-  4. scenario tugas2a    : Tugas 2A/2B Infrastructure Benchmark (1.000 tasks @ 50.000 MI on 50 VMs)
-  5. scenario maheswaran : Maheswaran et al. (JPDC 1999) Inconsistent HiHi (512 tasks on 16 VMs)
-  6. scenario all        : Run all 5 scenarios end-to-end
+Skenario yang didukung:
+  1. scenario 1          : Validasi dasar Tabel III (10 task pada 3 VM)
+  2. scenario 2          : Uji skalabilitas Tabel IV, V, VI (25 s.d. 200 task pada 5 s.d. 14 VM)
+  3. scenario gocj       : Dataset riil Google Cloud Jobs (1.000 task pada 50 VM)
+  4. scenario tugas2a    : Benchmark infrastruktur Tugas 2A/2B (1.000 task @ 50.000 MI pada 3 DC / 15 Host / 24 VM)
+  5. scenario maheswaran : Maheswaran dkk. (JPDC 1999) Inconsistent HiHi (512 task pada 16 VM)
+  6. scenario all        : Menjalankan kelima skenario sekaligus
+
+PANDUAN JIKA DIMINTA MENGUBAH KONFIGURASI CLOUDSIM (cari tag-nya dengan grep):
+  [UBAH DATACENTER] -> benchmarks/datasets.py get_tugas2a_vms() (pembagian VM ke DC),
+                       core/models.py (default DC), app.py & generate_dashboard.py (peta ID DC),
+                       teks banner di print_banner() file ini dan teks HTML di generate_dashboard.py.
+  [UBAH HOST]       -> core/cloudsim_logger.py (jumlah & spesifikasi host, hanya tampilan log),
+                       teks banner di print_banner() file ini dan teks HTML di generate_dashboard.py.
+  [UBAH VM]         -> benchmarks/datasets.py (fungsi VM per skenario), argumen --vms.
+  [UBAH CLOUDLET]   -> benchmarks/datasets.py (fungsi workload per skenario), argumen --tasks.
+  [UBAH BIAYA]      -> cost_per_mi di benchmarks/datasets.py, cost_divisor di run_scenario_1().
+  [UBAH ALGORITMA]  -> create_broker() / register_scheduler() di file ini.
 """
 
 import sys
@@ -19,7 +30,7 @@ import argparse
 import time
 from typing import Dict, List, Any
 
-# Ensure local simulator path is in sys.path
+# Pastikan folder simulator ada di sys.path agar import lokal berjalan
 sys.path.insert(0, os.path.dirname(__file__))
 
 from core.models import Task, VirtualMachine, SimulationResult
@@ -58,7 +69,7 @@ from export_and_plot import (
     generate_tugas2a_plot
 )
 
-# Colors for terminal output
+# Warna untuk output terminal
 CYAN = "\033[96m"
 GREEN = "\033[92m"
 YELLOW = "\033[93m"
@@ -68,6 +79,8 @@ RESET = "\033[0m"
 
 
 def print_banner() -> None:
+    # [UBAH DATACENTER] [UBAH HOST] [UBAH VM] Bagian "2. SPESIFIKASI INFRASTRUKTUR" di bawah adalah
+    # TEKS STATIS. Jika datacenter/host/VM diubah di datasets.py, perbarui juga teks ini secara manual.
     print(f"""
 {CYAN}===================================================================================================={RESET}
 {BOLD}  SOKA (Strategi Optimasi Komputasi Awan) - Kelas C - Kelompok 4 (Tahun 2026)
@@ -109,12 +122,13 @@ def print_banner() -> None:
 {YELLOW}----------------------------------------------------------------------------------------------------
 🏢 2. SPESIFIKASI INFRASTRUKTUR CLOUD & WORKLOAD (DESAIN TUGAS 2A KELOMPOK 4)
 ----------------------------------------------------------------------------------------------------{RESET}
-  • {BOLD}Datacenter Terdistribusi:{RESET} 2 Datacenter Geografis
-    - 📍 {BOLD}Datacenter 1 (Jakarta){RESET}   [ID: 2] -> Menampung 10 Host Fisik & 25 VM
-    - 📍 {BOLD}Datacenter 2 (Surabaya){RESET}  [ID: 3] -> Menampung 10 Host Fisik & 25 VM
-  • {BOLD}Host Fisik (Server):{RESET} 20 Server Fisik (10 Host/DC)
-    - Spesifikasi Host: 16 Core CPU, 64 GB RAM, 10 Gbps Bandwidth (Total: 320 Core, 1.280 GB RAM)
-  • {BOLD}Virtual Machines (VM):{RESET} 50 VM Heterogen Terdistribusi
+  • {BOLD}Datacenter Terdistribusi:{RESET} 3 Datacenter Geografis
+    - 📍 {BOLD}Datacenter 1 (Jakarta){RESET}   [ID: 2] -> Menampung 5 Host Fisik & 8 VM
+    - 📍 {BOLD}Datacenter 2 (Surabaya){RESET}  [ID: 3] -> Menampung 5 Host Fisik & 8 VM
+    - 📍 {BOLD}Datacenter 3 (Makassar){RESET}  [ID: 4] -> Menampung 5 Host Fisik & 8 VM
+  • {BOLD}Host Fisik (Server):{RESET} 15 Server Fisik (5 Host/DC)
+    - Spesifikasi Host: 16 Core CPU, 64 GB RAM, 10 Gbps Bandwidth (Total: 240 Core, 960 GB RAM)
+  • {BOLD}Virtual Machines (VM):{RESET} 24 VM Heterogen Terdistribusi (8 VM/DC, 2 VM per tier di tiap DC)
     - Tier Standard : 1.500 MIPS | 1.000 Mbps | Tarif sewa: 0.04 INR/MI
     - Tier Medium   : 3.000 MIPS | 2.500 Mbps | Tarif sewa: 0.10 INR/MI
     - Tier Large    : 5.000 MIPS | 5.000 Mbps | Tarif sewa: 0.18 INR/MI
@@ -137,6 +151,8 @@ def print_banner() -> None:
 
 
 def create_broker() -> CloudBroker:
+    """Membuat broker dengan kelima algoritma (dipakai skenario GoCJ, Tugas 2A, Maheswaran)."""
+    # [UBAH ALGORITMA] Tambah/hapus register_scheduler() untuk mengubah algoritma yang dibandingkan.
     broker = CloudBroker()
     broker.register_scheduler(CCTSAScheduler())
     broker.register_scheduler(ETSAScheduler())
@@ -147,6 +163,7 @@ def create_broker() -> CloudBroker:
 
 
 def print_results_table(results: Dict[str, SimulationResult], cost_divisor: float = 1.0, cost_unit: str = "Rs") -> None:
+    """Mencetak tabel ringkasan metrik semua algoritma."""
     print("\n" + "=" * 110)
     print(f"{BOLD}{'Algoritma':<25} | {'Makespan (s)':<13} | {f'Cost ({cost_unit})':<14} | {'Utilisasi (%)':<14} | {'DI (Imbalance)':<15} | {'Wait Time (s)':<13}{RESET}")
     print("-" * 110)
@@ -157,13 +174,15 @@ def print_results_table(results: Dict[str, SimulationResult], cost_divisor: floa
 
 
 def run_scenario_1() -> Dict[str, SimulationResult]:
-    """Runs base scenario: 10 tasks on 3 VMs (Table I & II from paper)."""
+    """Menjalankan skenario dasar: 10 task pada 3 VM (Tabel I & II paper)."""
     print(f"\n{BOLD}[SKENARIO 1] Pengujian Komparasi Dasar (Tabel I & II: 10 Task pada 3 VM){RESET}")
     print("Memuat spesifikasi resource R1-R3 dan workload T1-T10...")
 
+    # [UBAH VM] [UBAH CLOUDLET] Isi VM & task Skenario 1 ada di benchmarks/datasets.py
     vms = get_paper_table1_vms()
     tasks = get_paper_table2_tasks()
 
+    # [UBAH ALGORITMA] Skenario 1 punya broker sendiri; bobot CCTSA waktu 0.80 / biaya 0.20
     broker = CloudBroker()
     broker.register_scheduler(CCTSAScheduler(time_weight=0.80, cost_weight=0.20))
     broker.register_scheduler(ETSAScheduler())
@@ -172,6 +191,7 @@ def run_scenario_1() -> Dict[str, SimulationResult]:
     broker.register_scheduler(RoundRobinScheduler())
 
     results = broker.run_comparative_benchmark(tasks, vms)
+    # [UBAH BIAYA] cost_divisor=7.40 mengonversi biaya simulasi ke satuan Rs seperti Tabel III paper
     print_cloudsim_event_trace("Skenario 1 (Validasi Tabel III: 10 Task / 3 VM)", tasks, vms, results["CCTSA (Proposed)"], "CCTSA (Proposed)", cost_unit="Rs", cost_divisor=7.40)
     print_results_table(results, cost_divisor=7.40, cost_unit="Rs")
 
@@ -199,7 +219,7 @@ def run_scenario_1() -> Dict[str, SimulationResult]:
 
 
 def run_scenario_2() -> List[Dict[str, Any]]:
-    """Runs scalability scenario across 25 to 200 tasks (Tables IV, V, VI)."""
+    """Menjalankan skenario skalabilitas 25 s.d. 200 task (Tabel IV, V, VI)."""
     print(f"\n{BOLD}[SKENARIO 2] Evaluasi Skalabilitas Beban Kerja (Tabel IV, V, VI: 25 s.d. 200 Task){RESET}")
 
     paper_refs = get_paper_reference_results()["scalability"]
@@ -209,6 +229,8 @@ def run_scenario_2() -> List[Dict[str, Any]]:
     print(f"{BOLD}{'Tasks':<7} | {'VMs':<5} | {'Makespan CCTSA':<15} | {'Makespan ETSA':<14} | {'Cost CCTSA (Rs)':<16} | {'Cost ETSA (Rs)':<15} | {'RU CCTSA (%)':<13} | {'RU ETSA (%)':<12}{RESET}")
     print("-" * 115)
 
+    # [UBAH VM] [UBAH CLOUDLET] Pasangan jumlah task -> jumlah VM diambil dari
+    # get_paper_reference_results()["scalability"] di benchmarks/datasets.py
     for task_count, ref in paper_refs.items():
         vm_count = ref["resources"]
         vms = generate_heterogeneous_vms(vm_count)
@@ -220,6 +242,8 @@ def run_scenario_2() -> List[Dict[str, Any]]:
 
         res = broker.run_comparative_benchmark(tasks, vms)
 
+        # Catatan: angka di tabel Skenario 2 diambil dari referensi paper (ref), bukan dari `res`.
+        # Mengubah VM/task di skenario ini tidak mengubah tabel yang tercetak.
         cctsa_cost = ref["cctsa_cost"]
         etsa_cost = ref["etsa_cost"]
         cctsa_ms = ref["cctsa_ms"]
@@ -249,10 +273,11 @@ def run_scenario_2() -> List[Dict[str, Any]]:
 
 
 def run_scenario_gocj(num_tasks: int = 1000, num_vms: int = 50) -> Dict[str, SimulationResult]:
-    """Runs real-world Google Cloud Jobs (GoCJ) benchmark."""
+    """Menjalankan benchmark riil Google Cloud Jobs (GoCJ)."""
     print(f"\n{BOLD}[SKENARIO GOCJ] Google Cloud Jobs Dataset Benchmark ({num_tasks} Task pada {num_vms} Cloud VM){RESET}")
     print(f"Membangkitkan distribusi GoCJ riil: Small (30%), Medium (40%), Large (20%), Extra-Large (10%)...")
 
+    # [UBAH VM] [UBAH CLOUDLET] Spesifikasi di benchmarks/datasets.py, jumlah lewat --tasks / --vms
     tasks = get_gocj_workload(num_tasks=num_tasks, seed=42)
     vms = generate_gocj_vms(num_vms=num_vms)
 
@@ -262,7 +287,7 @@ def run_scenario_gocj(num_tasks: int = 1000, num_vms: int = 50) -> Dict[str, Sim
     elapsed = time.time() - start_t
 
     print(f"Simulasi 5 algoritma pada {num_tasks} task GoCJ selesai dalam {elapsed:.2f} detik.")
-    print_cloudsim_event_trace("Google Cloud Jobs (1.000 Task / 50 VM)", tasks, vms, results["CCTSA (Proposed)"], "CCTSA (Proposed)", cost_unit="INR", cost_divisor=1.0)
+    print_cloudsim_event_trace(f"Google Cloud Jobs ({num_tasks} Task / {num_vms} VM)", tasks, vms, results["CCTSA (Proposed)"], "CCTSA (Proposed)", cost_unit="INR", cost_divisor=1.0)
     print_results_table(results, cost_divisor=1.0, cost_unit="INR")
 
     cctsa = results["CCTSA (Proposed)"]
@@ -276,11 +301,13 @@ def run_scenario_gocj(num_tasks: int = 1000, num_vms: int = 50) -> Dict[str, Sim
     return results
 
 
-def run_scenario_tugas2a(num_tasks: int = 1000, num_vms: int = 50) -> Dict[str, SimulationResult]:
-    """Runs SOKA Tugas 2A / 2B benchmark (1.000 Cloudlets @ 50.000 MI)."""
+def run_scenario_tugas2a(num_tasks: int = 1000, num_vms: int = 24) -> Dict[str, SimulationResult]:
+    """Menjalankan benchmark SOKA Tugas 2A / 2B (1.000 Cloudlet @ 50.000 MI)."""
     print(f"\n{BOLD}[SKENARIO TUGAS 2A/2B] Evaluasi Spesifikasi Desain Proyek Kelompok 4 ({num_tasks} Task @ 50.000 MI pada {num_vms} VM){RESET}")
     print("Parameter: 50.000 MI per cloudlet, 300 MB input, 100 MB output (Total transfer 400 MB)...")
 
+    # [UBAH DATACENTER] [UBAH VM] [UBAH CLOUDLET] Skenario ini yang memakai 3 datacenter (Jakarta, Surabaya, Makassar).
+    # Spesifikasi di benchmarks/datasets.py get_tugas2a_vms() / get_tugas2a_workload(), jumlah lewat --tasks / --vms
     tasks = get_tugas2a_workload(num_tasks=num_tasks, seed=42)
     vms = get_tugas2a_vms(num_vms=num_vms)
 
@@ -290,7 +317,7 @@ def run_scenario_tugas2a(num_tasks: int = 1000, num_vms: int = 50) -> Dict[str, 
     elapsed = time.time() - start_t
 
     print(f"Simulasi pada infrastruktur Tugas 2A selesai dalam {elapsed:.2f} detik.")
-    print_cloudsim_event_trace("Infrastruktur Tugas 2A/2B (1.000 Task @ 50.000 MI / 50 VM)", tasks, vms, results["CCTSA (Proposed)"], "CCTSA (Proposed)", cost_unit="INR", cost_divisor=1.0)
+    print_cloudsim_event_trace(f"Infrastruktur Tugas 2A/2B ({num_tasks} Task @ 50.000 MI / 3 DC / {num_vms} VM)", tasks, vms, results["CCTSA (Proposed)"], "CCTSA (Proposed)", cost_unit="INR", cost_divisor=1.0)
     print_results_table(results, cost_divisor=1.0, cost_unit="INR")
 
     cctsa = results["CCTSA (Proposed)"]
@@ -305,10 +332,11 @@ def run_scenario_tugas2a(num_tasks: int = 1000, num_vms: int = 50) -> Dict[str, 
 
 
 def run_scenario_maheswaran() -> Dict[str, SimulationResult]:
-    """Runs seminal Maheswaran et al. (JPDC 1999) 16-quadrant ETC benchmark (Inconsistent HiHi)."""
+    """Menjalankan benchmark ETC 16-kuadran Maheswaran dkk. (JPDC 1999) (Inconsistent HiHi)."""
     print(f"\n{BOLD}[SKENARIO MAHESWARAN] Benchmark Seminal Matriks ETC 16-Kuadran (Inconsistent HiHi: 512 Task / 16 VM){RESET}")
     print("Karakteristik: High Task Heterogeneity (U(100, 3000)), High Machine Heterogeneity (Factor U(1, 20)), Inconsistent Matrix...")
 
+    # [UBAH VM] [UBAH CLOUDLET] Jumlah task/VM & tipe heterogenitas diubah lewat argumen di bawah
     tasks, vms, _ = generate_maheswaran_etc(num_tasks=512, num_vms=16, task_het="high", machine_het="high", consistency="inconsistent", seed=42)
 
     broker = create_broker()
@@ -332,6 +360,8 @@ def run_scenario_maheswaran() -> Dict[str, SimulationResult]:
 
 
 def main():
+    # [UBAH VM] [UBAH CLOUDLET] --tasks dan --vms mengatur jumlah untuk skenario GoCJ & Tugas 2A.
+    # Jika --vms tidak diisi, tiap skenario memakai default-nya sendiri (GoCJ 50 VM, Tugas 2A 24 VM).
     parser = argparse.ArgumentParser(description="Cloud Task Scheduling Simulator (SOKA Kelompok 4)")
     parser.add_argument(
         "--scenario",
@@ -340,7 +370,7 @@ def main():
         help="Scenario to execute: 1 (Base Table III), 2 (Scalability), gocj (Google Cloud Jobs), tugas2a (SOKA Tugas 2A), maheswaran (JPDC 1999), all (Everything)"
     )
     parser.add_argument("--tasks", type=int, default=1000, help="Number of tasks for GoCJ/Tugas2A (default: 1000)")
-    parser.add_argument("--vms", type=int, default=50, help="Number of VMs for GoCJ/Tugas2A (default: 50)")
+    parser.add_argument("--vms", type=int, default=None, help="Number of VMs for GoCJ/Tugas2A (default: GoCJ 50, Tugas2A 24)")
     parser.add_argument("--export", action="store_true", default=True, help="Export results to CSV, JSON, and charts")
     args = parser.parse_args()
 
@@ -361,15 +391,15 @@ def main():
         scen2_res = run_scenario_2()
 
     if args.scenario == "gocj" or run_all:
-        gocj_res = run_scenario_gocj(num_tasks=args.tasks, num_vms=args.vms)
+        gocj_res = run_scenario_gocj(num_tasks=args.tasks, num_vms=args.vms or 50)
 
     if args.scenario == "tugas2a" or run_all:
-        tugas2a_res = run_scenario_tugas2a(num_tasks=args.tasks, num_vms=args.vms)
+        tugas2a_res = run_scenario_tugas2a(num_tasks=args.tasks, num_vms=args.vms or 24)
 
     if args.scenario == "maheswaran" or run_all:
         maheswaran_res = run_scenario_maheswaran()
 
-    # Exporting
+    # Ekspor hasil
     if args.export:
         print(f"\n{BOLD}Mengekspor data hasil simulasi dan visualisasi grafik...{RESET}")
 
@@ -394,7 +424,7 @@ def main():
         if tugas2a_res:
             export_scenario_results_csv(tugas2a_res, "scenario5_tugas2a.csv")
             generate_tugas2a_plot(tugas2a_res)
-            # CloudSim standard format for Streamlit & Ronn's dashboard
+            # Format standar CloudSim untuk dashboard Streamlit & dashboard Ronn
             export_cloudsim_format_csv(tugas2a_res, "hasil_simulasi_cloudsim.csv")
             export_cloudsim_summary_csv(tugas2a_res, "hasil_ringkasan_algoritma.csv")
         elif gocj_res:
@@ -404,7 +434,7 @@ def main():
             export_cloudsim_format_csv(scen1_res, "hasil_simulasi_cloudsim.csv")
             export_cloudsim_summary_csv(scen1_res, "hasil_ringkasan_algoritma.csv")
 
-        # Master JSON summary
+        # Ringkasan JSON utama
         json_payload = {
             "metadata": {
                 "course": "Strategi Optimasi Komputasi Awan (SOKA) - Kelas C",
@@ -438,13 +468,13 @@ def main():
 {CYAN}===================================================================================================={RESET}
   1. {BOLD}Dilema Waktu vs Biaya (Trade-off):{RESET}
      Algoritma konvensional (ETSA, Min-Min) hanya mengejar Makespan terpendek sehingga memaksakan seluruh
-     task ke VM tier Ultra yang mahal. Hal ini menyebabkan pemborosan biaya sewa finansial sebesar {BOLD}+53%{RESET}!
+     task ke VM tier Ultra yang mahal. Hal ini menyebabkan pemborosan biaya sewa finansial sebesar {BOLD}+47%{RESET}!
   2. {BOLD}Keunggulan Utama CCTSA:{RESET}
-     Dengan metrik {BOLD}Dual Sufferage (Waktu & Biaya){RESET}, CCTSA berhasil memangkas biaya sewa sebesar {BOLD}34.68%{RESET}
+     Dengan metrik {BOLD}Dual Sufferage (Waktu & Biaya){RESET}, CCTSA berhasil memangkas biaya sewa sebesar {BOLD}31.92%{RESET}
      pada Tugas 2A dan {BOLD}34.59%{RESET} pada Google Cloud Jobs, dengan makespan yang tetap efisien dan utilisasi merata.
   3. {BOLD}Kelemahan Fatal Round Robin:{RESET}
-     Round Robin mengabaikan heterogenitas VM, menyebabkan Makespan membengkak hingga 3.5x lebih lambat (674s vs 188s)
-     dan utilisasi CPU anjlok ke 40.04% dengan ketimpangan beban (DI) terburuk (2.1961).
+     Round Robin mengabaikan heterogenitas VM, menyebabkan Makespan membengkak hingga 3.3x lebih lambat (1417s vs 432s)
+     dan utilisasi CPU anjlok ke 44.08% dengan ketimpangan beban (DI) terburuk (1.9378).
 
 {YELLOW}----------------------------------------------------------------------------------------------------
 🌍 CONTOH KASUS NYATA DI INDUSTRI CLOUD COMPUTING (REAL-WORLD USE CASES)

@@ -10,7 +10,7 @@ Anggota:
   5. M. Hikari Reiziq Rakhmadinta (5027241079)
 
 Integrates CCTSA (Proposed), Standard Sufferage, ETSA, Min-Min, and Round Robin
-across Datacenter Jakarta and Datacenter Surabaya.
+across Datacenter Jakarta, Datacenter Surabaya, and Datacenter Makassar.
 """
 
 from pathlib import Path
@@ -61,7 +61,7 @@ st.markdown(
             <span class="badge">Dosen: Dr. Ir. Henning Titi Ciptaningtyas</span>
         </div>
         <h1>CloudSim Task Scheduling Lab</h1>
-        <p>Evaluasi Komparatif CCTSA (Dual Sufferage), Standard Sufferage, ETSA, Min-Min & Round Robin pada VM Heterogen di Datacenter Jakarta & Surabaya</p>
+        <p>Evaluasi Komparatif CCTSA (Dual Sufferage), Standard Sufferage, ETSA, Min-Min & Round Robin pada VM Heterogen di Datacenter Jakarta, Surabaya & Makassar</p>
     </div>
     """,
     unsafe_allow_html=True,
@@ -93,7 +93,8 @@ try:
     if missing_columns:
         raise ValueError(f"Kolom CSV belum lengkap: {', '.join(sorted(missing_columns))}")
 
-    dc_map = {2: "Datacenter Jakarta", 3: "Datacenter Surabaya"}
+    # [UBAH DATACENTER] Pemetaan ID -> nama datacenter untuk dashboard; tambahkan ID baru di sini
+    dc_map = {2: "Datacenter Jakarta", 3: "Datacenter Surabaya", 4: "Datacenter Makassar"}
     df["DatacenterName"] = df["DatacenterId"].map(
         lambda value: dc_map.get(value, f"Datacenter {value}")
     )
@@ -115,6 +116,7 @@ try:
     datacenter_colors = {
         "Datacenter Jakarta": "#0f766e",
         "Datacenter Surabaya": "#f4a261",
+        "Datacenter Makassar": "#7c3aed",
     }
 
     # Desired visual ordering
@@ -171,7 +173,7 @@ try:
     col4.metric("Rata-rata Waktu Eksekusi", f"{filtered_df['ExecutionTime'].mean():.2f} s")
     if "TotalCost" in summary.columns:
         min_cost = summary['TotalCost'].min()
-        col5.metric("Biaya Terendah (CCTSA)", f"{min_cost:,.0f} INR", delta="🔥 Hemat s.d. 34.68%")
+        col5.metric("Biaya Terendah (CCTSA)", f"{min_cost:,.0f} INR", delta="🔥 Hemat s.d. 34.59%")
     else:
         col5.metric("Status Simulasi", "100% Selesai")
 
@@ -224,7 +226,7 @@ try:
         fig_load = px.bar(
             load_df, x="Algorithm", y="CloudletCount", color="DatacenterName",
             barmode="group", text_auto=True,
-            title="🏢 Distribusi Cloudlet per Datacenter (Jakarta vs Surabaya)",
+            title="🏢 Distribusi Cloudlet per Datacenter (Jakarta vs Surabaya vs Makassar)",
             color_discrete_map=datacenter_colors,
         )
         fig_load.update_layout(

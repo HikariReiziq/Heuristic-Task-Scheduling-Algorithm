@@ -1,9 +1,9 @@
 package cost;
 
 /**
- * TaskTime data structure.
- * Corresponds to the NetBeans CloudSim project structure shown in Implementation_Window.png.
- * Used for storing task mapping, execution times, and completion metrics.
+ * Struktur data TaskTime.
+ * Sesuai struktur proyek NetBeans CloudSim pada Implementation_Window.png.
+ * Menyimpan pemetaan task ke VM, waktu eksekusi, waktu selesai, dan biaya.
  */
 public class TaskTime {
     private int taskId;

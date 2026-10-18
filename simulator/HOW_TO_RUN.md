@@ -67,7 +67,7 @@ python3 run_simulation.py --scenario 2
 python3 run_simulation.py --scenario gocj
 ```
 
-### Opsi E: Jalankan Skenario Tugas 2A/2B (Desain Infrastruktur: 1.000 Task @ 50.000 MI pada 50 VM)
+### Opsi E: Jalankan Skenario Tugas 2A/2B (Desain Infrastruktur: 1.000 Task @ 50.000 MI pada 3 DC / 15 Host / 24 VM)
 ```bash
 python3 run_simulation.py --scenario tugas2a
 ```
@@ -133,7 +133,7 @@ Setiap eksekusi akan otomatis memperbarui file di folder `results/`:
 | **`scenario2_scalability.csv`** | Evaluasi skalabilitas beban 25 s.d. 200 task (Skenario 2 - Tabel IV, V, VI). |
 | **`scenario3_gocj.csv`** | Data komparasi 5 algoritma pada dataset Google Cloud Jobs (1.000 task pada 50 VM). |
 | **`scenario4_maheswaran.csv`** | Evaluasi matriks ETC Maheswaran JPDC 1999 (Inconsistent HiHi 512 task pada 16 VM). |
-| **`scenario5_tugas2a.csv`** | Evaluasi infrastruktur SOKA Tugas 2A (1.000 task @ 50.000 MI pada 50 VM). |
+| **`scenario5_tugas2a.csv`** | Evaluasi infrastruktur SOKA Tugas 2A (1.000 task @ 50.000 MI pada 3 DC / 15 Host / 24 VM). |
 | **`hasil_simulasi_cloudsim.csv`** | Log alokasi task rinci 5.000 baris kompatibel standar CloudSim. |
 | **`hasil_ringkasan_algoritma.csv`** | Ringkasan skor gabungan dan ranking efisiensi algoritma. |
 | **`task_allocations.csv`** | Log jejak alokasi task ke VM (start time, finish time, cost, waiting time). |

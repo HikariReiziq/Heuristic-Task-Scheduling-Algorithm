@@ -4,7 +4,9 @@ import java.util.*;
 
 /**
  * Execution Time based Sufferage Algorithm (ETSA).
- * Baseline algorithm by Krishnaveni & Sinthu Janita (Springer 2019).
+ * Algoritma pembanding (baseline) oleh Krishnaveni & Sinthu Janita (Springer 2019).
+ *
+ * [UBAH VM] [UBAH CLOUDLET] [UBAH BIAYA] -> ubah di Details.java, bukan di sini.
  */
 public class ETSA {
 
@@ -22,6 +24,7 @@ public class ETSA {
             unassignedTasks.add(i);
         }
 
+        // Matriks ETC (waktu) dan ECC (biaya), rumus sama dengan CostCTSA.java
         double[][] etc = new double[numTasks][numResources];
         double[][] ecc = new double[numTasks][numResources];
 
@@ -35,6 +38,7 @@ public class ETSA {
 
         List<TaskTime> scheduledTasks = new ArrayList<>();
 
+        // Tiap iterasi: pilih task dengan sufferage waktu terbesar (CT minimum ke-2 - ke-1)
         while (!unassignedTasks.isEmpty()) {
             Integer bestTask = null;
             int bestVm = 0;
@@ -90,6 +94,7 @@ public class ETSA {
         }
 
         double resourceUtilization = (totalTime / (numResources * makespan)) * 100.0;
+        // [UBAH BIAYA] Faktor konversi ke Rs agar sama dengan Tabel III paper
         double costInRupees = totalCost / 7.40;
 
         System.out.println("\n========== ETSA Simulation Results ==========");

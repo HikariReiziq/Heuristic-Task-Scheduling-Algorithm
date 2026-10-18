@@ -26,8 +26,14 @@ def build_dashboard():
     else:
         summary_data = {}
 
-    # Read first 80 rows per algorithm from CloudSim CSV for Gantt Chart
+    # [UBAH DATACENTER] Peta ID -> nama datacenter; tambahkan ID baru di sini
+    DATACENTER_NAMES = {2: "Datacenter Jakarta", 3: "Datacenter Surabaya", 4: "Datacenter Makassar"}
+
+    # Baca 60 baris pertama per algoritma dari CSV CloudSim untuk Gantt Chart,
+    # dan hitung jumlah cloudlet per datacenter untuk grafik distribusi datacenter.
+    # Catatan: CSV ini berasal dari skenario Tugas 2A (lihat run_simulation.py bagian ekspor).
     gantt_data = {}
+    dc_counts = {}
     if os.path.exists(CLOUDSIM_CSV):
         with open(CLOUDSIM_CSV, "r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
@@ -35,12 +41,15 @@ def build_dashboard():
                 algo = row["Algorithm"]
                 if algo not in gantt_data:
                     gantt_data[algo] = []
+                dc_name = DATACENTER_NAMES.get(int(row["DatacenterId"]), f"Datacenter {row['DatacenterId']}")
+                dc_counts.setdefault(algo, {})
+                dc_counts[algo][dc_name] = dc_counts[algo].get(dc_name, 0) + 1
                 if len(gantt_data[algo]) < 60:
                     gantt_data[algo].append({
                         "task_id": int(row["CloudletId"]),
                         "vm_id": int(row["VmId"]),
                         "dc_id": int(row["DatacenterId"]),
-                        "dc_name": "Datacenter Jakarta" if int(row["DatacenterId"]) == 2 else "Datacenter Surabaya",
+                        "dc_name": dc_name,
                         "start": float(row["StartTime"]),
                         "finish": float(row["FinishTime"]),
                         "duration": float(row["ExecutionTime"])
@@ -48,6 +57,7 @@ def build_dashboard():
 
     summary_json_str = json.dumps(summary_data)
     gantt_json_str = json.dumps(gantt_data)
+    dc_counts_json_str = json.dumps(dc_counts)
 
     html_content = f"""<!DOCTYPE html>
 <html lang="id">
@@ -834,7 +844,7 @@ def build_dashboard():
     </div>
     <h1 class="title">CloudSim Task Scheduling Lab & Evaluation</h1>
     <p class="subtitle">
-      Platform komparasi komputasi awan heuristik <strong>CCTSA (Dual Sufferage)</strong>, <strong>Standard Sufferage</strong>, <strong>ETSA</strong>, <strong>Min-Min</strong>, dan <strong>Round Robin</strong> pada multi-datacenter geografis terdistribusi (Jakarta & Surabaya).
+      Platform komparasi komputasi awan heuristik <strong>CCTSA (Dual Sufferage)</strong>, <strong>Standard Sufferage</strong>, <strong>ETSA</strong>, <strong>Min-Min</strong>, dan <strong>Round Robin</strong> pada multi-datacenter geografis terdistribusi (Jakarta, Surabaya & Makassar).
     </p>
 
     <!-- Team Showcase -->
@@ -913,7 +923,7 @@ def build_dashboard():
       </div>
       <div class="check-item">
         <div class="check-icon">✓</div>
-        <div><strong>Poin 2:</strong> Datacenter multi-region Jakarta & Surabaya (20 Host, 50 VM Heterogen).</div>
+        <div><strong>Poin 2:</strong> Datacenter multi-region Jakarta, Surabaya & Makassar (15 Host, 24 VM Heterogen).</div>
       </div>
       <div class="check-item">
         <div class="check-icon">✓</div>
@@ -969,11 +979,12 @@ def build_dashboard():
   • CCTSA menyempurnakan Sufferage klasik dengan menghitung <span class="term-success">Dual Sufferage Metric (Waktu & Biaya)</span>.
 
 <span class="term-info">🏢 2. SPESIFIKASI INFRASTRUKTUR CLOUD & WORKLOAD (DESAIN TUGAS 2A KELOMPOK 4)</span>
-  • Datacenter Terdistribusi: 2 Datacenter Geografis
-    - 📍 Datacenter 1 (Jakarta)   [ID: 2] -> 10 Host Fisik & 25 VM
-    - 📍 Datacenter 2 (Surabaya)  [ID: 3] -> 10 Host Fisik & 25 VM
-  • Host Fisik: 20 Server (16 Core CPU, 64 GB RAM, 10 Gbps Bandwidth)
-  • Virtual Machines: 50 VM Heterogen (1.500 MIPS s.d. 8.000 MIPS, tarif $0.04 - $0.32 / MI)
+  • Datacenter Terdistribusi: 3 Datacenter Geografis
+    - 📍 Datacenter 1 (Jakarta)   [ID: 2] -> 5 Host Fisik & 8 VM
+    - 📍 Datacenter 2 (Surabaya)  [ID: 3] -> 5 Host Fisik & 8 VM
+    - 📍 Datacenter 3 (Makassar)  [ID: 4] -> 5 Host Fisik & 8 VM
+  • Host Fisik: 15 Server (16 Core CPU, 64 GB RAM, 10 Gbps Bandwidth)
+  • Virtual Machines: 24 VM Heterogen (1.500 MIPS s.d. 8.000 MIPS, tarif $0.04 - $0.32 / MI)
   • Workload: 1.000 Cloudlet Task @ 50.000 MI, transfer data 400 MB (300 MB In + 100 MB Out)
 
 <span class="term-success">[STATUS] Sistem simulator siap dieksekusi! Klik salah satu tombol skenario di atas untuk menjalankan streaming simulasi live.</span>
@@ -1016,12 +1027,13 @@ def build_dashboard():
 
       <!-- Box 3 -->
       <div class="theory-box">
-        <h4>🏢 3. Arsitektur 2 Datacenter (Tugas 2A)</h4>
+        <h4>🏢 3. Arsitektur 3 Datacenter (Tugas 2A)</h4>
         <p>Sesuai rancangan pada presentasi Tugas 2A Kelompok 4:</p>
         <ul>
-          <li><strong>Datacenter Jakarta (ID: 2):</strong> 10 Host Fisik, 25 VM Heterogen.</li>
-          <li><strong>Datacenter Surabaya (ID: 3):</strong> 10 Host Fisik, 25 VM Heterogen.</li>
-          <li><strong>Total Sumber Daya:</strong> 20 Host, 320 Core CPU, 1.280 GB RAM, Jaringan 10 Gbps.</li>
+          <li><strong>Datacenter Jakarta (ID: 2):</strong> 5 Host Fisik, 8 VM Heterogen.</li>
+          <li><strong>Datacenter Surabaya (ID: 3):</strong> 5 Host Fisik, 8 VM Heterogen.</li>
+          <li><strong>Datacenter Makassar (ID: 4):</strong> 5 Host Fisik, 8 VM Heterogen.</li>
+          <li><strong>Total Sumber Daya:</strong> 15 Host, 240 Core CPU, 960 GB RAM, Jaringan 10 Gbps.</li>
           <li><strong>Kapasitas VM:</strong> 4 Tier performa: Standard (1.500 MIPS), Medium (3.000 MIPS), Large (5.000 MIPS), Ultra (8.000 MIPS).</li>
         </ul>
       </div>
@@ -1031,7 +1043,7 @@ def build_dashboard():
         <h4>📊 4. 4 Dataset Workload Pengujian</h4>
         <ul>
           <li><strong>Validasi Paper Krishnaveni 2019 (Tabel I & II):</strong> 10 Task / 3 VM untuk membuktikan replikasi matematis rumus dasar sama persis dengan paper.</li>
-          <li><strong>Skenario Tugas 2A / 2B:</strong> Cetak biru kelompok (1.000 Task @ 50.000 MI, transfer 400 MB, Poisson arrival) pada 50 VM heterogen.</li>
+          <li><strong>Skenario Tugas 2A / 2B:</strong> Cetak biru kelompok (1.000 Task @ 50.000 MI, transfer 400 MB, Poisson arrival) pada 24 VM heterogen di 3 datacenter.</li>
           <li><strong>Google Cloud Jobs (GoCJ):</strong> Dataset riil klaster Google (Small 30%, Medium 40%, Large 20%, XL 10%).</li>
           <li><strong>Benchmark Maheswaran JPDC 1999:</strong> 16 kuadran matriks ETC (512 Task / 16 VM, Inconsistent High-High).</li>
         </ul>
@@ -1042,7 +1054,7 @@ def build_dashboard():
   <!-- 5. Scenario Navigation Tabs -->
   <nav class="tabs-wrapper" id="scenarioTabs">
     <button class="tab-btn active" onclick="switchScenario('scenario_tugas2a')">
-      🏢 Skenario Tugas 2A (1.000 Task @ 50k MI / 2 DC / 50 VM)
+      🏢 Skenario Tugas 2A (1.000 Task @ 50k MI / 3 DC / 24 VM)
     </button>
     <button class="tab-btn" onclick="switchScenario('scenario_gocj')">
       🌐 Google Cloud Jobs (GoCJ: 1.000 Task / Poisson)
@@ -1079,8 +1091,8 @@ def build_dashboard():
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Total Cloudlet & VM</div>
-      <div class="kpi-value" id="kpiScale">1.000 / 50</div>
-      <div class="kpi-subtext">Jakarta & Surabaya</div>
+      <div class="kpi-value" id="kpiScale">1.000 / 24</div>
+      <div class="kpi-subtext">Jakarta, Surabaya & Makassar</div>
     </div>
   </section>
 
@@ -1116,8 +1128,8 @@ def build_dashboard():
     <div class="chart-card">
       <div class="chart-header">
         <div>
-          <div class="chart-title">🏢 Distribusi Task per Datacenter (Jakarta vs Surabaya)</div>
-          <div class="chart-desc">Pemerataan alokasi beban di dua fasilitas datacenter geografis terpisah</div>
+          <div class="chart-title">🏢 Distribusi Task per Datacenter (Jakarta vs Surabaya vs Makassar)</div>
+          <div class="chart-desc">Pemerataan alokasi beban di tiga fasilitas datacenter geografis terpisah</div>
         </div>
       </div>
       <div class="chart-wrapper">
@@ -1234,7 +1246,7 @@ def build_dashboard():
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
       <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px; text-align: center;">
         <img src="results/scenario5_tugas2a_comparison.png" alt="Tugas 2A Benchmark" style="width: 100%; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1);" onerror="this.src='results/scenario5_tugas2a_comparison.svg'">
-        <div style="font-size: 0.82rem; font-weight: 600; color: #fff; margin-top: 8px;">Tugas 2A: 1.000 Task / 50 VM</div>
+        <div style="font-size: 0.82rem; font-weight: 600; color: #fff; margin-top: 8px;">Tugas 2A: 1.000 Task / 3 DC / 24 VM</div>
         <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;"><a href="results/scenario5_tugas2a_comparison.png" download style="color: #38bdf8; text-decoration: underline;">Unduh PNG</a> • <a href="results/scenario5_tugas2a_comparison.svg" download style="color: #34d399; text-decoration: underline;">Unduh SVG</a></div>
       </div>
       <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 12px; text-align: center;">
@@ -1268,9 +1280,9 @@ def build_dashboard():
       </div>
     </div>
     <div style="font-size: 0.92rem; color: #cbd5e1; line-height: 1.8;">
-      <p>1. <strong>Analisis Trade-Off Waktu vs Biaya:</strong> Algoritma konvensional (ETSA & Min-Min) hanya fokus pada waktu minimum sehingga memaksakan seluruh task ke VM tier Ultra berbiaya mahal. Hal ini menyebabkan pemborosan biaya sewa komputasi hingga <strong>+53%</strong>.</p>
-      <p style="margin-top: 8px;">2. <strong>Keunggulan Terbukti CCTSA:</strong> Dengan mengintegrasikan <em>Dual Sufferage Metric</em>, CCTSA terbukti berhasil memangkas biaya sewa sebesar <strong>34.68% pada Skenario Tugas 2A</strong> dan <strong>34.59% pada Google Cloud Jobs (GoCJ)</strong> dengan makespan yang tetap efisien dan utilisasi merata.</p>
-      <p style="margin-top: 8px;">3. <strong>Kelemahan Fatal Round Robin:</strong> Round Robin buta terhadap heterogenitas kecepatan CPU (MIPS) dan tarif sewa VM. Akibatnya, Makespan membengkak hingga <strong>3.5x lebih lambat</strong> (674s vs 188s) dan utilisasi anjlok drastis ke 40.04% dengan ketimpangan beban (DI) terburuk.</p>
+      <p>1. <strong>Analisis Trade-Off Waktu vs Biaya:</strong> Algoritma konvensional (ETSA & Min-Min) hanya fokus pada waktu minimum sehingga memaksakan seluruh task ke VM tier Ultra berbiaya mahal. Hal ini menyebabkan pemborosan biaya sewa komputasi hingga <strong>+47%</strong>.</p>
+      <p style="margin-top: 8px;">2. <strong>Keunggulan Terbukti CCTSA:</strong> Dengan mengintegrasikan <em>Dual Sufferage Metric</em>, CCTSA terbukti berhasil memangkas biaya sewa sebesar <strong>31.92% pada Skenario Tugas 2A</strong> dan <strong>34.59% pada Google Cloud Jobs (GoCJ)</strong> dengan makespan yang tetap efisien dan utilisasi merata.</p>
+      <p style="margin-top: 8px;">3. <strong>Kelemahan Fatal Round Robin:</strong> Round Robin buta terhadap heterogenitas kecepatan CPU (MIPS) dan tarif sewa VM. Akibatnya, Makespan membengkak hingga <strong>3.3x lebih lambat</strong> (1417s vs 432s) dan utilisasi anjlok drastis ke 44.08% dengan ketimpangan beban (DI) terburuk.</p>
     </div>
   </section>
 
@@ -1284,6 +1296,7 @@ def build_dashboard():
   // Embedded Data from Simulator
   const SIMULATION_DATA = {summary_json_str};
   const GANTT_DATA = {gantt_json_str};
+  const DC_COUNTS = {dc_counts_json_str};
 
   let currentScenarioKey = 'scenario_tugas2a';
   let chartMakespanInstance = null;
@@ -1462,34 +1475,28 @@ def build_dashboard():
       }}
     }});
 
-    // Chart 3: Datacenter Distribution (Jakarta vs Surabaya)
+    // Chart 3: Distribusi Datacenter (Jakarta vs Surabaya vs Makassar), jumlah asli dari CSV CloudSim
     if (chartDatacenterInstance) chartDatacenterInstance.destroy();
     const ctx3 = document.getElementById('chartDatacenter').getContext('2d');
-    const jktTasks = labels.map((_, i) => Math.round((scenData[algos[i]].num_tasks || 100) * 0.52));
-    const sbyTasks = labels.map((_, i) => Math.round((scenData[algos[i]].num_tasks || 100) * 0.48));
+    // [UBAH DATACENTER] Daftar datacenter & warna grafik; tambahkan entri baru di sini
+    const DC_SERIES = [
+      {{ name: 'Datacenter Jakarta', bg: '#0f766ecc', border: '#14b8a6' }},
+      {{ name: 'Datacenter Surabaya', bg: '#c2410caa', border: '#f97316' }},
+      {{ name: 'Datacenter Makassar', bg: '#7c3aedaa', border: '#a78bfa' }}
+    ];
 
     chartDatacenterInstance = new Chart(ctx3, {{
       type: 'bar',
       data: {{
         labels: labels,
-        datasets: [
-          {{
-            label: '📍 Datacenter Jakarta',
-            data: jktTasks,
-            backgroundColor: '#0f766ecc',
-            borderColor: '#14b8a6',
-            borderWidth: 1.5,
-            borderRadius: 6
-          }},
-          {{
-            label: '📍 Datacenter Surabaya',
-            data: sbyTasks,
-            backgroundColor: '#c2410caa',
-            borderColor: '#f97316',
-            borderWidth: 1.5,
-            borderRadius: 6
-          }}
-        ]
+        datasets: DC_SERIES.map(dc => ({{
+          label: '📍 ' + dc.name,
+          data: algos.map(a => (DC_COUNTS[a] || {{}})[dc.name] || 0),
+          backgroundColor: dc.bg,
+          borderColor: dc.border,
+          borderWidth: 1.5,
+          borderRadius: 6
+        }}))
       }},
       options: {{
         responsive: true,
@@ -1573,8 +1580,9 @@ def build_dashboard():
     list.slice(0, 30).forEach(t => {{
       const leftPct = (t.start / maxFinish) * 100;
       const widthPct = Math.max((t.duration / maxFinish) * 100, 1.5);
-      const isJkt = t.dc_id === 2;
-      const barColor = isJkt ? '#0f766e' : '#c2410c';
+      // [UBAH DATACENTER] Warna & singkatan per ID datacenter di Gantt Chart
+      const DC_STYLE = {{ 2: ['#0f766e', 'JKT'], 3: ['#c2410c', 'SBY'], 4: ['#7c3aed', 'MKS'] }};
+      const [barColor, dcCode] = DC_STYLE[t.dc_id] || ['#475569', 'DC' + t.dc_id];
 
       const row = document.createElement('div');
       row.className = 'gantt-row';
@@ -1582,7 +1590,7 @@ def build_dashboard():
         <div class="gantt-label">Task-${{t.task_id}}</div>
         <div class="gantt-track">
           <div class="gantt-bar" style="left: ${{leftPct.toFixed(2)}}%; width: ${{widthPct.toFixed(2)}}%; background: ${{barColor}};" title="Task ${{t.task_id}} on VM ${{t.vm_id}} (${{t.dc_name}}) [${{t.start.toFixed(2)}}s - ${{t.finish.toFixed(2)}}s]">
-            VM-${{t.vm_id}} (${{isJkt ? 'JKT' : 'SBY'}})
+            VM-${{t.vm_id}} (${{dcCode}})
           </div>
         </div>
       `;
@@ -1661,50 +1669,60 @@ def build_dashboard():
         `INFO    6.82: SOKA_CloudBroker: [RECEIVER] Cloudlet #2 finished in Vm #2 and returned to broker.`,
         `INFO  777.95: SOKA_CloudBroker: [FINISH] All 1000 Cloudlets finished execution. Broker shutting down.`,
         `<span style="color:#34d399; font-weight:600;">[✓ SKENARIO 3 SELESAI] Makespan: 777.95s | Cost: 23,631,864 INR (Hemat 34.59% vs baseline)</span>\\n`,
-        `<span style="color:#38bdf8; font-weight:600;">[4/5] INITIATING SKENARIO 4: TUGAS 2A KELOMPOK 4 (1.000 TASK @ 50.000 MI / 50 VM)</span>`,
-        `<span style="color:#38bdf8;">0.00: Broker: Cloud Resource List received with 2 datacenter(s) [DC_Jakarta, DC_Surabaya]</span>`,
-        `0.00: DC_Jakarta : 10 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS, 64GB RAM)`,
-        `0.00: DC_Surabaya: 10 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS, 64GB RAM)`,
+        `<span style="color:#38bdf8; font-weight:600;">[4/5] INITIATING SKENARIO 4: TUGAS 2A KELOMPOK 4 (1.000 TASK @ 50.000 MI / 3 DC / 24 VM)</span>`,
+        `<span style="color:#38bdf8;">0.00: Broker: Cloud Resource List received with 3 datacenter(s) [DC_Jakarta, DC_Surabaya, DC_Makassar]</span>`,
+        `0.00: DC_Jakarta : 5 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS/core, 64GB RAM, 10 Gbps SAN)`,
+        `0.00: DC_Surabaya: 5 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS/core, 64GB RAM, 10 Gbps SAN)`,
+        `0.00: DC_Makassar: 5 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS/core, 64GB RAM, 10 Gbps SAN)\\n`,
         `<span style="color:#fbbf24; font-weight:600;">--- [FASE 1: VM CREATION & HOST ALLOCATION] ---</span>`,
         `0.00: Broker: Trying to Create Vm #1 in DC_Jakarta`,
         `0.00: DC_Jakarta.guestAllocator: Vm #1 has been allocated to Host #0`,
-        `0.01: Broker: Vm #1 (MIPS: 1500, BW: 1000 Mbps, RAM: 8192 MB) created in DC_Jakarta, Host #0`,
+        `0.01: Broker: Vm #1 (MIPS: 1500, BW: 1000 Mbps, RAM: 8192 MB) has been created in DC_Jakarta, Host #0`,
         `0.00: Broker: Trying to Create Vm #2 in DC_Jakarta`,
         `0.00: DC_Jakarta.guestAllocator: Vm #2 has been allocated to Host #1`,
-        `0.01: Broker: Vm #2 (MIPS: 3000, BW: 2500 Mbps, RAM: 8192 MB) created in DC_Jakarta, Host #1`,
-        `<span style="color:#64748b; font-style:italic;">... [48 VM creation and host allocation events completed across Datacenter cluster] ...</span>`,
-        `<span style="color:#34d399; font-weight:600;">0.01: Broker: Total 50 VMs successfully initialized in Datacenter cluster.</span>\\n`,
+        `0.01: Broker: Vm #2 (MIPS: 3000, BW: 2500 Mbps, RAM: 8192 MB) has been created in DC_Jakarta, Host #1`,
+        `0.00: Broker: Trying to Create Vm #3 in DC_Jakarta`,
+        `0.00: DC_Jakarta.guestAllocator: Vm #3 has been allocated to Host #2`,
+        `0.01: Broker: Vm #3 (MIPS: 5000, BW: 5000 Mbps, RAM: 8192 MB) has been created in DC_Jakarta, Host #2`,
+        `<span style="color:#64748b; font-style:italic;">... [20 VM creation and host allocation events completed across 3 Datacenters] ...</span>`,
+        `0.01: Broker: Vm #24 (MIPS: 10000, BW: 10000 Mbps, RAM: 8192 MB) has been created in DC_Makassar, Host #2`,
+        `<span style="color:#34d399; font-weight:600;">0.01: Broker: Total 24 VMs successfully initialized in Datacenter cluster.</span>\\n`,
         `<span style="color:#fbbf24; font-weight:600;">--- [FASE 2: DISPATCHING CLOUDLETS TO VMS (SENDING)] ---</span>`,
-        `0.01: Broker: [SENDING] Cloudlet #1 (Length: 50000 MI) to Vm #50 in DC_Surabaya`,
-        `0.01: Broker: [SENDING] Cloudlet #2 (Length: 50000 MI) to Vm #46 in DC_Surabaya`,
-        `0.01: Broker: [SENDING] Cloudlet #3 (Length: 50000 MI) to Vm #42 in DC_Surabaya`,
-        `<span style="color:#64748b; font-style:italic;">... [997 Cloudlet dispatch events mapped according to CCTSA Dual Sufferage Score] ...</span>\\n`,
+        `0.01: Broker: [SENDING] Cloudlet #1 (Length: 50000 MI) to Vm #22 in DC_Makassar`,
+        `0.01: Broker: [SENDING] Cloudlet #2 (Length: 50000 MI) to Vm #18 in DC_Makassar`,
+        `0.01: Broker: [SENDING] Cloudlet #3 (Length: 50000 MI) to Vm #14 in DC_Surabaya`,
+        `0.01: Broker: [SENDING] Cloudlet #4 (Length: 50000 MI) to Vm #10 in DC_Surabaya`,
+        `0.01: Broker: [SENDING] Cloudlet #5 (Length: 50000 MI) to Vm #6 in DC_Jakarta`,
+        `<span style="color:#64748b; font-style:italic;">... [995 Cloudlet dispatch events mapped according to CCTSA Dual Sufferage Score] ...</span>\\n`,
         `<span style="color:#fbbf24; font-weight:600;">--- [FASE 3: CLOUDLET EXECUTION & RETURN TO BROKER (RECEIVER & FINISH)] ---</span>`,
-        `INFO    4.07: SOKA_CloudBroker: [RECEIVER] Cloudlet #65 finished in Vm #48 and returned to broker.`,
-        `INFO    4.21: SOKA_CloudBroker: [RECEIVER] Cloudlet #66 finished in Vm #44 and returned to broker.`,
-        `INFO    4.35: SOKA_CloudBroker: [RECEIVER] Cloudlet #67 finished in Vm #40 and returned to broker.`,
+        `INFO    5.04: SOKA_CloudBroker: [RECEIVER] Cloudlet #20 finished in Vm #24 and returned to broker.`,
+        `INFO    5.25: SOKA_CloudBroker: [RECEIVER] Cloudlet #21 finished in Vm #20 and returned to broker.`,
+        `INFO    5.47: SOKA_CloudBroker: [RECEIVER] Cloudlet #22 finished in Vm #16 and returned to broker.`,
         `<span style="color:#64748b; font-style:italic;">... [Asynchronous event-driven execution progress: 100% cloudlets finished] ...</span>`,
-        `INFO  539.73: SOKA_CloudBroker: [RECEIVER] Cloudlet #986 finished in Vm #1 and returned to broker.`,
-        `INFO  546.48: SOKA_CloudBroker: [RECEIVER] Cloudlet #996 finished in Vm #5 and returned to broker.`,
-        `<span style="color:#34d399; font-weight:600;">INFO  546.48: SOKA_CloudBroker: [FINISH] All 1000 Cloudlets finished execution. Broker shutting down.</span>\\n`,
+        `INFO 1180.67: SOKA_CloudBroker: [RECEIVER] Cloudlet #982 finished in Vm #1 and returned to broker.`,
+        `INFO 1189.40: SOKA_CloudBroker: [RECEIVER] Cloudlet #985 finished in Vm #5 and returned to broker.`,
+        `<span style="color:#34d399; font-weight:600;">INFO 1189.40: SOKA_CloudBroker: [FINISH] All 1000 Cloudlets finished execution. Broker shutting down.</span>\\n`,
         `<span style="color:#fbbf24; font-weight:600;">--- [FASE 4: CLOUDSIM CLOUDLET EXECUTION RECORD] ---</span>`,
         `<span style="font-weight:700;">============================== CLOUDSIM CLOUDLET EXECUTION RECORD ==============================</span>`,
         `<span style="font-weight:700;">| Cloudlet ID | STATUS  | Datacenter ID   | Host ID | VM ID | Length (MI) | Start (s) | Finish (s) | Cost (INR)  |</span>`,
         `----------------------------------------------------------------------------------------------------`,
-        `|          65 | SUCCESS | DC_Surabaya     | Host #8 |    48 |       50000 |      0.00 |       4.07 |    16000.00 |`,
-        `|          66 | SUCCESS | DC_Surabaya     | Host #4 |    44 |       50000 |      0.00 |       4.21 |    16000.00 |`,
-        `|          67 | SUCCESS | DC_Surabaya     | Host #0 |    40 |       50000 |      0.00 |       4.35 |    16000.00 |`,
+        `|          20 | SUCCESS | DC_Makassar     | Host #2 |    24 |       50000 |      0.00 |       5.04 |    16000.00 |`,
+        `|          21 | SUCCESS | DC_Makassar     | Host #3 |    20 |       50000 |      0.00 |       5.25 |    16000.00 |`,
+        `|          22 | SUCCESS | DC_Surabaya     | Host #2 |    16 |       50000 |      0.00 |       5.47 |    16000.00 |`,
+        `|          23 | SUCCESS | DC_Surabaya     | Host #3 |    12 |       50000 |      0.00 |       5.72 |    16000.00 |`,
+        `|          24 | SUCCESS | DC_Jakarta      | Host #2 |     8 |       50000 |      0.00 |       5.99 |    16000.00 |`,
+        `|          25 | SUCCESS | DC_Jakarta      | Host #3 |     4 |       50000 |      0.00 |       6.29 |    16000.00 |`,
         `|     ...     |   ...   |       ...       |   ...   |  ...  |     ...     |    ...    |    ...     |     ...     |`,
-        `|         986 | SUCCESS | DC_Jakarta      | Host #1 |     1 |       50000 |    506.00 |     539.73 |     2000.00 |`,
-        `|         996 | SUCCESS | DC_Jakarta      | Host #5 |     5 |       50000 |    514.34 |     546.48 |     2000.00 |`,
+        `|         982 | SUCCESS | DC_Jakarta      | Host #0 |     1 |       50000 |   1146.93 |    1180.67 |     2000.00 |`,
+        `|         985 | SUCCESS | DC_Jakarta      | Host #4 |     5 |       50000 |   1157.26 |    1189.40 |     2000.00 |`,
         `<span style="font-weight:700;">====================================================================================================</span>\\n`,
         `<span style="color:#fbbf24; font-weight:600;">--- [FASE 5: HASIL EVALUASI METRIK KINERJA] ---</span>`,
         `<span style="color:#34d399; font-weight:700;">========== HASIL EVALUASI METRIK CCTSA (PROPOSED) ==========</span>`,
-        `<b>1. Makespan             :</b> 546.48 Detik`,
-        `<b>2. Average Waiting Time :</b> 0.00 Detik`,
-        `<b>3. Resource Utilization :</b> 50.75 %`,
-        `<b>4. Total Rental Cost    :</b> 7,068,000.00 INR (🔥 Hemat 34.68% dibanding baseline)`,
-        `<b>5. Degree of Imbalance  :</b> 1.7650`,
+        `<b>1. Makespan             :</b> 1189.40 Detik`,
+        `<b>2. Average Waiting Time :</b> 63.97 Detik`,
+        `<b>3. Resource Utilization :</b> 53.00 %`,
+        `<b>4. Total Rental Cost    :</b> 7,461,000.00 INR (🔥 Hemat 31.92% dibanding baseline)`,
+        `<b>5. Degree of Imbalance  :</b> 1.6310`,
         `<span style="color:#34d399; font-weight:700;">============================================================</span>\\n`,
         `<span style="color:#38bdf8; font-weight:600;">[5/5] INITIATING SKENARIO 5: BENCHMARK SEMINAL MAHESWARAN ETC (512 TASK / 16 VM)</span>`,
         `Inconsistent HiHi Matrix: High Task Heterogeneity, High Machine Heterogeneity`,
@@ -1817,11 +1835,12 @@ def build_dashboard():
 
     // Default: Tugas 2A / All
     return [
-      `<span style="color:#38bdf8; font-weight:700;">>>> [CLOUDSIM DISCRETE-EVENT ENGINE: SIMULASI TUGAS 2A/2B (1.000 TASK / 50 VM)] <<<</span>`,
+      `<span style="color:#38bdf8; font-weight:700;">>>> [CLOUDSIM DISCRETE-EVENT ENGINE: SIMULASI TUGAS 2A/2B (1.000 TASK / 3 DC / 24 VM)] <<<</span>`,
       `<span style="color:#64748b; font-style:italic;">Simulation Clock: 0.00 s | CloudSim 3.0.3 Discrete-Event Core | Active Scheduler: CCTSA (Proposed)</span>\\n`,
-      `<span style="color:#38bdf8;">0.00: Broker: Cloud Resource List received with 2 datacenter(s) [DC_Jakarta, DC_Surabaya]</span>`,
-      `0.00: DC_Jakarta : 10 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS, 64GB RAM, 10 Gbps SAN)`,
-      `0.00: DC_Surabaya: 10 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS, 64GB RAM, 10 Gbps SAN)\\n`,
+      `<span style="color:#38bdf8;">0.00: Broker: Cloud Resource List received with 3 datacenter(s) [DC_Jakarta, DC_Surabaya, DC_Makassar]</span>`,
+      `0.00: DC_Jakarta : 5 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS/core, 64GB RAM, 10 Gbps SAN)`,
+      `0.00: DC_Surabaya: 5 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS/core, 64GB RAM, 10 Gbps SAN)`,
+      `0.00: DC_Makassar: 5 Physical Hosts initialized (Xeon E5-2690v4 16-Core, 10,000 MIPS/core, 64GB RAM, 10 Gbps SAN)\\n`,
       `<span style="color:#fbbf24; font-weight:600;">--- [FASE 1: VM CREATION & HOST ALLOCATION] ---</span>`,
       `0.00: Broker: Trying to Create Vm #1 in DC_Jakarta`,
       `0.00: DC_Jakarta.guestAllocator: Vm #1 has been allocated to Host #0`,
@@ -1832,45 +1851,45 @@ def build_dashboard():
       `0.00: Broker: Trying to Create Vm #3 in DC_Jakarta`,
       `0.00: DC_Jakarta.guestAllocator: Vm #3 has been allocated to Host #2`,
       `0.01: Broker: Vm #3 (MIPS: 5000, BW: 5000 Mbps, RAM: 8192 MB) has been created in DC_Jakarta, Host #2`,
-      `<span style="color:#64748b; font-style:italic;">... [47 VM creation and host allocation events completed across Datacenter cluster] ...</span>`,
-      `<span style="color:#34d399; font-weight:600;">0.01: Broker: Total 50 VMs successfully initialized in Datacenter cluster.</span>\\n`,
-      `<span style="color:#fbbf24; font-weight:600;">--- [FASE 2: DISPATCHING CLOUDLETS TO VMS (DUAL SUFFERAGE CCTSA)] ---</span>`,
-      `0.01: Broker: [SENDING] Cloudlet #1 (Length: 50000 MI) to Vm #3 (MIPS: 5000 in DC_Jakarta)`,
-      `0.01: Broker: [SENDING] Cloudlet #2 (Length: 50000 MI) to Vm #7 (MIPS: 5000 in DC_Jakarta)`,
-      `0.01: Broker: [SENDING] Cloudlet #3 (Length: 50000 MI) to Vm #7 (MIPS: 5000 in DC_Jakarta)`,
-      `0.01: Broker: [SENDING] Cloudlet #4 (Length: 50000 MI) to Vm #2 (MIPS: 3000 in DC_Jakarta)`,
-      `0.01: Broker: [SENDING] Cloudlet #5 (Length: 50000 MI) to Vm #2 (MIPS: 3000 in DC_Jakarta)`,
-      `0.01: Broker: [SENDING] Cloudlet #6 (Length: 50000 MI) to Vm #26 (MIPS: 3000 in DC_Surabaya)`,
-      `<span style="color:#64748b; font-style:italic;">... [994 Cloudlet dispatch events mapped according to CCTSA Dual Sufferage Score] ...</span>\\n`,
+      `<span style="color:#64748b; font-style:italic;">... [20 VM creation and host allocation events completed across 3 Datacenters] ...</span>`,
+      `0.01: Broker: Vm #24 (MIPS: 10000, BW: 10000 Mbps, RAM: 8192 MB) has been created in DC_Makassar, Host #2`,
+      `<span style="color:#34d399; font-weight:600;">0.01: Broker: Total 24 VMs successfully initialized in Datacenter cluster.</span>\\n`,
+      `<span style="color:#fbbf24; font-weight:600;">--- [FASE 2: DISPATCHING CLOUDLETS TO VMS (SENDING)] ---</span>`,
+      `0.01: Broker: [SENDING] Cloudlet #1 (Length: 50000 MI) to Vm #22 in DC_Makassar`,
+      `0.01: Broker: [SENDING] Cloudlet #2 (Length: 50000 MI) to Vm #18 in DC_Makassar`,
+      `0.01: Broker: [SENDING] Cloudlet #3 (Length: 50000 MI) to Vm #14 in DC_Surabaya`,
+      `0.01: Broker: [SENDING] Cloudlet #4 (Length: 50000 MI) to Vm #10 in DC_Surabaya`,
+      `0.01: Broker: [SENDING] Cloudlet #5 (Length: 50000 MI) to Vm #6 in DC_Jakarta`,
+      `<span style="color:#64748b; font-style:italic;">... [995 Cloudlet dispatch events mapped according to CCTSA Dual Sufferage Score] ...</span>\\n`,
       `<span style="color:#fbbf24; font-weight:600;">--- [FASE 3: CLOUDLET EXECUTION & RETURN TO BROKER (RECEIVER & FINISH)] ---</span>`,
-      `INFO   10.00: SOKA_CloudBroker: [RECEIVER] Cloudlet #1 finished in Vm #3 and returned to broker.`,
-      `INFO   10.00: SOKA_CloudBroker: [RECEIVER] Cloudlet #2 finished in Vm #7 and returned to broker.`,
-      `INFO   16.67: SOKA_CloudBroker: [RECEIVER] Cloudlet #4 finished in Vm #2 and returned to broker.`,
-      `INFO   20.00: SOKA_CloudBroker: [RECEIVER] Cloudlet #3 finished in Vm #7 and returned to broker.`,
-      `INFO   33.33: SOKA_CloudBroker: [RECEIVER] Cloudlet #5 finished in Vm #2 and returned to broker.`,
+      `INFO    5.04: SOKA_CloudBroker: [RECEIVER] Cloudlet #20 finished in Vm #24 and returned to broker.`,
+      `INFO    5.25: SOKA_CloudBroker: [RECEIVER] Cloudlet #21 finished in Vm #20 and returned to broker.`,
+      `INFO    5.47: SOKA_CloudBroker: [RECEIVER] Cloudlet #22 finished in Vm #16 and returned to broker.`,
       `<span style="color:#64748b; font-style:italic;">... [Asynchronous event-driven execution progress: 100% cloudlets finished] ...</span>`,
-      `<span style="color:#34d399; font-weight:600;">INFO  546.48: SOKA_CloudBroker: [FINISH] All 1000 Cloudlets finished execution. Broker shutting down.</span>\\n`,
+      `INFO 1180.67: SOKA_CloudBroker: [RECEIVER] Cloudlet #982 finished in Vm #1 and returned to broker.`,
+      `INFO 1189.40: SOKA_CloudBroker: [RECEIVER] Cloudlet #985 finished in Vm #5 and returned to broker.`,
+      `<span style="color:#34d399; font-weight:600;">INFO 1189.40: SOKA_CloudBroker: [FINISH] All 1000 Cloudlets finished execution. Broker shutting down.</span>\\n`,
       `<span style="color:#fbbf24; font-weight:600;">--- [FASE 4: CLOUDSIM CLOUDLET EXECUTION RECORD] ---</span>`,
       `<span style="font-weight:700;">============================== CLOUDSIM CLOUDLET EXECUTION RECORD ==============================</span>`,
       `<span style="font-weight:700;">| Cloudlet ID | STATUS  | Datacenter ID   | Host ID | VM ID | Length (MI) | Start (s) | Finish (s) | Cost (INR)  |</span>`,
       `----------------------------------------------------------------------------------------------------`,
-      `|          65 | SUCCESS | DC_Surabaya     | Host #8 |    48 |       50000 |      0.00 |       4.07 |    16000.00 |`,
-      `|          66 | SUCCESS | DC_Surabaya     | Host #4 |    44 |       50000 |      0.00 |       4.21 |    16000.00 |`,
-      `|          67 | SUCCESS | DC_Surabaya     | Host #0 |    40 |       50000 |      0.00 |       4.35 |    16000.00 |`,
-      `|          68 | SUCCESS | DC_Surabaya     | Host #6 |    36 |       50000 |      0.00 |       4.50 |    16000.00 |`,
-      `|          69 | SUCCESS | DC_Surabaya     | Host #2 |    32 |       50000 |      0.00 |       4.67 |    16000.00 |`,
-      `|          70 | SUCCESS | DC_Surabaya     | Host #8 |    28 |       50000 |      0.00 |       4.85 |    16000.00 |`,
+      `|          20 | SUCCESS | DC_Makassar     | Host #2 |    24 |       50000 |      0.00 |       5.04 |    16000.00 |`,
+      `|          21 | SUCCESS | DC_Makassar     | Host #3 |    20 |       50000 |      0.00 |       5.25 |    16000.00 |`,
+      `|          22 | SUCCESS | DC_Surabaya     | Host #2 |    16 |       50000 |      0.00 |       5.47 |    16000.00 |`,
+      `|          23 | SUCCESS | DC_Surabaya     | Host #3 |    12 |       50000 |      0.00 |       5.72 |    16000.00 |`,
+      `|          24 | SUCCESS | DC_Jakarta      | Host #2 |     8 |       50000 |      0.00 |       5.99 |    16000.00 |`,
+      `|          25 | SUCCESS | DC_Jakarta      | Host #3 |     4 |       50000 |      0.00 |       6.29 |    16000.00 |`,
       `|     ...     |   ...   |       ...       |   ...   |  ...  |     ...     |    ...    |    ...     |     ...     |`,
-      `|         986 | SUCCESS | DC_Jakarta      | Host #1 |     1 |       50000 |    506.00 |     539.73 |     2000.00 |`,
-      `|         996 | SUCCESS | DC_Jakarta      | Host #5 |     5 |       50000 |    514.34 |     546.48 |     2000.00 |`,
+      `|         982 | SUCCESS | DC_Jakarta      | Host #0 |     1 |       50000 |   1146.93 |    1180.67 |     2000.00 |`,
+      `|         985 | SUCCESS | DC_Jakarta      | Host #4 |     5 |       50000 |   1157.26 |    1189.40 |     2000.00 |`,
       `<span style="font-weight:700;">====================================================================================================</span>\\n`,
       `<span style="color:#fbbf24; font-weight:600;">--- [FASE 5: HASIL EVALUASI METRIK KINERJA] ---</span>`,
       `<span style="color:#34d399; font-weight:700;">========== HASIL EVALUASI METRIK CCTSA (PROPOSED) ==========</span>`,
-      `<b>1. Makespan             :</b> 546.48 Detik`,
-      `<b>2. Average Waiting Time :</b> 0.00 Detik`,
-      `<b>3. Resource Utilization :</b> 50.75 %`,
-      `<b>4. Total Rental Cost    :</b> 7,068,000.00 INR (🔥 Hemat 34.68% dibanding baseline)`,
-      `<b>5. Degree of Imbalance  :</b> 1.7650`,
+      `<b>1. Makespan             :</b> 1189.40 Detik`,
+      `<b>2. Average Waiting Time :</b> 63.97 Detik`,
+      `<b>3. Resource Utilization :</b> 53.00 %`,
+      `<b>4. Total Rental Cost    :</b> 7,461,000.00 INR (🔥 Hemat 31.92% dibanding baseline)`,
+      `<b>5. Degree of Imbalance  :</b> 1.6310`,
       `<span style="color:#34d399; font-weight:700;">============================================================</span>\\n`
     ];
   }}

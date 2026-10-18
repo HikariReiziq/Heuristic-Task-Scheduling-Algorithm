@@ -38,7 +38,7 @@ Repositori ini memuat implementasi *cloud task scheduling simulator*, kerangka k
 
 **Status Pemenuhan Tugas Kelompok 4**:
 - [x] **Poin 1**: Slide presentasi komprehensif Sufferage & CCTSA ([`Sufferage_Kelompok4_Tugas2A.pdf`](file:///home/reiziqzip/Documents/SOKA/Algoritma%20Heuristik/Sufferage_Kelompok4_Tugas2A.pdf)).
-- [x] **Poin 2**: Datacenter multi-region: Datacenter Jakarta (DC 2) & Datacenter Surabaya (DC 3), 20 Host Fisik, 50 VM Heterogen.
+- [x] **Poin 2**: Datacenter multi-region: Datacenter Jakarta (DC 2), Datacenter Surabaya (DC 3) & Datacenter Makassar (DC 4), 15 Host Fisik (5/DC), 24 VM Heterogen (8/DC).
 - [x] **Poin 3**: 5 Algoritma penjadwalan: CCTSA (Proposed), ETSA, Standard Sufferage, Min-Min, dan Round Robin.
 - [x] **Poin 4**: 4 Dataset uji: Paper Krishnaveni 2019 (Tabel I & II), Skenario Tugas 2A (1.000 task @ 50.000 MI), Google Cloud Jobs (GoCJ), dan Maheswaran JPDC 1999 (Inconsistent HiHi).
 
@@ -130,7 +130,7 @@ Simulator mendukung 5 skenario pengujian komprehensif:
 1. **Skenario 1 (Validasi Tabel III)**: Pengujian dasar 10 task (Tabel II) pada 3 VM (Tabel I) dari paper Krishnaveni (2019).
 2. **Skenario 2 (Skalabilitas Tabel IV–VI)**: Evaluasi skalabilitas beban kerja dari 25, 50, 75, 100, 150, hingga 200 task pada 5 hingga 14 VM.
 3. **Skenario GoCJ (Google Cloud Jobs)**: Dataset beban kerja riil Google data center (1.000 task: *Small 30%, Medium 40%, Large 20%, Extra-Large 10%*) dengan proses kedatangan stokastik Poisson pada 50 VM heterogen.
-4. **Skenario Tugas 2A / 2B**: Dataset cetak biru desain proyek Kelompok 4 (1.000 task @ 50.000 MI, transfer data 400 MB) pada infrastruktur 2 Datacenter, 20 Host, dan 50 VM.
+4. **Skenario Tugas 2A / 2B**: Dataset cetak biru desain proyek Kelompok 4 (1.000 task @ 50.000 MI, transfer data 400 MB) pada infrastruktur 3 Datacenter, 15 Host, dan 24 VM.
 5. **Skenario Maheswaran ETC (JPDC 1999)**: Matriks ETC 16-kuadran heterogenitas ekstrim (*Inconsistent High Task, High Machine - HiHi*: 512 task pada 16 mesin).
 
 ---
@@ -192,22 +192,22 @@ Simulator mendukung 5 skenario pengujian komprehensif:
 
 ---
 
-### 6.4 Desain Infrastruktur Tugas 2A / 2B (1.000 Task @ 50.000 MI / 50 VM)
+### 6.4 Desain Infrastruktur Tugas 2A / 2B (1.000 Task @ 50.000 MI / 3 DC / 15 Host / 24 VM)
 | Algoritma | Makespan (s) | Total Cost (INR) | Utilisasi (%) | Degree of Imbalance (DI) | Waiting Time (s) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **CCTSA (Proposed)** | **546.48 s** | **7,068,000 INR (🔥 Hemat 34.68%)** | **50.75%** | **1.7650** | **0.00 s** |
-| **ETSA (Baseline)** | 188.70 s | 10,820,000 INR | 96.13% | 0.1542 | 0.00 s |
-| **Standard Sufferage** | 188.70 s | 10,820,000 INR | 96.13% | 0.1542 | 0.00 s |
-| **Min-Min** | 188.70 s | 10,820,000 INR | 96.13% | 0.1542 | 0.00 s |
-| **Round Robin (RR)** | 674.67 s | 7,820,000 INR | 40.04% | 2.1961 | 0.01 s |
+| **CCTSA (Proposed)** | **1189.40 s** | **7,461,000 INR (🔥 Hemat 31.92%)** | **53.00%** | **1.6310** | **63.97 s** |
+| **ETSA (Baseline)** | 432.17 s | 10,959,000 INR | 98.20% | 0.0645 | 0.00 s |
+| **Standard Sufferage** | 432.17 s | 10,959,000 INR | 98.20% | 0.0645 | 0.00 s |
+| **Min-Min** | 432.17 s | 10,959,000 INR | 98.20% | 0.0645 | 0.00 s |
+| **Round Robin (RR)** | 1416.80 s | 8,000,000 INR | 44.08% | 1.9378 | 67.93 s |
 
-> **Analisis Kunci**: Pada beban komputasi masif 50.000 MI, CCTSA secara cerdas mendistribusikan task ke tier Medium dan Large sehingga memangkas biaya sebesar **34.68%** (**7,06 Juta INR** vs **10,82 Juta INR**).
+> **Analisis Kunci**: Pada beban komputasi masif 50.000 MI, CCTSA secara cerdas mendistribusikan task ke tier Medium dan Large sehingga memangkas biaya sebesar **31.92%** (**7,46 Juta INR** vs **10,96 Juta INR**).
 
 <p align="center">
   <a href="simulator/results/scenario5_tugas2a_comparison.png">
     <img src="simulator/results/scenario5_tugas2a_comparison.png" width="850" alt="Tugas 2A Infrastructure Benchmark" />
   </a><br>
-  <i><b>Gambar 6.4</b>: Evaluasi Makespan vs Utilisasi pada Desain Infrastruktur Tugas 2A / 2B Kelompok 4 (2 Datacenter, 20 Host, 50 VM, 1.000 Task @ 50.000 MI). (<a href="simulator/results/scenario5_tugas2a_comparison.svg">Unduh Format Vektor SVG</a>)</i>
+  <i><b>Gambar 6.4</b>: Evaluasi Makespan vs Utilisasi pada Desain Infrastruktur Tugas 2A / 2B Kelompok 4 (3 Datacenter, 15 Host, 24 VM, 1.000 Task @ 50.000 MI). (<a href="simulator/results/scenario5_tugas2a_comparison.svg">Unduh Format Vektor SVG</a>)</i>
 </p>
 
 ---
@@ -270,7 +270,7 @@ Heuristic-Task-Scheduling-Algorithm/
     ├── engine.py                                       # CloudBroker (Orkestrasi eksekusi simulasi)
     ├── run_simulation.py                               # CLI Runner utama (Semua skenario)
     ├── export_and_plot.py                              # Generator ekspor CSV, JSON, grafik PNG/SVG
-    ├── app.py                                          # Dashboard Streamlit terintegrasi (CCTSA & 2 Datacenter)
+    ├── app.py                                          # Dashboard Streamlit terintegrasi (CCTSA & 3 Datacenter)
     ├── dashboard.html                                  # Interactive Web Dashboard mandiri (Zero-Dependency)
     ├── serve_dashboard.py                              # Web server lokal bawaan Python (Port 8080)
     ├── generate_dashboard.py                           # Compiler generator dashboard HTML
@@ -308,7 +308,7 @@ python3 run_simulation.py --scenario 2
 # Opsi 4: Jalankan Skenario GoCJ (Google Cloud Jobs: 1.000 Task / 50 VM)
 python3 run_simulation.py --scenario gocj
 
-# Opsi 5: Jalankan Skenario Tugas 2A/2B (1.000 Task @ 50.000 MI / 50 VM)
+# Opsi 5: Jalankan Skenario Tugas 2A/2B (1.000 Task @ 50.000 MI / 3 DC / 24 VM)
 python3 run_simulation.py --scenario tugas2a
 
 # Opsi 6: Jalankan Skenario Maheswaran ETC (Inconsistent HiHi: 512 Task / 16 VM)
